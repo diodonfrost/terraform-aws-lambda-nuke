@@ -39,7 +39,10 @@ resource "aws_iam_policy" "nuke_policy" {
         "Action": [
             "ec2:DescribeInstances",
             "ec2:DescribeInstanceStatus",
-            "ec2:TerminateInstances"
+            "ec2:TerminateInstances",
+            "autoscaling:DescribeInstances",
+            "autoscaling:DescribeInstanceStatus",
+            "autoscaling:TerminateInstances"
         ],
         "Resource": "*",
         "Effect": "Allow"
