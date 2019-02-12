@@ -42,7 +42,11 @@ resource "aws_iam_policy" "nuke_policy" {
             "ec2:TerminateInstances",
             "autoscaling:DescribeInstances",
             "autoscaling:DescribeInstanceStatus",
-            "autoscaling:TerminateInstances"
+            "autoscaling:TerminateInstances",
+            "rds:DescribeDBClusters",
+            "rds:TerminateDBCluster",
+            "rds:DescribeDBInstances",
+            "rds:TerminateDBInstance"
         ],
         "Resource": "*",
         "Effect": "Allow"
@@ -67,8 +71,8 @@ resource "aws_iam_role_policy_attachment" "autoscaling" {
 # Convert *.py to .zip because AWS Lambda need .zip
 data "archive_file" "convert_py_to_zip" {
   type        = "zip"
-  source_file = "${path.module}/package/main.py"
-  output_path = "${path.module}/package/nuke-everything.zip"
+  source_dir  = "${path.module}/package/"
+  output_path = "${path.module}/nuke-everything.zip"
 }
 
 # Create Lambda function for destroy all aws resources
