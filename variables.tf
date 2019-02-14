@@ -13,12 +13,6 @@ variable "name" {
   default     = "nuke"
 }
 
-variable "aws_regions" {
-  type        = "string"
-  description = "Define the regions where the function will destroy aws resources"
-  default     = "*"
-}
-
 variable "aws_resources" {
   type        = "string"
   description = "Define the resources that will be destroyed"
@@ -27,5 +21,5 @@ variable "aws_resources" {
 
 variable "older_than" {
   description = "Only destroy resources that were created before a certain period"
-  default     = ""
+  default     = "11000d"
 }
