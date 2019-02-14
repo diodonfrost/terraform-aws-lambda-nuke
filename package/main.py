@@ -6,7 +6,6 @@ import timeparse
 import ec2
 
 aws_resources = os.getenv('AWS_RESOURCES', 'tostop')
-aws_regions = os.getenv('AWS_REGIONS', '*')
 older_than = os.getenv('OLDER_THAN', 'none')
 
 # Setup simple logging for INFO

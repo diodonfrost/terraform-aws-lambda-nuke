@@ -86,7 +86,6 @@ resource "aws_lambda_function" "nuke" {
   timeout          = "600"
   environment {
     variables = {
-      AWS_REGIONS   = "${var.aws_regions}"
       AWS_RESOURCES = "${var.aws_resources}"
       OLDER_THAN    = "${var.older_than}"
     }
