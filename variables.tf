@@ -16,13 +16,13 @@ variable "name" {
 variable "aws_regions" {
   type        = "string"
   description = "Define the regions where the function will destroy aws resources"
-  default     = "all"
+  default     = "*"
 }
 
 variable "aws_resources" {
   type        = "string"
   description = "Define the resources that will be destroyed"
-  default     = "all"
+  default     = "*"
 }
 
 variable "older_than" {
