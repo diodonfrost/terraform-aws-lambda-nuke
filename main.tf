@@ -42,7 +42,11 @@ resource "aws_iam_policy" "nuke_compute" {
             "autoscaling:DescribeAutoScalingGroups",
             "autoscaling:DeleteAutoScalingGroup",
             "autoscaling:DescribeLaunchConfigurations",
-            "autoscaling:DeleteLaunchConfiguration"
+            "autoscaling:DeleteLaunchConfiguration",
+            "elasticloadbalancing:DescribeLoadBalancers",
+            "elasticloadbalancing:DeleteLoadBalancer",
+            "elasticloadbalancing:DescribeTargetGroups",
+            "elasticloadbalancing:DeleteTargetGroup"
         ],
         "Resource": "*",
         "Effect": "Allow"
