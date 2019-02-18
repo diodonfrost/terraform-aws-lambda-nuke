@@ -4,6 +4,7 @@ import logging
 import os
 import timeparse
 import ec2
+import autoscaling
 
 aws_resources = os.getenv('AWS_RESOURCES', 'tostop')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -20,3 +21,6 @@ def lambda_handler(event, context):
 
     if aws_resources == "*":
         ec2.nuke_all_ec2(older_than_seconds)
+
+    if aws_resources == "*":
+        autoscaling.nuke_all_autoscaling(older_than_seconds)

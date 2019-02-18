@@ -21,5 +21,5 @@ variable "aws_resources" {
 
 variable "older_than" {
   description = "Only destroy resources that were created before a certain period"
-  default     = "11000d"
+  default     = "0d"
 }

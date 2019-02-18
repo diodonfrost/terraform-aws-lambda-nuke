@@ -26,9 +26,9 @@ resource "aws_iam_role" "nuke_lambda" {
 EOF
 }
 
-# Create custom policy for allow destroying al resources
-resource "aws_iam_policy" "nuke_policy" {
-  name        = "${var.name}-nuke-custom-policy"
+# Create custom policy for allow destroying all compute resources
+resource "aws_iam_policy" "nuke_compute" {
+  name        = "${var.name}-nuke-compute"
   description = "Allow destroying all aws resources"
 
   policy = <<EOF
@@ -38,15 +38,11 @@ resource "aws_iam_policy" "nuke_policy" {
     {
         "Action": [
             "ec2:DescribeInstances",
-            "ec2:DescribeInstanceStatus",
             "ec2:TerminateInstances",
-            "autoscaling:DescribeInstances",
-            "autoscaling:DescribeInstanceStatus",
-            "autoscaling:TerminateInstances",
-            "rds:DescribeDBClusters",
-            "rds:TerminateDBCluster",
-            "rds:DescribeDBInstances",
-            "rds:TerminateDBInstance"
+            "autoscaling:DescribeAutoScalingGroups",
+            "autoscaling:DeleteAutoScalingGroup",
+            "autoscaling:DescribeLaunchConfigurations",
+            "autoscaling:DeleteLaunchConfiguration"
         ],
         "Resource": "*",
         "Effect": "Allow"
@@ -59,7 +55,7 @@ EOF
 # Attach custom policy nuke to role
 resource "aws_iam_role_policy_attachment" "autoscaling" {
   role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_policy.arn}"
+  policy_arn = "${aws_iam_policy.nuke_compute.arn}"
 }
 
 ################################################
