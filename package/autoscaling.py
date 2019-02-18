@@ -13,7 +13,7 @@ def nuke_all_autoscaling(older_than_seconds):
         launch_configuration aws resources
     """
 
-    #### Nuke autoscaling group ####
+    #### Nuke all autoscaling group ####
     response = AUTOSCALING.describe_auto_scaling_groups()
     time_delete = time.time() - older_than_seconds
 
@@ -26,7 +26,7 @@ def nuke_all_autoscaling(older_than_seconds):
             AutoScalingGroupName=autoscaling['AutoScalingGroupName'], ForceDelete=True)
 
 
-    #### Nuke launch configuration ####
+    #### Nuke all launch configuration ####
     response = AUTOSCALING.describe_launch_configurations()
 
     for launchconfiguration in response['LaunchConfigurations']:
