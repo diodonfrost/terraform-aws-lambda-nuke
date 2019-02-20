@@ -32,3 +32,6 @@ def lambda_handler(event, context):
 
     if aws_resources == "*" or "ebs" in aws_resources:
         compute.ebs.nuke_all_ebs(older_than_seconds)
+
+    if aws_resources == "*" or "key_pair" in aws_resources:
+        compute.key_pair.nuke_all_key_pair()
