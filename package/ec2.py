@@ -8,8 +8,12 @@ import boto3
 EC2 = boto3.client('ec2')
 
 def nuke_all_ec2(older_than_seconds):
-    """ ec2 function for destroy every ec2 resources """
+    """
+        ec2 function for destroy all ec2 instances
+        and launchtemplate resources
+    """
 
+    #### Nuke all ec2 instances ####
     # Initialize instance list
     instance_list = []
     reservations = EC2.describe_instances()
@@ -28,3 +32,13 @@ def nuke_all_ec2(older_than_seconds):
     if instance_list:
         # Nuke all instances
         EC2.terminate_instances(InstanceIds=instance_list)
+
+    #### Nuke all launch templates ####
+    response = EC2.describe_launch_templates()
+
+    for launchtemplate in response['LaunchTemplates']:
+
+        if launchtemplate['CreateTime'].timestamp() < time_delete:
+
+            # Nuke all launch template
+            EC2.delete_launch_template(LaunchTemplateId=launchtemplate['LaunchTemplateId'])
