@@ -42,3 +42,11 @@ def nuke_all_ec2(older_than_seconds):
 
             # Nuke all launch template
             EC2.delete_launch_template(LaunchTemplateId=launchtemplate['LaunchTemplateId'])
+
+    #### Nuke all placement group ####
+    response = EC2.describe_placement_groups()
+
+    for placementgroup in response['PlacementGroups']:
+
+        # Nuke all launch template
+        EC2.delete_placement_group(GroupName=placementgroup['GroupName'])
