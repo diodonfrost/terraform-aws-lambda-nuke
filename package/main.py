@@ -3,10 +3,10 @@
 import logging
 import os
 import timeparse
-import ec2
-import autoscaling
-import loadbalancing
-import ebs
+import compute.ec2
+import compute.autoscaling
+import compute.loadbalancing
+import compute.ebs
 
 aws_resources = os.getenv('AWS_RESOURCES', 'tostop')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -22,13 +22,13 @@ def lambda_handler(event, context):
     older_than_seconds = timeparse.timeparse(older_than)
 
     if aws_resources == "*" or "ec2" in aws_resources:
-        ec2.nuke_all_ec2(older_than_seconds)
+        compute.ec2.nuke_all_ec2(older_than_seconds)
 
     if aws_resources == "*" or "autoscaling" in aws_resources:
-        autoscaling.nuke_all_autoscaling(older_than_seconds)
+        compute.autoscaling.nuke_all_autoscaling(older_than_seconds)
 
     if aws_resources == "*" or "loadbalancing" in aws_resources:
-        loadbalancing.nuke_all_loadbalancing(older_than_seconds)
+        compute.loadbalancing.nuke_all_loadbalancing(older_than_seconds)
 
     if aws_resources == "*" or "ebs" in aws_resources:
-        ebs.nuke_all_ebs(older_than_seconds)
+        compute.ebs.nuke_all_ebs(older_than_seconds)
