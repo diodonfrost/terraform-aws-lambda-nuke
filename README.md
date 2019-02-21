@@ -16,6 +16,9 @@ Terraform module which create lambda which nuke all resources on aws account
     -   Target Groups
     -   Key Pairs
     -   Placement Groups
+    -   Elastic Container Registry
+    -   Elastic Container Clusters
+    -   Elastic Kubernetes Services
 
 
 ## Usage
