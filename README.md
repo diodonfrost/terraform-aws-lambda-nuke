@@ -4,7 +4,19 @@ Terraform module which create lambda which nuke all resources on aws account
 ## Features
 
 *   Aws lambda runtine Python 3.6
-*   ec2 nuke
+*   Compute resources nuke:
+    -   Ec2 Instances
+    -   Launch Templates
+    -   Ebs Volumes
+    -   Ebs Life Cycle Manager
+    -   Load Balancers
+    -   Target Groups
+    -   Launch Configurations
+    -   Auto Scaling Groups
+    -   Target Groups
+    -   Key Pairs
+    -   Placement Groups
+
 
 ## Usage
 ```hcl
@@ -12,7 +24,7 @@ module "nuke_everything_older_than_7d" {
   source                         = "diodonfrost/lambda-nuke/aws"
   name                           = "nuke_everything"
   cloudwatch_schedule_expression = "cron(0 00 ? * FRI *)"
-  aws_resources                  = "*"
+  exclude_resources              = "key_pairs,rds"
   older_than                     = "7d"
 }
 ```
@@ -27,7 +39,7 @@ module "nuke_everything_older_than_7d" {
 |------|-------------|------|---------|----------|
 | name | Define name to use for lambda function, cloudwatch event and iam role | string | n/a | yes |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
-| aws_resources | Define the resources that will be destroyed | string | * | no |
+| exclude_resources | Define the resources that will be not destroyed | string |  | no |
 | older_than | Only destroy resources that were created before a certain period | string | 0d | no |
 
 ## Outputs
