@@ -61,7 +61,9 @@ resource "aws_iam_policy" "nuke_compute" {
             "elasticloadbalancing:DescribeTargetGroups",
             "elasticloadbalancing:DeleteTargetGroup",
             "ecr:DescribeRepositories",
-            "ecr:DeleteRepository"
+            "ecr:DeleteRepository",
+            "ecs:DescribeClusters",
+            "ecs:DeleteCluster"
         ],
         "Resource": "*",
         "Effect": "Allow"
