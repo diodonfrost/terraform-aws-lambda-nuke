@@ -7,8 +7,9 @@ import compute.ec2
 import compute.autoscaling
 import compute.loadbalancing
 import compute.ebs
+import compute.key_pair
 
-aws_resources = os.getenv('AWS_RESOURCES', 'tostop')
+exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
 
 # Setup simple logging for INFO
@@ -21,17 +22,17 @@ def lambda_handler(event, context):
     # Convert older_than variable to seconds
     older_than_seconds = timeparse.timeparse(older_than)
 
-    if aws_resources == "*" or "ec2" in aws_resources:
+    if "ec2" not in exclude_resources:
         compute.ec2.nuke_all_ec2(older_than_seconds)
 
-    if aws_resources == "*" or "autoscaling" in aws_resources:
+    if "autoscaling" not in exclude_resources:
         compute.autoscaling.nuke_all_autoscaling(older_than_seconds)
 
-    if aws_resources == "*" or "loadbalancing" in aws_resources:
+    if "loadbalancing" not in exclude_resources:
         compute.loadbalancing.nuke_all_loadbalancing(older_than_seconds)
 
-    if aws_resources == "*" or "ebs" in aws_resources:
+    if "ebs" not in exclude_resources:
         compute.ebs.nuke_all_ebs(older_than_seconds)
 
-    if aws_resources == "*" or "key_pair" in aws_resources:
+    if "key_pair" not in exclude_resources:
         compute.key_pair.nuke_all_key_pair()

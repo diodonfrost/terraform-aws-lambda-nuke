@@ -13,10 +13,10 @@ variable "name" {
   default     = "nuke"
 }
 
-variable "aws_resources" {
+variable "exclude_resources" {
   type        = "string"
-  description = "Define the resources that will be destroyed"
-  default     = "*"
+  description = "Define the resources that will not be destroyed"
+  default     = "key_pair"
 }
 
 variable "older_than" {

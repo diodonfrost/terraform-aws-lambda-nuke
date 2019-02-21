@@ -99,8 +99,8 @@ resource "aws_lambda_function" "nuke" {
   timeout          = "600"
   environment {
     variables = {
-      AWS_RESOURCES = "${var.aws_resources}"
-      OLDER_THAN    = "${var.older_than}"
+      EXCLUDE_RESOURCES = "${var.exclude_resources}"
+      OLDER_THAN        = "${var.older_than}"
     }
   }
 }
