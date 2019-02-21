@@ -63,7 +63,10 @@ resource "aws_iam_policy" "nuke_compute" {
             "ecr:DescribeRepositories",
             "ecr:DeleteRepository",
             "ecs:DescribeClusters",
-            "ecs:DeleteCluster"
+            "ecs:DeleteCluster",
+            "eks:ListClusters",
+            "eks:DescribeCluster",
+            "eks:DeleteCluster"
         ],
         "Resource": "*",
         "Effect": "Allow"

@@ -10,7 +10,7 @@ variable "cloudwatch_schedule_expression" {
 
 variable "name" {
   description = "Define name to use for lambda function, cloudwatch event and iam role"
-  default     = "nuke"
+  default     = "everything"
 }
 
 variable "exclude_resources" {

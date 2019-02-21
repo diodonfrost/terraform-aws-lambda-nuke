@@ -10,6 +10,7 @@ import compute.ebs
 import compute.key_pair
 import compute.ecr
 import compute.ecs
+import compute.eks
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -44,3 +45,6 @@ def lambda_handler(event, context):
 
     if "ecs" not in exclude_resources:
         compute.ecs.nuke_all_ecs()
+
+    if "eks" not in exclude_resources:
+        compute.eks.nuke_all_eks(older_than_seconds)
