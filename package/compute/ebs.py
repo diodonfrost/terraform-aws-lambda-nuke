@@ -21,9 +21,12 @@ def nuke_all_ebs(older_than_seconds):
     for volume in response['Volumes']:
 
         if volume['CreateTime'].timestamp() < time_delete:
+            for volumestate in volume['Attachments']:
+                if volumestate['State'] == 'detached' or \
+                volumestate['State'] == 'busy':
 
-            # Nuke all ebs volume
-            EC2.delete_volume(VolumeId=volume['VolumeId'])
+                    # Nuke all ebs volume
+                    EC2.delete_volume(VolumeId=volume['VolumeId'])
 
     #### Nuke all snapshots ####
 #    response = EC2.describe_snapshots()
