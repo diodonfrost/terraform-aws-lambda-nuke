@@ -1,13 +1,12 @@
 
 """This script nuke all autoscaling resources"""
 
-#import datetime
 import time
 import boto3
 
 LOADBALANCING = boto3.client('elbv2')
 
-def nuke_all_loadbalancing(older_than_seconds):
+def nuke_all_loadbalancing(older_than_seconds, logger):
     """
         Function for destroy every loadbalancer and
         target groups aws resources
@@ -24,6 +23,7 @@ def nuke_all_loadbalancing(older_than_seconds):
             # Nuke all load balancer
             LOADBALANCING.delete_load_balancer(\
             LoadBalancerArn=loadbalancing['LoadBalancerArn'])
+            logger.info("Nuke Load Balancer %s", loadbalancing['LoadBalancerArn'])
 
 
     #### Nuke all target group ####
@@ -34,3 +34,4 @@ def nuke_all_loadbalancing(older_than_seconds):
         # Nuke all target group
         LOADBALANCING.delete_target_group(\
         TargetGroupArn=targetgroup['TargetGroupArn'])
+        logger.info("Nuke Target Group %s", targetgroup['TargetGroupArn'])

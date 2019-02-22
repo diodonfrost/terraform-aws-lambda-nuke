@@ -23,28 +23,28 @@ def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
 
     # Convert older_than variable to seconds
-    older_than_seconds = timeparse.timeparse(older_than)
+    older_than_seconds = timeparse.timeparse(older_than, LOGGER)
 
     if "ec2" not in exclude_resources:
-        compute.ec2.nuke_all_ec2(older_than_seconds)
+        compute.ec2.nuke_all_ec2(older_than_seconds, LOGGER)
 
     if "autoscaling" not in exclude_resources:
-        compute.autoscaling.nuke_all_autoscaling(older_than_seconds)
+        compute.autoscaling.nuke_all_autoscaling(older_than_seconds, LOGGER)
 
     if "loadbalancing" not in exclude_resources:
-        compute.loadbalancing.nuke_all_loadbalancing(older_than_seconds)
+        compute.loadbalancing.nuke_all_loadbalancing(older_than_seconds, LOGGER)
 
     if "ebs" not in exclude_resources:
-        compute.ebs.nuke_all_ebs(older_than_seconds)
+        compute.ebs.nuke_all_ebs(older_than_seconds, LOGGER)
 
     if "key_pair" not in exclude_resources:
-        compute.key_pair.nuke_all_key_pair()
+        compute.key_pair.nuke_all_key_pair(LOGGER)
 
     if "ecr" not in exclude_resources:
-        compute.ecr.nuke_all_ecr(older_than_seconds)
+        compute.ecr.nuke_all_ecr(older_than_seconds, LOGGER)
 
     if "ecs" not in exclude_resources:
-        compute.ecs.nuke_all_ecs()
+        compute.ecs.nuke_all_ecs(LOGGER)
 
     if "eks" not in exclude_resources:
-        compute.eks.nuke_all_eks(older_than_seconds)
+        compute.eks.nuke_all_eks(older_than_seconds, LOGGER)

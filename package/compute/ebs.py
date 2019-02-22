@@ -1,14 +1,13 @@
 
 """This script nuke all ebs resources"""
 
-#import datetime
 import time
 import boto3
 
 EC2 = boto3.client('ec2')
 DLM = boto3.client('dlm')
 
-def nuke_all_ebs(older_than_seconds):
+def nuke_all_ebs(older_than_seconds, logger):
     """
          ebs function for destroy all snapshots,
          volumes and lifecycle manager
@@ -27,6 +26,7 @@ def nuke_all_ebs(older_than_seconds):
 
                     # Nuke all ebs volume
                     EC2.delete_volume(VolumeId=volume['VolumeId'])
+                    logger.info("Nuke EBS Volume %s", volume['VolumeId'])
 
     #### Nuke all snapshots ####
 #    response = EC2.describe_snapshots()
@@ -51,3 +51,4 @@ def nuke_all_ebs(older_than_seconds):
 
             # Nuke all ebs volume
             DLM.delete_lifecycle_policy(PolicyId=detailedresponse['Policy']['PolicyId'])
+            logger.info("Nuke EBS Lifecycle Policy %s", detailedresponse['Policy']['PolicyId'])
