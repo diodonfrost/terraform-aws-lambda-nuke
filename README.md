@@ -19,6 +19,8 @@ Terraform module which create lambda which nuke all resources on aws account
     -   Elastic Container Registry
     -   Elastic Container Clusters
     -   Elastic Kubernetes Services
+    -   Elastic Beanstalk
+    -   S3
 
 
 ## Usage
