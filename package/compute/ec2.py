@@ -22,7 +22,8 @@ def nuke_all_ec2(older_than_seconds, logger):
     for reservation in reservations['Reservations']:
         for instance in reservation['Instances']:
 
-            if instance['LaunchTime'].timestamp() < time_delete:
+            if instance['LaunchTime'].timestamp() < time_delete and \
+            instance['State']['Name'] != 'terminated':
 
                 # Retrieve ec2 instance id and add in list
                 instance_id = instance['InstanceId']
