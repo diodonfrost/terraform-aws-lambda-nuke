@@ -29,7 +29,7 @@ EOF
 # Create custom policy for allow destroying all compute resources
 resource "aws_iam_policy" "nuke_compute" {
   name        = "${var.name}-nuke-compute"
-  description = "Allow destroying all aws resources"
+  description = "Allow destroying all aws compute resources"
 
   policy = <<EOF
 {
@@ -66,7 +66,11 @@ resource "aws_iam_policy" "nuke_compute" {
             "ecs:DeleteCluster",
             "eks:ListClusters",
             "eks:DescribeCluster",
-            "eks:DeleteCluster"
+            "eks:DeleteCluster",
+            "elasticbeanstalk:DescribeApplications",
+            "elasticbeanstalk:DescribeEnvironments",
+            "elasticbeanstalk:DeleteApplication",
+            "elasticbeanstalk:TerminateEnvironment"
         ],
         "Resource": "*",
         "Effect": "Allow"
@@ -76,10 +80,38 @@ resource "aws_iam_policy" "nuke_compute" {
 EOF
 }
 
-# Attach custom policy nuke to role
-resource "aws_iam_role_policy_attachment" "autoscaling" {
+# Create custom policy for allow destroying all storage resources
+resource "aws_iam_policy" "nuke_storage" {
+  name        = "${var.name}-nuke-storage"
+  description = "Allow destroying all aws storage resources"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+        "Action": [
+            "s3:ListAllMyBuckets",
+            "s3:DeleteBucket"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+# Attach custom policy compute nuke to role
+resource "aws_iam_role_policy_attachment" "compute" {
   role       = "${aws_iam_role.nuke_lambda.name}"
   policy_arn = "${aws_iam_policy.nuke_compute.arn}"
+}
+
+# Attach custom policy storage nuke to role
+resource "aws_iam_role_policy_attachment" "storage" {
+  role       = "${aws_iam_role.nuke_lambda.name}"
+  policy_arn = "${aws_iam_policy.nuke_storage.arn}"
 }
 
 ################################################
