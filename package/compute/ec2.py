@@ -1,13 +1,12 @@
 
 """This script nuke all ec2 resources"""
 
-#import datetime
 import time
 import boto3
 
 EC2 = boto3.client('ec2')
 
-def nuke_all_ec2(older_than_seconds):
+def nuke_all_ec2(older_than_seconds, logger):
     """
         ec2 function for destroy all ec2 instances
         and launchtemplate resources
@@ -23,7 +22,8 @@ def nuke_all_ec2(older_than_seconds):
     for reservation in reservations['Reservations']:
         for instance in reservation['Instances']:
 
-            if instance['LaunchTime'].timestamp() < time_delete:
+            if instance['LaunchTime'].timestamp() < time_delete and \
+            instance['State']['Name'] != 'terminated':
 
                 # Retrieve ec2 instance id and add in list
                 instance_id = instance['InstanceId']
@@ -32,6 +32,7 @@ def nuke_all_ec2(older_than_seconds):
     if instance_list:
         # Nuke all instances
         EC2.terminate_instances(InstanceIds=instance_list)
+        logger.info("Nuke instances %s", instance_list)
 
     #### Nuke all launch templates ####
     response = EC2.describe_launch_templates()
@@ -42,6 +43,7 @@ def nuke_all_ec2(older_than_seconds):
 
             # Nuke all launch template
             EC2.delete_launch_template(LaunchTemplateId=launchtemplate['LaunchTemplateId'])
+            logger.info("Nuke Launch Template %s", launchtemplate['LaunchTemplateId'])
 
     #### Nuke all placement group ####
     response = EC2.describe_placement_groups()
@@ -50,3 +52,4 @@ def nuke_all_ec2(older_than_seconds):
 
         # Nuke all launch template
         EC2.delete_placement_group(GroupName=placementgroup['GroupName'])
+        logger.info("Nuke Placement Group %s", placementgroup['GroupName'])

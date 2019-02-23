@@ -6,7 +6,7 @@ import boto3
 
 EKS = boto3.client('eks')
 
-def nuke_all_eks(older_than_seconds):
+def nuke_all_eks(older_than_seconds, logger):
     """
          eks function for destroy all kubernetes clusters
     """
@@ -22,3 +22,4 @@ def nuke_all_eks(older_than_seconds):
 
             # Nuke all ecr registry
             EKS.delete_cluster(name=cluster['cluster']['name'])
+            logger.info("Nuke EKS Cluster %s", cluster['cluster']['name'])

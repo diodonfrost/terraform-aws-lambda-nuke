@@ -5,9 +5,9 @@ import boto3
 
 ECS = boto3.client('ecs')
 
-def nuke_all_ecs():
+def nuke_all_ecs(logger):
     """
-         ecs function for destroy all ecs clusyers
+         ecs function for destroy all ecs clusters
          and task definitions
     """
 
@@ -18,3 +18,4 @@ def nuke_all_ecs():
 
         # Nuke all ecs cluster
         ECS.delete_cluster(cluster=cluster['clusterName'])
+        logger.info("Nuke ECS Cluster %s", cluster['clusterName'])

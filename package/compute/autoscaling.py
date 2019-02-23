@@ -1,13 +1,12 @@
 
 """This script nuke all autoscaling resources"""
 
-#import datetime
 import time
 import boto3
 
 AUTOSCALING = boto3.client('autoscaling')
 
-def nuke_all_autoscaling(older_than_seconds):
+def nuke_all_autoscaling(older_than_seconds, logger):
     """
         Function for destroy every autoscaling,
         launch_configuration aws resources
@@ -24,6 +23,7 @@ def nuke_all_autoscaling(older_than_seconds):
             # Nuke autoscaling group
             AUTOSCALING.delete_auto_scaling_group(\
             AutoScalingGroupName=autoscaling['AutoScalingGroupName'], ForceDelete=True)
+            logger.info("Nuke Autoscaling Group %s", autoscaling['AutoScalingGroupName'])
 
 
     #### Nuke all launch configuration ####
@@ -36,3 +36,5 @@ def nuke_all_autoscaling(older_than_seconds):
             # Nuke launch configuration
             AUTOSCALING.delete_launch_configuration(\
             LaunchConfigurationName=launchconfiguration['LaunchConfigurationName'])
+            logger.info("Nuke Launch Configuration %s", \
+            launchconfiguration['LaunchConfigurationName'])
