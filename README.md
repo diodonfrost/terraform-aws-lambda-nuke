@@ -21,6 +21,7 @@ Terraform module which create lambda which nuke all resources on aws account
     -   Elastic Kubernetes Services
     -   Elastic Beanstalk
     -   S3
+    -   EFS
 
 
 ## Usage
