@@ -3,14 +3,15 @@
 import logging
 import os
 import timeparse
-import compute.ec2
-import compute.autoscaling
-import compute.loadbalancing
-import compute.ebs
-import compute.key_pair
-import compute.ecr
-import compute.ecs
-import compute.eks
+
+from compute.ec2 import nuke_all_ec2
+from compute.autoscaling import nuke_all_autoscaling
+from compute.loadbalancing import nuke_all_loadbalancing
+from compute.ebs import nuke_all_ebs
+from compute.key_pair import nuke_all_key_pair
+from compute.ecr import nuke_all_ecr
+from compute.ecs import nuke_all_ecs
+from compute.eks import nuke_all_eks
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -26,25 +27,25 @@ def lambda_handler(event, context):
     older_than_seconds = timeparse.timeparse(older_than, LOGGER)
 
     if "ec2" not in exclude_resources:
-        compute.ec2.nuke_all_ec2(older_than_seconds, LOGGER)
+        nuke_all_ec2(older_than_seconds, LOGGER)
 
     if "autoscaling" not in exclude_resources:
-        compute.autoscaling.nuke_all_autoscaling(older_than_seconds, LOGGER)
+        nuke_all_autoscaling(older_than_seconds, LOGGER)
 
     if "loadbalancing" not in exclude_resources:
-        compute.loadbalancing.nuke_all_loadbalancing(older_than_seconds, LOGGER)
+        nuke_all_loadbalancing(older_than_seconds, LOGGER)
 
     if "ebs" not in exclude_resources:
-        compute.ebs.nuke_all_ebs(older_than_seconds, LOGGER)
+        nuke_all_ebs(older_than_seconds, LOGGER)
 
     if "key_pair" not in exclude_resources:
-        compute.key_pair.nuke_all_key_pair(LOGGER)
+        nuke_all_key_pair(LOGGER)
 
     if "ecr" not in exclude_resources:
-        compute.ecr.nuke_all_ecr(older_than_seconds, LOGGER)
+        nuke_all_ecr(older_than_seconds, LOGGER)
 
     if "ecs" not in exclude_resources:
-        compute.ecs.nuke_all_ecs(LOGGER)
+        nuke_all_ecs(LOGGER)
 
     if "eks" not in exclude_resources:
-        compute.eks.nuke_all_eks(older_than_seconds, LOGGER)
+        nuke_all_eks(older_than_seconds, LOGGER)
