@@ -92,6 +92,7 @@ resource "aws_iam_policy" "nuke_storage" {
     {
         "Action": [
             "s3:ListAllMyBuckets",
+            "s3:DeleteBucketPolicy",
             "s3:DeleteBucket"
         ],
         "Resource": "*",

@@ -12,6 +12,7 @@ from compute.key_pair import nuke_all_key_pair
 from compute.ecr import nuke_all_ecr
 from compute.ecs import nuke_all_ecs
 from compute.eks import nuke_all_eks
+from storage.s3 import nuke_all_s3
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -49,3 +50,6 @@ def lambda_handler(event, context):
 
     if "eks" not in exclude_resources:
         nuke_all_eks(older_than_seconds, LOGGER)
+
+    if "s3" not in exclude_resources:
+        nuke_all_s3(older_than_seconds, LOGGER)
