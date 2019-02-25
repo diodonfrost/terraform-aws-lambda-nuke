@@ -93,7 +93,9 @@ resource "aws_iam_policy" "nuke_storage" {
         "Action": [
             "s3:ListAllMyBuckets",
             "s3:DeleteBucketPolicy",
-            "s3:DeleteBucket"
+            "s3:DeleteBucket",
+            "elasticfilesystem:DescribeFileSystems",
+            "elasticfilesystem:DeleteFileSystem"
         ],
         "Resource": "*",
         "Effect": "Allow"
