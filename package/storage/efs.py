@@ -1,4 +1,3 @@
-
 """This script nuke all efs resources"""
 
 import time
@@ -16,7 +15,7 @@ def nuke_all_efs(older_than_seconds, logger):
     try:
         response = EFS.describe_file_systems()
     except EndpointConnectionError:
-        print('EFS service is not available in this aws region')
+        print('EFS resource is not available in this aws region')
         return
 
     time_delete = time.time() - older_than_seconds
