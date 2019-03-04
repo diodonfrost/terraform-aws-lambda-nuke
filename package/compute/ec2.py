@@ -38,8 +38,8 @@ def nuke_all_ec2(older_than_seconds, logger):
         if instance_list:
             # Nuke all instances
             try:
-                ec2.stop_instances(InstanceIds=instance_list)
-                LOGGER.info("Stop instances %s", instance_list)
+                ec2.terminate_instances(InstanceIds=instance_list)
+                LOGGER.info("Terminate instances %s", instance_list)
             except ClientError:
                 print('No instance found')
 
