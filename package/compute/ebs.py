@@ -7,6 +7,7 @@ import boto3
 EC2 = boto3.client('ec2')
 DLM = boto3.client('dlm')
 
+
 def nuke_all_ebs(older_than_seconds, logger):
     """
          ebs function for destroy all snapshots,
@@ -18,11 +19,12 @@ def nuke_all_ebs(older_than_seconds, logger):
     time_delete = time.time() - older_than_seconds
 
     for volume in response['Volumes']:
-
         if volume['CreateTime'].timestamp() < time_delete:
+
             for volumestate in volume['Attachments']:
                 if volumestate['State'] == 'detached' or \
-                volumestate['State'] == 'busy':
+                volumestate['State'] == 'busy' or \
+                volume['State'] == 'available':
 
                     # Nuke all ebs volume
                     EC2.delete_volume(VolumeId=volume['VolumeId'])

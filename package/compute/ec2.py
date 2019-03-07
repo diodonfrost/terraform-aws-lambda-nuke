@@ -20,7 +20,11 @@ def nuke_all_ec2(older_than_seconds, logger):
     # Define the connection
     ec2 = boto3.client('ec2')
     paginator = ec2.get_paginator('describe_instances')
-    page_iterator = paginator.paginate()
+    page_iterator = paginator.paginate(
+        Filters=[{'Name': 'instance-state-name', 'Values': ['pending',
+                                                            'running',
+                                                            'stopping',
+                                                            'stopped']}])
     time_delete = time.time() - older_than_seconds
 
     # Initialize instance list
