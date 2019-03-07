@@ -20,6 +20,7 @@ Terraform module which create lambda which nuke all resources on aws account
     -   Elastic Container Clusters
     -   Elastic Kubernetes Services
     -   Elastic Beanstalk
+*   Storage resources nuke:
     -   S3
     -   EFS
 
@@ -36,6 +37,12 @@ module "nuke_everything_older_than_7d" {
 ```
 
 ## Examples
+
+*   [Compute-nuke](https://github.com/diodonfrost/terraform-aws-lambda-nuke/tree/master/examples/compute) Create lambda function to nuke compute resources on Friday at 23:00 Gmt
+
+*   [Storage-nuke](https://github.com/diodonfrost/terraform-aws-lambda-nuke/tree/master/examples/storage) Create lambda function to nuke storage resources on Friday at 23:00 Gmt
+
+*   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-lambda/tree/master/examples/test_fixture) - Deploy environment for testing module with kitchen-ci and awspec
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
