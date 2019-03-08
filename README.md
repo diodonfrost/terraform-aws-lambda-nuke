@@ -108,6 +108,7 @@ Apache 2 Licensed. See LICENSE for full details.
 ## Resources
 
 *   [cloudwatch schedule expressions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html)
+*   [Python boto3 paginator](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html)
 *   [Python boto3 ec2](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html)
 *   [Python boto3 rds](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html)
 *   [Python boto3 autoscaling](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/autoscaling.html)
