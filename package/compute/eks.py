@@ -4,22 +4,47 @@
 import time
 import boto3
 
-EKS = boto3.client('eks')
 
 def nuke_all_eks(older_than_seconds, logger):
     """
          eks function for destroy all kubernetes clusters
     """
-
-    #### Nuke all ecr repository ####
-    response = EKS.list_clusters()
+    # Convert date in seconds
     time_delete = time.time() - older_than_seconds
 
-    for kubernetes in response['clusters']:
+    # Define connection
+    eks = boto3.client('eks')
 
-        cluster = EKS.describe_cluster(name=kubernetes)
-        if cluster['cluster']['createdAt'].timestamp() < time_delete:
+    # List all eks cluster
+    eks_cluster_list = eks_list_clusters(time_delete)
 
-            # Nuke all ecr registry
-            EKS.delete_cluster(name=cluster['cluster']['name'])
-            logger.info("Nuke EKS Cluster %s", cluster['cluster']['name'])
+    # Nuke all eks cluster
+    for cluster in eks_cluster_list:
+
+        # Delete eks cluster
+        eks.delete_cluster(name=cluster)
+        logger.info("Nuke EKS Cluster %s", cluster)
+
+
+def eks_list_clusters(time_delete):
+    """
+       Aws eks container service, list name of
+       all eks cluster container and return it in list.
+    """
+
+    # Define the connection
+    eks = boto3.client('eks')
+    response = eks.list_clusters()
+
+    # Initialize eks cluster list
+    eks_cluster_list = []
+
+    # Retrieve all eks cluster
+    for kube in response['clusters']:
+        k8s = eks.describe_cluster(name=kube)
+        if k8s['cluster']['createdAt'].timestamp() < time_delete:
+
+            eks_cluster = kube
+            eks_cluster_list.insert(0, eks_cluster)
+
+    return eks_cluster_list

@@ -4,7 +4,6 @@
 import time
 import boto3
 
-AUTOSCALING = boto3.client('autoscaling')
 
 def nuke_all_autoscaling(older_than_seconds, logger):
     """
@@ -12,29 +11,80 @@ def nuke_all_autoscaling(older_than_seconds, logger):
         launch_configuration aws resources
     """
 
-    #### Nuke all autoscaling group ####
-    response = AUTOSCALING.describe_auto_scaling_groups()
+    # Convert date in seconds
     time_delete = time.time() - older_than_seconds
 
-    for autoscaling in response['AutoScalingGroups']:
+    # Define connection
+    autoscaling = boto3.client('autoscaling')
 
-        if autoscaling['CreatedTime'].timestamp() < time_delete:
+    # List all autoscaling groups
+    autoscaling_group_list = autoscaling_list_groups(time_delete)
 
-            # Nuke autoscaling group
-            AUTOSCALING.delete_auto_scaling_group(\
-            AutoScalingGroupName=autoscaling['AutoScalingGroupName'], ForceDelete=True)
-            logger.info("Nuke Autoscaling Group %s", autoscaling['AutoScalingGroupName'])
+    # Nuke all autoscaling groups
+    for scaling in autoscaling_group_list:
+
+        # Delete autoscaling group
+        autoscaling.delete_auto_scaling_group(
+            AutoScalingGroupName=scaling,
+            ForceDelete=True)
+        logger.info("Nuke Autoscaling Group %s", scaling)
+
+    # List all launch configurations
+    launch_list_configuration = autoscaling_list_launch_confs(time_delete)
+
+    # Nuke all autoscaling launch configurations
+    for launchconfiguration in launch_list_configuration:
+
+        # Delete launch configuration
+        autoscaling.delete_launch_configuration(
+            LaunchConfigurationName=launchconfiguration)
+        logger.info("Nuke Launch Configuration %s", launchconfiguration)
 
 
-    #### Nuke all launch configuration ####
-    response = AUTOSCALING.describe_launch_configurations()
+def autoscaling_list_groups(time_delete):
+    """
+       Aws autoscaling list function, list name of
+       all autoscaling group and return it in list.
+    """
 
-    for launchconfiguration in response['LaunchConfigurations']:
+    # Define connection
+    autoscaling = boto3.client('autoscaling')
+    paginator = autoscaling.get_paginator('describe_auto_scaling_groups')
+    page_iterator = paginator.paginate()
 
-        if launchconfiguration['CreatedTime'].timestamp() < time_delete:
+    # Initialize autoscaling group list
+    autoscaling_group_list = []
 
-            # Nuke launch configuration
-            AUTOSCALING.delete_launch_configuration(\
-            LaunchConfigurationName=launchconfiguration['LaunchConfigurationName'])
-            logger.info("Nuke Launch Configuration %s", \
-            launchconfiguration['LaunchConfigurationName'])
+    # Retrieve ec2 autoscalinggroup tags
+    for page in page_iterator:
+        for group in page['AutoScalingGroups']:
+            if group['CreatedTime'].timestamp() < time_delete:
+
+                # Retrieve and add in list autoscaling name
+                autoscaling_group = group['AutoScalingGroupName']
+                autoscaling_group_list.insert(0, autoscaling_group)
+
+    return autoscaling_group_list
+
+
+def autoscaling_list_launch_confs(time_delete):
+    """
+       Aws launch configuration list function, list name of
+       all ec2 launch configuration group and return it in list.
+    """
+
+    # Define connection
+    autoscaling = boto3.client('autoscaling')
+    response = autoscaling.describe_launch_configurations()
+
+    # Initialize autoscaling launch configuration list
+    autoscaling_launch_conf_list = []
+
+    # Retrieve autoscaling launch configuration names
+    for launchconf in response['LaunchConfigurations']:
+        if launchconf['CreatedTime'].timestamp() < time_delete:
+
+            launch_configuration = launchconf['LaunchConfigurationName']
+            autoscaling_launch_conf_list.insert(0, launch_configuration)
+
+    return autoscaling_launch_conf_list

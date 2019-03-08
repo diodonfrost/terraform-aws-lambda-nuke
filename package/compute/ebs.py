@@ -4,34 +4,31 @@
 import time
 import boto3
 
-EC2 = boto3.client('ec2')
-DLM = boto3.client('dlm')
-
 
 def nuke_all_ebs(older_than_seconds, logger):
     """
          ebs function for destroy all snapshots,
          volumes and lifecycle manager
     """
-
-    #### Nuke all volumes ####
-    response = EC2.describe_volumes()
+    # Convert date in seconds
     time_delete = time.time() - older_than_seconds
 
-    for volume in response['Volumes']:
-        if volume['CreateTime'].timestamp() < time_delete:
+    # Define connection
+    ec2 = boto3.client('ec2')
+    dlm = boto3.client('dlm')
 
-            for volumestate in volume['Attachments']:
-                if volumestate['State'] == 'detached' or \
-                volumestate['State'] == 'busy' or \
-                volume['State'] == 'available':
+    # List all ebs volumes
+    ebs_volume_list = ebs_list_volumes(time_delete)
 
-                    # Nuke all ebs volume
-                    EC2.delete_volume(VolumeId=volume['VolumeId'])
-                    logger.info("Nuke EBS Volume %s", volume['VolumeId'])
+    # Nuke all volumes
+    for volume in ebs_volume_list:
 
-    #### Nuke all snapshots ####
-#    response = EC2.describe_snapshots()
+        # Nuke all ebs volume
+        ec2.delete_volume(VolumeId=volume)
+        logger.info("Nuke EBS Volume %s", volume)
+
+    # Nuke all snapshots
+#    response = ec2.describe_snapshots()
 
 #
 #    for snapshot in response['Snapshots']:
@@ -40,17 +37,69 @@ def nuke_all_ebs(older_than_seconds, logger):
 #        snapshot['OwnerAlias'] == 'self':
 #
 #            # Nuke all ebs volume
-#            EC2.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+#            ec2.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
 
-    #### Nuke all ebs lifecycle manager ####
-    response = DLM.get_lifecycle_policies()
+    # List all dlm policies
+    dlm_policy_list = dlm_list_policy(time_delete)
 
-    for ebslifecycle in response['Policies']:
+    # Nuke all ebs lifecycle manager
+    for policy in dlm_policy_list:
 
-        detailedresponse = DLM.get_lifecycle_policy(PolicyId=ebslifecycle['PolicyId'])
+        # Nuke all ebs volume
+        dlm.delete_lifecycle_policy(PolicyId=policy)
+        logger.info("Nuke EBS Lifecycle Policy %s", policy)
 
-        if detailedresponse['Policy']['DateCreated'].timestamp() < time_delete:
 
-            # Nuke all ebs volume
-            DLM.delete_lifecycle_policy(PolicyId=detailedresponse['Policy']['PolicyId'])
-            logger.info("Nuke EBS Lifecycle Policy %s", detailedresponse['Policy']['PolicyId'])
+def ebs_list_volumes(time_delete):
+    """
+       Aws ebs list function, list name of
+       all ebs volumes and return it in list.
+    """
+
+    # Define connection
+    ec2 = boto3.client('ec2')
+
+    # Paginator volume list
+    paginator = ec2.get_paginator('describe_volumes')
+    page_iterator = paginator.paginate()
+
+    # Initialize ebs volume list
+    ebs_volumes_list = []
+
+    # Retrieve all volume ID in available state
+    for page in page_iterator:
+        for volume in page['Volumes']:
+            if volume['State'] == 'available':
+                if volume['CreateTime'].timestamp() < time_delete:
+
+                    # Retrieve and add in list ebs volume ID
+                    ebs_volume = volume['VolumeId']
+                    ebs_volumes_list.insert(0, ebs_volume)
+
+    return ebs_volumes_list
+
+
+def dlm_list_policy(time_delete):
+    """
+       Aws dlm list function, list name of
+       all data lifecycle manager and return it in list.
+    """
+
+    # Define connection
+    dlm = boto3.client('dlm')
+
+    # Paginator dlm list
+    response = dlm.get_lifecycle_policies()
+
+    # Initialize data lifecycle manager list
+    dlm_policy_list = []
+
+    # Retrieve dlm policies
+    for policy in response['Policies']:
+        detailed = dlm.get_lifecycle_policy(PolicyId=policy)
+        if detailed['Policy']['DateCreated'].timestamp() < time_delete:
+
+            dlm_policy = dlm['PolicyId']
+            dlm_policy_list.insert(0, dlm_policy)
+
+    return dlm_policy_list
