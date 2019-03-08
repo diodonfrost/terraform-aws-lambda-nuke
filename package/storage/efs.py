@@ -4,26 +4,57 @@ import time
 import boto3
 from botocore.exceptions import EndpointConnectionError
 
-EFS = boto3.client('efs')
 
 def nuke_all_efs(older_than_seconds, logger):
     """
          efs function for destroy all efs share
     """
+    # Convert date in seconds
+    time_delete = time.time() - older_than_seconds
 
-    #### Nuke all efs share ####
+    # define connection
+    efs = boto3.client('efs')
+
+    # Test if efs services is present in current aws region
     try:
-        response = EFS.describe_file_systems()
+        efs.describe_file_systems()
     except EndpointConnectionError:
         print('EFS resource is not available in this aws region')
         return
 
-    time_delete = time.time() - older_than_seconds
+    # List all efs file systems
+    efs_filesystem_list = efs_list_file_systems(time_delete)
 
-    for efs in response['FileSystems']:
+    # Nuke all efs file systems
+    for efs in efs_filesystem_list:
 
-        if efs['CreationTime'].timestamp() < time_delete:
+        # Delete efs file system
+        efs.delete_file_system(FileSystemId=efs)
+        logger.info("Nuke EFS share %s", efs)
 
-            # Nuke efs share
-            EFS.delete_file_system(FileSystemId=efs['FileSystemId'])
-            logger.info("Nuke EFS share %s", efs['FileSystemId'])
+
+def efs_list_file_systems(time_delete):
+    """
+       Aws efs list file system, list name of
+       all efs file systems and return it in list.
+    """
+
+    # define connection
+    efs = boto3.client('efs')
+
+    # Define the connection
+    paginator = efs.get_paginator('describe_file_systems')
+    page_iterator = paginator.paginate()
+
+    # Initialize efs file system list
+    efs_filesystem_list = []
+
+    # Retrieve all efs file system Id
+    for page in page_iterator:
+        for filesystem in page['FileSystems']:
+            if efs['CreationTime'].timestamp() < time_delete:
+
+                efs_filesystem = filesystem['FileSystemId']
+                efs_filesystem_list.insert(0, efs_filesystem)
+
+    return efs_filesystem_list
