@@ -23,6 +23,7 @@ Terraform module which create lambda which nuke all resources on aws account
 *   Storage resources nuke:
     -   S3
     -   EFS
+    -   Glacier
 
 
 ## Usage
