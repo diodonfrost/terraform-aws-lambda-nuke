@@ -95,7 +95,10 @@ resource "aws_iam_policy" "nuke_storage" {
             "s3:DeleteBucketPolicy",
             "s3:DeleteBucket",
             "elasticfilesystem:DescribeFileSystems",
-            "elasticfilesystem:DeleteFileSystem"
+            "elasticfilesystem:DeleteFileSystem",
+            "glacier:ListVaults",
+            "glacier:DescribeVault",
+            "glacier:DeleteVault"
         ],
         "Resource": "*",
         "Effect": "Allow"
