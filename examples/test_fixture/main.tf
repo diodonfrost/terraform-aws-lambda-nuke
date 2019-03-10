@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
-
 # Deploy two lambda for testing with awspec
 
 module "nuke-everything" {
