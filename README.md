@@ -24,7 +24,9 @@ Terraform module which create lambda which nuke all resources on aws account
     -   S3
     -   EFS
     -   Glacier
-
+*   Rds resources nuke:
+    -   Rds instances
+    -   Rds Clusters
 
 ## Usage
 ```hcl
