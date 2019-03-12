@@ -108,6 +108,30 @@ resource "aws_iam_policy" "nuke_storage" {
 EOF
 }
 
+# Create custom policy for allow destroying all rds resources
+resource "aws_iam_policy" "nuke_rds" {
+  name        = "${var.name}-nuke-rds"
+  description = "Allow destroying all aws rds resources"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "rds:DescribeDBClusters",
+        "rds:DeleteDBCluster",
+        "rds:DescribeDBInstances",
+        "rds:DeleteDBInstance"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 # Attach custom policy compute nuke to role
 resource "aws_iam_role_policy_attachment" "compute" {
   role       = "${aws_iam_role.nuke_lambda.name}"
@@ -118,6 +142,12 @@ resource "aws_iam_role_policy_attachment" "compute" {
 resource "aws_iam_role_policy_attachment" "storage" {
   role       = "${aws_iam_role.nuke_lambda.name}"
   policy_arn = "${aws_iam_policy.nuke_storage.arn}"
+}
+
+# Attach custom policy rds nuke to role
+resource "aws_iam_role_policy_attachment" "rds" {
+  role       = "${aws_iam_role.nuke_lambda.name}"
+  policy_arn = "${aws_iam_policy.nuke_rds.arn}"
 }
 
 ################################################

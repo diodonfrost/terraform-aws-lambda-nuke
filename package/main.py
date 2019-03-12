@@ -15,6 +15,8 @@ from compute.eks import nuke_all_eks
 from storage.s3 import nuke_all_s3
 from storage.efs import nuke_all_efs
 from storage.glacier import nuke_all_glacier
+from database.rds import nuke_all_rds
+
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -60,4 +62,7 @@ def lambda_handler(event, context):
         nuke_all_efs(older_than_seconds, LOGGER)
 
     if "glacier" not in exclude_resources:
-        nuke_all_glacier( LOGGER)
+        nuke_all_glacier(LOGGER)
+
+    if "rds" not in exclude_resources:
+        nuke_all_rds(older_than_seconds, LOGGER)
