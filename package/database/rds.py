@@ -32,7 +32,19 @@ def nuke_all_rds(older_than_seconds, logger):
         rds.delete_db_instance(
             DBInstanceIdentifier=instance,
             SkipFinalSnapshot=True)
-        logger.info("Nuke rds share %s", instance)
+        logger.info("Nuke rds instance %s", instance)
+
+    # List all rds clusters
+    rds_cluster_list = rds_list_clusters(time_delete)
+
+    # Nuke all rds clusters
+    for cluster in rds_cluster_list:
+
+        # Delete rds cluster
+        rds.delete_db_cluster(
+            DBClusterIdentifier=cluster,
+            SkipFinalSnapshot=True)
+        logger.info("Nuke rds cluster %s", cluster)
 
 
 def rds_list_instances(time_delete):
@@ -60,3 +72,29 @@ def rds_list_instances(time_delete):
                 rds_instance_list.insert(0, rds_instance)
 
     return rds_instance_list
+
+def rds_list_clusters(time_delete):
+    """
+       Aws rds list db clusters, list name of
+       all rds db clusters and return it in list.
+    """
+
+    # define connection
+    rds = boto3.client('rds')
+
+    # Define the connection
+    paginator = rds.get_paginator('describe_db_clusters')
+    page_iterator = paginator.paginate()
+
+    # Initialize rds cluster list
+    rds_cluster_list = []
+
+    # Retrieve all rds cluster identifier
+    for page in page_iterator:
+        for cluster in page['DBClusters']:
+            if cluster['ClusterCreateTime'].timestamp() < time_delete:
+
+                rds_cluster = cluster['DBClusterIdentifier']
+                rds_cluster_list.insert(0, rds_cluster)
+
+    return rds_cluster_list
