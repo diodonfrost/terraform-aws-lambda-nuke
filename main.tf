@@ -109,9 +109,9 @@ EOF
 }
 
 # Create custom policy for allow destroying all rds resources
-resource "aws_iam_policy" "nuke_rds" {
-  name        = "${var.name}-nuke-rds"
-  description = "Allow destroying all aws rds resources"
+resource "aws_iam_policy" "nuke_database" {
+  name        = "${var.name}-nuke-database"
+  description = "Allow destroying all aws database resources"
 
   policy = <<EOF
 {
@@ -122,7 +122,13 @@ resource "aws_iam_policy" "nuke_rds" {
         "rds:DescribeDBClusters",
         "rds:DeleteDBCluster",
         "rds:DescribeDBInstances",
-        "rds:DeleteDBInstance"
+        "rds:DeleteDBInstance",
+        "dynamodb:ListTables",
+        "dynamodb:DescribeTable",
+        "dynamodb:DeleteTable",
+        "dynamodb:ListBackups",
+        "dynamodb:DescribeBackup",
+        "dynamodb:DeleteBackup"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -144,10 +150,10 @@ resource "aws_iam_role_policy_attachment" "storage" {
   policy_arn = "${aws_iam_policy.nuke_storage.arn}"
 }
 
-# Attach custom policy rds nuke to role
-resource "aws_iam_role_policy_attachment" "rds" {
+# Attach custom policy database nuke to role
+resource "aws_iam_role_policy_attachment" "database" {
   role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_rds.arn}"
+  policy_arn = "${aws_iam_policy.nuke_database.arn}"
 }
 
 ################################################
