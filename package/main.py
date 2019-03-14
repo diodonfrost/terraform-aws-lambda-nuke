@@ -17,6 +17,7 @@ from storage.efs import nuke_all_efs
 from storage.glacier import nuke_all_glacier
 from database.rds import nuke_all_rds
 from database.dynamodb import nuke_all_dynamodb
+from database.dax import nuke_all_dax
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -69,3 +70,6 @@ def lambda_handler(event, context):
 
     if "dynamodb" not in exclude_resources:
         nuke_all_dynamodb(older_than_seconds, LOGGER)
+
+    if "dax" not in exclude_resources:
+        nuke_all_dax(LOGGER)

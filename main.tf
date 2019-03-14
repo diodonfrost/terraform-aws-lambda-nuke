@@ -128,7 +128,13 @@ resource "aws_iam_policy" "nuke_database" {
         "dynamodb:DeleteTable",
         "dynamodb:ListBackups",
         "dynamodb:DescribeBackup",
-        "dynamodb:DeleteBackup"
+        "dynamodb:DeleteBackup",
+        "dax:DescribeClusters",
+        "dax:DeleteCluster",
+        "dax:DescribeParameterGroups",
+        "dax:DeleteParameterGroup",
+        "dax:DescribeSubnetGroups",
+        "dax:DeleteSubnetGroup"
       ],
       "Effect": "Allow",
       "Resource": "*"
