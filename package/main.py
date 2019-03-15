@@ -18,6 +18,7 @@ from storage.glacier import nuke_all_glacier
 from database.rds import nuke_all_rds
 from database.dynamodb import nuke_all_dynamodb
 from database.dax import nuke_all_dax
+from database.neptune import nuke_all_neptune
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -73,3 +74,6 @@ def lambda_handler(event, context):
 
     if "dax" not in exclude_resources:
         nuke_all_dax(LOGGER)
+
+    if "neptune" not in exclude_resources:
+        nuke_all_neptune(older_than_seconds, LOGGER)
