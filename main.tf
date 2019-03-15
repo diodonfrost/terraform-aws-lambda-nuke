@@ -134,7 +134,13 @@ resource "aws_iam_policy" "nuke_database" {
         "dax:DescribeParameterGroups",
         "dax:DeleteParameterGroup",
         "dax:DescribeSubnetGroups",
-        "dax:DeleteSubnetGroup"
+        "dax:DeleteSubnetGroup",
+        "elasticache:DescribeCacheClusters",
+        "elasticache:DeleteCacheCluster",
+        "elasticache:DescribeCacheSecurityGroup",
+        "elasticache:DeleteCacheSecurityGroup",
+        "elasticache:DescribeCacheParameterGroups",
+        "elasticache:DeleteCacheParameterGroups"
       ],
       "Effect": "Allow",
       "Resource": "*"
