@@ -4,7 +4,8 @@ resource "aws_elasticache_cluster" "nuke_memcached" {
   engine               = "memcached"
   node_type            = "cache.t2.micro"
   num_cache_nodes      = 1
-  parameter_group_name = "default.memcached1.4"
+  parameter_group_name = "default.memcached1.5"
+  engine_version       = "1.5.10"
   port                 = 11211
 }
 
