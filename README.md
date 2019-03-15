@@ -30,6 +30,7 @@ Terraform module which create lambda which nuke all resources on aws account
     -   Dynamodb
     -   Dax
     -   Neptune
+    -   Redshift
 
 ## Usage
 ```hcl
