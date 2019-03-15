@@ -81,6 +81,8 @@ def nuke_all_redshift(older_than_seconds, logger):
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidClusterParameterGroupStateFault':
                 logger.info("redshift param %s is not in state available", param)
+            elif e.response['Error']['Code'] == 'InvalidParameterValue':
+                logger.info("default %s parameter group cannot be deleted", param)
             else:
                 print("Unexpected error: %s" % e)
 
