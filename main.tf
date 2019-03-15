@@ -145,12 +145,12 @@ resource "aws_iam_policy" "nuke_database" {
         "dax:DeleteSubnetGroup",
         "redshift:DescribeClusters",
         "redshift:DeleteCluster",
-        "redshift:DescribeParameterGroups",
-        "redshift:DeleteParameterGroup",
-        "redshift:DescribeSubnetGroups",
-        "redshift:DeleteSubnetGroup",
-        "redshift:DescribeSecurityGroups",
-        "redshift:DeleteSecurityGroup"
+        "redshift:DescribeClusterSnapshots",
+        "redshift:DeleteClusterSnapshot",
+        "redshift:DescribeClusterParameterGroups",
+        "redshift:DeleteClusterParameterGroup",
+        "redshift:DescribeClusterSubnetGroups",
+        "redshift:DeleteClusterSubnetGroup"
       ],
       "Effect": "Allow",
       "Resource": "*"

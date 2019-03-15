@@ -19,6 +19,7 @@ from database.rds import nuke_all_rds
 from database.dynamodb import nuke_all_dynamodb
 from database.dax import nuke_all_dax
 from database.neptune import nuke_all_neptune
+from database.redshift import nuke_all_redshift
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -26,6 +27,7 @@ older_than = os.getenv('OLDER_THAN', 'none')
 # Setup simple logging for INFO
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
+
 
 def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
@@ -77,3 +79,6 @@ def lambda_handler(event, context):
 
     if "neptune" not in exclude_resources:
         nuke_all_neptune(older_than_seconds, LOGGER)
+
+    if "redshift" not in exclude_resources:
+        nuke_all_redshift(older_than_seconds, LOGGER)
