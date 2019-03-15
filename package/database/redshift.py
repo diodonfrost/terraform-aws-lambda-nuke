@@ -64,7 +64,7 @@ def nuke_all_redshift(older_than_seconds, logger):
             redshift.delete_cluster_subnet_group(ClusterSubnetGroupName=subnet)
             logger.info("Nuke redshift subnet %s", subnet)
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBSubnetGroupStateFault':
+            if e.response['Error']['Code'] == 'InvalidClusterSubnetGroupStateFault':
                 logger.info("redshift subnet %s is not in state available", subnet)
             else:
                 print("Unexpected error: %s" % e)
