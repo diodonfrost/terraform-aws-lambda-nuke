@@ -3,6 +3,7 @@
 
 import time
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_eks(older_than_seconds, logger):
@@ -14,6 +15,12 @@ def nuke_all_eks(older_than_seconds, logger):
 
     # Define connection
     eks = boto3.client('eks')
+
+    try:
+        eks.list_clusters()
+    except EndpointConnectionError:
+        print('eks resource is not available in this aws region')
+        return
 
     # List all eks cluster
     eks_cluster_list = eks_list_clusters(time_delete)

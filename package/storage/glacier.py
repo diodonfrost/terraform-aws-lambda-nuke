@@ -2,6 +2,7 @@
 """This script nuke all glacier resources"""
 
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_glacier(logger):
@@ -10,6 +11,12 @@ def nuke_all_glacier(logger):
     """
     # Define connection
     glacier = boto3.client('glacier')
+
+    try:
+        glacier.list_vaults()
+    except EndpointConnectionError:
+        print('glacier resource is not available in this aws region')
+        return
 
     # List all glacier vault
     glacier_vault_list = glacier_list_vaults()

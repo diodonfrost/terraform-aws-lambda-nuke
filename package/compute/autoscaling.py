@@ -3,6 +3,7 @@
 
 import time
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_autoscaling(older_than_seconds, logger):
@@ -16,6 +17,12 @@ def nuke_all_autoscaling(older_than_seconds, logger):
 
     # Define connection
     autoscaling = boto3.client('autoscaling')
+
+    try:
+        autoscaling.describe_auto_scaling_groups()
+    except EndpointConnectionError:
+        print('autoscaling resource is not available in this aws region')
+        return
 
     # List all autoscaling groups
     autoscaling_group_list = autoscaling_list_groups(time_delete)

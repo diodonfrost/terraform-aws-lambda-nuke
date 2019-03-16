@@ -7,7 +7,6 @@ def nuke_all_key_pair(logger):
     """
          ec2 function for nuke all key pairs
     """
-
     # Define connection
     ec2 = boto3.client('ec2')
 

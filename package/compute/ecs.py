@@ -2,6 +2,7 @@
 """This script nuke all ecs resources"""
 
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_ecs(logger):
@@ -9,9 +10,14 @@ def nuke_all_ecs(logger):
          ecs function for destroy all ecs clusters
          and task definitions
     """
-
     # Define connection
     ecs = boto3.client('ecs')
+
+    try:
+        ecs.list_clusters()
+    except EndpointConnectionError:
+        print('ecs resource is not available in this aws region')
+        return
 
     # List all ecs cluster
     ecs_cluster_list = ecs_list_clusters()

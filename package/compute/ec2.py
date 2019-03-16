@@ -1,14 +1,9 @@
 
 """This script nuke all ec2 resources"""
 
-import logging
 import time
 import boto3
 from botocore.exceptions import ClientError
-
-# Setup simple logging for INFO
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
 
 
 def nuke_all_ec2(older_than_seconds, logger):
@@ -27,7 +22,7 @@ def nuke_all_ec2(older_than_seconds, logger):
 
     try:
         ec2.terminate_instances(InstanceIds=ec2_instance_list)
-        LOGGER.info("Terminate instances %s", ec2_instance_list)
+        logger.info("Terminate instances %s", ec2_instance_list)
     except ClientError:
         print('No instance found')
 

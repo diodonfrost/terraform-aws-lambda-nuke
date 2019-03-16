@@ -3,8 +3,7 @@
 
 import time
 import boto3
-
-ELBV2 = boto3.client('elbv2')
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_loadbalancing(older_than_seconds, logger):
@@ -17,6 +16,12 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
 
     # Define connection
     elbv2 = boto3.client('elbv2')
+
+    try:
+        elbv2.describe_load_balancers()
+    except EndpointConnectionError:
+        print('elbv2 resource is not available in this aws region')
+        return
 
     # List all elbv2 load balaner arn
     elbv2_loadbalancer_list = elbv2_list_loadbalancers(time_delete)

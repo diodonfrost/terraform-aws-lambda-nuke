@@ -3,6 +3,7 @@
 
 import time
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_elasticbeanstalk(older_than_seconds, logger):
@@ -15,6 +16,12 @@ def nuke_all_elasticbeanstalk(older_than_seconds, logger):
 
     # Define connection
     elasticbeanstalk = boto3.client('elasticbeanstalk')
+
+    try:
+        elasticbeanstalk.describe_applications()
+    except EndpointConnectionError:
+        print('elasticbeanstalk resource is not available in this aws region')
+        return
 
     # List all elastic beanstalk app
     elasticbeanstalk_app_list = elasticbeanstalk_list_apps()

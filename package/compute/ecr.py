@@ -2,6 +2,7 @@
 
 import time
 import boto3
+from botocore.exceptions import EndpointConnectionError
 
 
 def nuke_all_ecr(older_than_seconds, logger):
@@ -13,6 +14,12 @@ def nuke_all_ecr(older_than_seconds, logger):
 
     # Define the connection
     ecr = boto3.client('ecr')
+
+    try:
+        ecr.describe_repositories()
+    except EndpointConnectionError:
+        print('ecr resource is not available in this aws region')
+        return
 
     # List all ecr registry
     ecr_registry_list = ecr_list_registry(time_delete)
