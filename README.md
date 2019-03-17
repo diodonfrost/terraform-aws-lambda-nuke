@@ -1,6 +1,10 @@
 # terraform-aws-lambda-nuke
 Terraform module which create lambda which nuke all resources on aws account
 
+Requirements
+
+This role was developed using python lib boto3 1.9.46 Backwards compatibility is not guaranteed.
+
 ## Features
 
 *   Aws lambda runtine Python 3.6
