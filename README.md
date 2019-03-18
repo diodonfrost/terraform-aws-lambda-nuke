@@ -1,7 +1,7 @@
 # terraform-aws-lambda-nuke
 Terraform module which create lambda which nuke all resources on aws account
 
-Requirements
+## Requirements
 
 This role was developed using python lib boto3 1.9.46 Backwards compatibility is not guaranteed.
 
@@ -36,6 +36,9 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Elasticache
     -   Neptune
     -   Redshift
+*   Network resources nuke:
+    -   Security group
+    -   Network acl
 
 ## Usage
 ```hcl
