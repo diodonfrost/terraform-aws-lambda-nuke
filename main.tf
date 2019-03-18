@@ -168,6 +168,30 @@ resource "aws_iam_policy" "nuke_database" {
 EOF
 }
 
+# Create custom policy for allow destroying all network resources
+resource "aws_iam_policy" "nuke_network" {
+  name        = "${var.name}-nuke-network"
+  description = "Allow destroying all aws network resources"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:DescribeSecurityGroups",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DescribeNetworkAcls",
+        "ec2:DeleteNetworkAcl"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 # Attach custom policy compute nuke to role
 resource "aws_iam_role_policy_attachment" "compute" {
   role       = "${aws_iam_role.nuke_lambda.name}"
@@ -184,6 +208,12 @@ resource "aws_iam_role_policy_attachment" "storage" {
 resource "aws_iam_role_policy_attachment" "database" {
   role       = "${aws_iam_role.nuke_lambda.name}"
   policy_arn = "${aws_iam_policy.nuke_database.arn}"
+}
+
+# Attach custom policy network nuke to role
+resource "aws_iam_role_policy_attachment" "network" {
+  role       = "${aws_iam_role.nuke_lambda.name}"
+  policy_arn = "${aws_iam_policy.nuke_network.arn}"
 }
 
 ################################################
