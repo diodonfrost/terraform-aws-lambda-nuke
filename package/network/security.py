@@ -44,7 +44,7 @@ def nuke_all_network_security(logger):
             ec2.delete_network_acl(NetworkAclId=net_acl)
             logger.info("Nuke ec2 network acl %s", net_acl)
         except ClientError as e:
-            if e.response['Error']['Code'] == 'CannotDelete':
+            if e.response['Error']['Code'] == 'InvalidParameterValue':
                 logger.info("network acl %s cannot be deleted", net_acl)
             else:
                 print("Unexpected error: %s" % e)
