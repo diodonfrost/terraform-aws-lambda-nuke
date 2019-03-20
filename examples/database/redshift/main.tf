@@ -55,7 +55,7 @@ resource "aws_redshift_cluster" "cluster_nuke" {
 
 module "nuke-everything" {
   source                         = "diodonfrost/lambda-nuke/aws"
-  name                           = "nuke-neptune"
+  name                           = "nuke-redshift"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""
   older_than                     = "0d"

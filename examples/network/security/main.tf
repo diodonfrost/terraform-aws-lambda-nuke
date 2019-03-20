@@ -45,7 +45,7 @@ resource "aws_network_acl" "main" {
 
 module "nuke-everything" {
   source                         = "diodonfrost/lambda-nuke/aws"
-  name                           = "nuke-elasticache"
+  name                           = "nuke-network-security"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""
   older_than                     = "0d"
