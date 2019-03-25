@@ -39,6 +39,7 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
 *   Network resources nuke:
     -   Security group
     -   Network acl
+    -   Vpc endpoint
 
 ## Usage
 ```hcl
