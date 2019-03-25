@@ -4,7 +4,25 @@ data "aws_region" "current" {}
 
 # Create vpc
 resource "aws_vpc" "main" {
-  cidr_block = "10.110.0.0/16"
+  cidr_block = "10.120.0.0/16"
+}
+
+resource "aws_subnet" "primary" {
+  vpc_id     = "${aws_vpc.main.id}"
+  cidr_block = "10.120.98.0/24"
+}
+
+resource "aws_subnet" "secondary" {
+  vpc_id     = "${aws_vpc.main.id}"
+  cidr_block = "10.120.99.0/24"
+}
+
+# Create a loadbalancer
+resource "aws_lb" "nuke_lb" {
+  name               = "lb-nuke"
+  load_balancer_type = "network"
+  internal           = true
+  subnets            = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
 }
 
 # Create s3 endpoint
@@ -17,6 +35,12 @@ resource "aws_vpc_endpoint" "nuke_s3_endpoint" {
 resource "aws_vpc_endpoint" "nuke_dynamodb_endpoint" {
   vpc_id       = "${aws_vpc.main.id}"
   service_name = "com.amazonaws.${data.aws_region.current.name}.dynamodb"
+}
+
+# Create load balancer endpoint
+resource "aws_vpc_endpoint_service" "nuke_loadbalancer_endpoint" {
+  acceptance_required        = false
+  network_load_balancer_arns = ["${aws_lb.nuke_lb.arn}"]
 }
 
 
