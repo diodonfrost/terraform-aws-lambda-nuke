@@ -22,6 +22,7 @@ from database.elasticache import nuke_all_elasticache
 from database.neptune import nuke_all_neptune
 from database.redshift import nuke_all_redshift
 from network.security import nuke_all_network_security
+from network.endpoint import nuke_all_endpoint
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -36,6 +37,9 @@ def lambda_handler(event, context):
 
     # Convert older_than variable to seconds
     older_than_seconds = timeparse.timeparse(older_than, LOGGER)
+
+    if "endpoint" not in exclude_resources:
+        nuke_all_endpoint(older_than_seconds, LOGGER)
 
     if "ec2" not in exclude_resources:
         nuke_all_ec2(older_than_seconds, LOGGER)

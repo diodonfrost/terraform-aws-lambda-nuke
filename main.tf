@@ -182,7 +182,13 @@ resource "aws_iam_policy" "nuke_network" {
         "ec2:DescribeSecurityGroups",
         "ec2:DeleteSecurityGroup",
         "ec2:DescribeNetworkAcls",
-        "ec2:DeleteNetworkAcl"
+        "ec2:DeleteNetworkAcl",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DeleteVpcEndpoints",
+        "ec2:DescribeVpcEndpointServices",
+        "ec2:DeleteVpcEndpointService",
+        "ec2:DescribeVpcEndpointServiceConfigurations",
+        "ec2:DeleteVpcEndpointServiceConfigurations"
       ],
       "Effect": "Allow",
       "Resource": "*"
