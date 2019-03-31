@@ -26,18 +26,31 @@ def nuke_all_endpoint(older_than_seconds, logger):
     # List all ec2 endpoints
     ec2_endpoint_list = ec2_list_endpoints(time_delete)
 
-    # Nuke all ec2 endpoints
-    ec2.delete_vpc_endpoints(
-        VpcEndpointIds=ec2_endpoint_list)
-    logger.info("Nuke ec2 endpoint %s", ec2_endpoint_list)
+    try:
+        # Nuke all ec2 endpoints
+        ec2.delete_vpc_endpoints(
+            VpcEndpointIds=ec2_endpoint_list)
+        logger.info("Nuke ec2 endpoint %s", ec2_endpoint_list)
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ClientError':
+            logger.info("DeleteVpcEndpoints operation max retries reached")
+        else:
+            print("Unexpected error: %s" % e)
+
 
     # List all ec2 endpoint services
     ec2_endpoint_service_list = ec2_list_endpoint_services()
 
-    # Nuke all ec2 endpoints
-    ec2.delete_vpc_endpoint_service_configurations(
-        ServiceIds=ec2_endpoint_service_list)
-    logger.info("Nuke ec2 endpoint %s", ec2_endpoint_service_list)
+    try:
+        # Nuke all ec2 endpoints
+        ec2.delete_vpc_endpoint_service_configurations(
+            ServiceIds=ec2_endpoint_service_list)
+        logger.info("Nuke ec2 endpoint %s", ec2_endpoint_service_list)
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ClientError':
+            logger.info("DeleteVpcEndpoints operation max retries reached")
+        else:
+            print("Unexpected error: %s" % e)
 
 
 def ec2_list_endpoints(time_delete):
