@@ -40,6 +40,7 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Security group
     -   Network acl
     -   Vpc endpoint
+    -   Nat gateway
 
 ## Usage
 ```hcl
