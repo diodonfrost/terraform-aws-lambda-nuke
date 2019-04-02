@@ -7,8 +7,7 @@ from botocore.exceptions import EndpointConnectionError, ClientError
 
 def nuke_all_endpoint(older_than_seconds, logger):
     """
-         ec2 function for destroy all endpoint and
-         network acl resources
+         ec2 function for destroy all endpoint
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds

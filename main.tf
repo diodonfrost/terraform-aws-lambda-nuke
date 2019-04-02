@@ -186,11 +186,14 @@ resource "aws_iam_policy" "nuke_network" {
         "ec2:DescribeVpcEndpoints",
         "ec2:DeleteVpcEndpoints",
         "ec2:DescribeVpcEndpointServices",
-        "ec2:DeleteVpcEndpointService",
         "ec2:DescribeVpcEndpointServiceConfigurations",
         "ec2:DeleteVpcEndpointServiceConfigurations",
         "ec2:DescribeNatGateways",
-        "ec2:DeleteNatGateway"
+        "ec2:DeleteNatGateway",
+        "ec2:DescribeAddresses",
+        "ec2:ReleaseAddress",
+        "ec2:DescribeRouteTables",
+        "ec2:DeleteRouteTable"
       ],
       "Effect": "Allow",
       "Resource": "*"
