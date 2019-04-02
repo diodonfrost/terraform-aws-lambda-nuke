@@ -24,6 +24,7 @@ from database.redshift import nuke_all_redshift
 from network.security import nuke_all_network_security
 from network.endpoint import nuke_all_endpoint
 from network.natgateway import nuke_all_natgateway
+from network.eip import nuke_all_eip
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -98,3 +99,6 @@ def lambda_handler(event, context):
 
     if "natgateway" not in exclude_resources:
         nuke_all_natgateway(older_than_seconds, LOGGER)
+
+    if "eip" not in exclude_resources:
+        nuke_all_eip(LOGGER)
