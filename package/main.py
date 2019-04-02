@@ -26,6 +26,7 @@ from network.endpoint import nuke_all_endpoint
 from network.natgateway import nuke_all_natgateway
 from network.eip import nuke_all_eip
 from network.routetable import nuke_all_routetable
+from network.internetgateway import nuke_all_internetgateway
 
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
@@ -106,3 +107,6 @@ def lambda_handler(event, context):
 
     if "routetable" not in exclude_resources:
         nuke_all_routetable(LOGGER)
+
+    if "internetgateway" not in exclude_resources:
+        nuke_all_internetgateway(LOGGER)
