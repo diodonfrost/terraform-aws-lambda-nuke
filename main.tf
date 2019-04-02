@@ -191,7 +191,9 @@ resource "aws_iam_policy" "nuke_network" {
         "ec2:DescribeNatGateways",
         "ec2:DeleteNatGateway",
         "ec2:DescribeAddresses",
-        "ec2:ReleaseAddress"
+        "ec2:ReleaseAddress",
+        "ec2:DescribeRouteTables",
+        "ec2:DeleteRouteTable"
       ],
       "Effect": "Allow",
       "Resource": "*"
