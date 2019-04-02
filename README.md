@@ -43,6 +43,7 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Nat gateway
     -   Eip
     -   Route table
+    -   Internet/egress gateway
 
 ## Usage
 ```hcl
