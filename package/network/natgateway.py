@@ -7,8 +7,7 @@ from botocore.exceptions import EndpointConnectionError
 
 def nuke_all_natgateway(older_than_seconds, logger):
     """
-         ec2 function for destroy all security group and
-         network acl resources
+         ec2 function for destroy all ec2 nat gateway
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -23,10 +22,10 @@ def nuke_all_natgateway(older_than_seconds, logger):
         print('ec2 resource is not available in this aws region')
         return
 
-    # List all ec2 security groups
+    # List all ec2 nat gateway
     ec2_nat_gateway_list = ec2_list_nat_gateways(time_delete)
 
-    # Nuke all ec2 security groups
+    # Nuke all ec2 nat gateway
     for nat_gw in ec2_nat_gateway_list:
 
         ec2.delete_nat_gateway(NatGatewayId=nat_gw)
