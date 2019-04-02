@@ -6,8 +6,7 @@ from botocore.exceptions import EndpointConnectionError, ClientError
 
 def nuke_all_routetable(logger):
     """
-         ec2 function for destroy all route table and
-         network acl resources
+         ec2 function for destroy all route table
     """
     # define connection
     ec2 = boto3.client('ec2')
