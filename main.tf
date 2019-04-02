@@ -193,7 +193,11 @@ resource "aws_iam_policy" "nuke_network" {
         "ec2:DescribeAddresses",
         "ec2:ReleaseAddress",
         "ec2:DescribeRouteTables",
-        "ec2:DeleteRouteTable"
+        "ec2:DeleteRouteTable",
+        "ec2:DescribeInternetGateways",
+        "ec2:DeleteInternetGateway",
+        "ec2:DescribeEgressOnlyInternetGateways",
+        "ec2:DeleteEgressOnlyInternetGateway"
       ],
       "Effect": "Allow",
       "Resource": "*"

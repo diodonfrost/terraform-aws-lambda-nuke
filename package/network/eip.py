@@ -6,8 +6,7 @@ from botocore.exceptions import EndpointConnectionError
 
 def nuke_all_eip(logger):
     """
-         ec2 function for destroy all elastic ip and
-         network acl resources
+         ec2 function for destroy all elastic
     """
     # define connection
     ec2 = boto3.client('ec2')
