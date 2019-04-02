@@ -41,6 +41,8 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Network acl
     -   Vpc endpoint
     -   Nat gateway
+    -   Eip
+    -   Route table
 
 ## Usage
 ```hcl
