@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
 
 # Create S3 bucket
 resource "aws_s3_bucket" "nuke" {

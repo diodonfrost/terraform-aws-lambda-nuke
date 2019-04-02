@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
 
 # Create EC2 Container Registry Repository
 resource "aws_ecr_repository" "nuke" {

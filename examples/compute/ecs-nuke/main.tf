@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
 
 # Create ECS cluster
 resource "aws_ecs_cluster" "nuke" {

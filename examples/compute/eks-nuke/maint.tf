@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
 
 # Create vpc for EKS cluster
 resource "aws_vpc" "main" {

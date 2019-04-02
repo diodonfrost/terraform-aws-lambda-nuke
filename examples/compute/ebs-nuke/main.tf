@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
 
 # Create ebs volume
 resource "aws_ebs_volume" "nuke" {
