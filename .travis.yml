@@ -34,7 +34,7 @@ script:
       -var "name=nuke-all" \
       -var "cloudwatch_schedule_expression=cron(0 4 ? * MON-FRI *)" \
       -var "exclude_resources=glacier,eip,rds" \
-      -var "older_than=14d" \
+      -var "older_than=14d"
 
   # Test Terraform fixture example
   - cd examples/test_fixture
