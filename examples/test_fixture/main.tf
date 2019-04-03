@@ -2,8 +2,8 @@
 
 module "nuke-everything" {
   source                         = "../.."
-  name                           = "nuke-everything"
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  exclude_resources              = ""
-  older_than                     = "0d"
+  name                           = "${var.name}"
+  cloudwatch_schedule_expression = "${var.cloudwatch_schedule_expression}"
+  exclude_resources              = "${var.exclude_resources}"
+  older_than                     = "${var.older_than}"
 }
