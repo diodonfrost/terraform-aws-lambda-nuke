@@ -1,26 +1,9 @@
-language: ruby
-sudo: required
-dist: trusty
-
+---
 services:
-- docker
-
-rvm:
-- 2.4.4
+  - docker
 
 env:
-  global:
-  - AWS_REGION='eu-east-1'
-  - TF_VAR_region=${AWS_REGION}
-  - TF_WARN_OUTPUT_ERRORS=1
-
-before_install:
-  - echo "before_install"
-
-install:
-  - echo "install"
-  - gem install bundler --no-rdoc --no-ri
-  - bundle install
+  - aws_region: eu-west-1
 
 before_script:
 
