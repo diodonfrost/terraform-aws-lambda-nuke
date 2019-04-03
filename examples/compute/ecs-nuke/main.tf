@@ -1,9 +1,7 @@
-
 # Create ECS cluster
 resource "aws_ecs_cluster" "nuke" {
   name = "nuke-ecs"
 }
-
 
 ### Terraform modules ###
 

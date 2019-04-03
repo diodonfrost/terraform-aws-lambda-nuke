@@ -1,4 +1,3 @@
-
 # Create rds aurora cluster
 resource "aws_rds_cluster" "aurora_nuke" {
   cluster_identifier  = "aurora-cluster-nuke"
@@ -42,7 +41,6 @@ resource "aws_db_instance" "mysql_nuke" {
   password            = "foobarbaz"
   skip_final_snapshot = "true"
 }
-
 
 ### Terraform modules ###
 

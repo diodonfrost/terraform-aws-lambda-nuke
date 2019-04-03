@@ -1,9 +1,7 @@
-
 # Create EFS filesystem
 resource "aws_efs_file_system" "nuke" {
   creation_token = "efs-nuke"
 }
-
 
 ### Terraform modules ###
 

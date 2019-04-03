@@ -2,11 +2,13 @@
 services:
   - docker
 
-env:
-  - aws_region: eu-west-1
+  env:
+    global:
+      - AWS_REGION='eu-west-1'
+      - TF_VAR_region=${AWS_REGION}
+      - TF_WARN_OUTPUT_ERRORS=1
 
 before_script:
-
   # Retrieve the lastest version of Terraform
   - export TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')
 
@@ -19,7 +21,6 @@ before_script:
   - terraform -v
 
 script:
-
   # Download Terraform requirements
   - terraform init
 
@@ -29,6 +30,7 @@ script:
   # Test Terraform module
   - >
     terraform validate
+     -var "region=${AWS_REGION}"
      -var 'name=nuke-all'
      -var 'cloudwatch_schedule_expression=cron(0 4 ? * MON-FRI *)'
      -var 'exclude_resources=glacier,eip,rds'

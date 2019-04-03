@@ -253,6 +253,7 @@ resource "aws_lambda_function" "nuke" {
   source_code_hash = "${data.archive_file.convert_py_to_zip.output_base64sha256}"
   runtime          = "python3.7"
   timeout          = "600"
+
   environment {
     variables = {
       EXCLUDE_RESOURCES = "${var.exclude_resources}"
@@ -282,9 +283,9 @@ resource "aws_cloudwatch_event_target" "lambda_event_target" {
 
 # Allow cloudwatch to invoke lambda function nuke
 resource "aws_lambda_permission" "allow_cloudwatch_nuke" {
-    statement_id  = "AllowExecutionFromCloudWatch"
-    action        = "lambda:InvokeFunction"
-    principal     = "events.amazonaws.com"
-    function_name = "${aws_lambda_function.nuke.function_name}"
-    source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  principal     = "events.amazonaws.com"
+  function_name = "${aws_lambda_function.nuke.function_name}"
+  source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
 }

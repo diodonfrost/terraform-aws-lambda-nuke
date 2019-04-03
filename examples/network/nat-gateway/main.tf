@@ -25,7 +25,6 @@ resource "aws_nat_gateway" "nuke_nat" {
   depends_on    = ["aws_internet_gateway.nuke_nat"]
 }
 
-
 ### Terraform modules ###
 
 module "nuke-everything" {

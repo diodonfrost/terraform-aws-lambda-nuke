@@ -1,9 +1,7 @@
-
 # Create EC2 Container Registry Repository
 resource "aws_ecr_repository" "nuke" {
   name = "nuke-ecr"
 }
-
 
 ### Terraform modules ###
 

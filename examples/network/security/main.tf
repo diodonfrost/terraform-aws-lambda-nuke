@@ -1,4 +1,3 @@
-
 # Create vpc
 resource "aws_vpc" "main" {
   cidr_block = "10.110.0.0/16"
@@ -39,7 +38,6 @@ resource "aws_network_acl" "main" {
     to_port    = 80
   }
 }
-
 
 ### Terraform modules ###
 

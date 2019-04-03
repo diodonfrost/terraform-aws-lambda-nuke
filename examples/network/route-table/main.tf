@@ -28,7 +28,6 @@ resource "aws_route_table" "nuke_routetable" {
   }
 }
 
-
 ### Terraform modules ###
 
 module "nuke-everything" {

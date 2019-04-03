@@ -28,7 +28,6 @@ resource "aws_eip" "nuke_eip_three" {
   vpc = true
 }
 
-
 ### Terraform modules ###
 
 module "nuke-everything" {

@@ -1,4 +1,3 @@
-
 resource "aws_vpc" "main" {
   cidr_block = "10.102.0.0/16"
 }
@@ -49,7 +48,6 @@ resource "aws_neptune_cluster_instance" "instance_nuke" {
   instance_class     = "db.r4.large"
   apply_immediately  = true
 }
-
 
 ### Terraform modules ###
 

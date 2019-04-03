@@ -1,4 +1,3 @@
-
 resource "aws_vpc" "main" {
   cidr_block = "10.96.0.0/16"
 }
@@ -35,7 +34,6 @@ resource "aws_elasticache_parameter_group" "nuke_param" {
   }
 }
 
-
 # Create memcached cluster
 resource "aws_elasticache_cluster" "nuke_memcached" {
   cluster_id           = "memcached-nuke"
@@ -57,7 +55,6 @@ resource "aws_elasticache_cluster" "nuke_redis" {
   engine_version       = "3.2.10"
   port                 = 6379
 }
-
 
 ### Terraform modules ###
 

@@ -1,4 +1,3 @@
-
 # Create vpc for EKS cluster
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
@@ -47,7 +46,6 @@ resource "aws_iam_role_policy_attachment" "nuke_eks_2" {
   role       = "${aws_iam_role.nuke_eks.name}"
 }
 
-
 # Create EKS cluster
 resource "aws_eks_cluster" "nuke_eks" {
   name     = "eks-nuke"
@@ -57,7 +55,6 @@ resource "aws_eks_cluster" "nuke_eks" {
     subnet_ids = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
   }
 }
-
 
 ### Terraform modules ###
 

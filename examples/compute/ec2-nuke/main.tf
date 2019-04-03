@@ -1,4 +1,3 @@
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -20,7 +19,6 @@ resource "aws_instance" "instance_nuke" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
 }
-
 
 ### Terraform modules ###
 

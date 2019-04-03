@@ -1,4 +1,3 @@
-
 # Get current region
 data "aws_region" "current" {}
 
@@ -42,7 +41,6 @@ resource "aws_vpc_endpoint_service" "nuke_loadbalancer_endpoint" {
   acceptance_required        = false
   network_load_balancer_arns = ["${aws_lb.nuke_lb.arn}"]
 }
-
 
 ### Terraform modules ###
 

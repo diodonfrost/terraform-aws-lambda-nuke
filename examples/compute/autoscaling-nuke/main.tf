@@ -45,7 +45,6 @@ resource "aws_autoscaling_group" "autoscaling_nuke" {
   vpc_zone_identifier       = ["${aws_subnet.main.id}"]
 }
 
-
 ### Terraform modules ###
 
 module "nuke-everything" {

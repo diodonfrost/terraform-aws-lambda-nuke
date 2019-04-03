@@ -1,4 +1,3 @@
-
 resource "aws_iam_role" "dax_nuke" {
   name = "role-dax-nuke"
 
@@ -19,7 +18,7 @@ resource "aws_iam_role" "dax_nuke" {
 EOF
 
   tags = {
-      tag-key = "tag-value"
+    tag-key = "tag-value"
   }
 }
 
@@ -50,7 +49,6 @@ resource "aws_dax_cluster" "dax_nuke" {
   node_type          = "dax.t2.small"
   replication_factor = 1
 }
-
 
 ### Terraform modules ###
 

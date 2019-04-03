@@ -1,10 +1,8 @@
-
 # Create S3 bucket
 resource "aws_s3_bucket" "nuke" {
   bucket = "s3-nuke"
   acl    = "private"
 }
-
 
 ### Terraform modules ###
 

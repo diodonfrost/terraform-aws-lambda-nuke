@@ -1,5 +1,4 @@
-
- # Create vpc for elb
+# Create vpc for elb
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
@@ -33,7 +32,6 @@ resource "aws_lb" "network_nuke" {
   load_balancer_type = "network"
   subnets            = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
 }
-
 
 ### Terraform modules ###
 

@@ -5,7 +5,7 @@
 # cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
 variable "cloudwatch_schedule_expression" {
   description = "Define the aws cloudwatch event rule schedule expression"
-  default = "cron(0 22 ? * MON-FRI *)"
+  default     = "cron(0 22 ? * MON-FRI *)"
 }
 
 variable "name" {

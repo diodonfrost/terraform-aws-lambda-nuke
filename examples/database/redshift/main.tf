@@ -1,4 +1,3 @@
-
 resource "aws_vpc" "main" {
   cidr_block = "10.103.0.0/16"
 }
@@ -49,7 +48,6 @@ resource "aws_redshift_cluster" "cluster_nuke" {
   node_type          = "dc2.large"
   cluster_type       = "single-node"
 }
-
 
 ### Terraform modules ###
 

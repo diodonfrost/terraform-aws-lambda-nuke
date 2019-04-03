@@ -15,7 +15,7 @@ output "nuke_lambda_arn" {
 
 output "nuke_function_name" {
   description = "The name of the Lambda function"
-  value       ="${aws_lambda_function.nuke.function_name}"
+  value       = "${aws_lambda_function.nuke.function_name}"
 }
 
 output "nuke_lambda_invoke_arn" {

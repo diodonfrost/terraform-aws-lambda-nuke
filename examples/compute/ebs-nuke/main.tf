@@ -1,4 +1,3 @@
-
 # Create ebs volume
 resource "aws_ebs_volume" "nuke" {
   count             = 3
