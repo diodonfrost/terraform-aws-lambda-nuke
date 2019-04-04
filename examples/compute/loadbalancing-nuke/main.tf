@@ -36,7 +36,7 @@ resource "aws_lb" "network_nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "../../.."
+  source                         = "diodonfrost/lambda-nuke/aws"
   name                           = "nuke-loadbalancer"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

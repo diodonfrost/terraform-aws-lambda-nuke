@@ -8,7 +8,7 @@ resource "aws_ebs_volume" "nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "../../.."
+  source                         = "diodonfrost/lambda-nuke/aws"
   name                           = "nuke-ebs"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

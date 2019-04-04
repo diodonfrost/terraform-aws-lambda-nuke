@@ -23,7 +23,7 @@ resource "aws_instance" "instance_nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "../../.."
+  source                         = "diodonfrost/lambda-nuke/aws"
   name                           = "nuke-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

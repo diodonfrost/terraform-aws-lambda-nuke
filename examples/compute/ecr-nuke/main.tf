@@ -6,7 +6,7 @@ resource "aws_ecr_repository" "nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "../../.."
+  source                         = "diodonfrost/lambda-nuke/aws"
   name                           = "nuke-ecr"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""
