@@ -1,4 +1,7 @@
 # terraform-aws-lambda-nuke
+
+[![Build Status](https://api.travis-ci.org/diodonfrost/terraform-aws-lambda-nuke.svg?branch=master)](https://travis-ci.org/diodonfrost/terraform-aws-lambda-nuke)
+
 Terraform module which create lambda which nuke all resources on aws account
 
 ## Requirements
