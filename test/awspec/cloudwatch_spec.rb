@@ -4,7 +4,7 @@ require 'awspec'
 require 'aws-sdk'
 require 'rhcl'
 
-cloudwatch_name = ['trigger-lambda-nuke-nuke']
+cloudwatch_name = ['trigger-lambda-nuke-everything']
 
 cloudwatch_name.each do |name|
   describe cloudwatch_event(name) do

@@ -4,7 +4,7 @@ require 'awspec'
 require 'aws-sdk'
 require 'rhcl'
 
-lambda_names = ['nuke']
+lambda_names = ['everything']
 
 # Lambda function should be created
 lambda_names.each do |name|
