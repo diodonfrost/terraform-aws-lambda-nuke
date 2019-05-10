@@ -1,3 +1,10 @@
+# Freeze aws provider version
+terraform {
+  required_providers {
+    aws = ">= 2.9.0"
+  }
+}
+
 ################################################
 #
 #            IAM CONFIGURATION
@@ -27,9 +34,9 @@ EOF
 }
 
 # Create custom policy for allow destroying all compute resources
-resource "aws_iam_policy" "nuke_compute" {
-  name        = "${var.name}-nuke-compute"
-  description = "Allow destroying all aws compute resources"
+resource "aws_iam_role_policy" "nuke_compute" {
+  name = "${var.name}-nuke-compute"
+  role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
 {
@@ -81,9 +88,9 @@ EOF
 }
 
 # Create custom policy for allow destroying all storage resources
-resource "aws_iam_policy" "nuke_storage" {
-  name        = "${var.name}-nuke-storage"
-  description = "Allow destroying all aws storage resources"
+resource "aws_iam_role_policy" "nuke_storage" {
+  name = "${var.name}-nuke-storage"
+  role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
 {
@@ -109,9 +116,9 @@ EOF
 }
 
 # Create custom policy for allow destroying all rds resources
-resource "aws_iam_policy" "nuke_database" {
-  name        = "${var.name}-nuke-database"
-  description = "Allow destroying all aws database resources"
+resource "aws_iam_role_policy" "nuke_database" {
+  name = "${var.name}-nuke-database"
+  role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
 {
@@ -169,9 +176,9 @@ EOF
 }
 
 # Create custom policy for allow destroying all network resources
-resource "aws_iam_policy" "nuke_network" {
-  name        = "${var.name}-nuke-network"
-  description = "Allow destroying all aws network resources"
+resource "aws_iam_role_policy" "nuke_network" {
+  name = "${var.name}-nuke-network"
+  role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
 {
@@ -205,30 +212,6 @@ resource "aws_iam_policy" "nuke_network" {
   ]
 }
 EOF
-}
-
-# Attach custom policy compute nuke to role
-resource "aws_iam_role_policy_attachment" "compute" {
-  role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_compute.arn}"
-}
-
-# Attach custom policy storage nuke to role
-resource "aws_iam_role_policy_attachment" "storage" {
-  role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_storage.arn}"
-}
-
-# Attach custom policy database nuke to role
-resource "aws_iam_role_policy_attachment" "database" {
-  role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_database.arn}"
-}
-
-# Attach custom policy network nuke to role
-resource "aws_iam_role_policy_attachment" "network" {
-  role       = "${aws_iam_role.nuke_lambda.name}"
-  policy_arn = "${aws_iam_policy.nuke_network.arn}"
 }
 
 ################################################
