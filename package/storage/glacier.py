@@ -1,14 +1,18 @@
 
 """This script nuke all glacier resources"""
 
+import time
 import boto3
 from botocore.exceptions import EndpointConnectionError
 
 
-def nuke_all_glacier(logger):
+def nuke_all_glacier(older_than_seconds, logger):
     """
          glacier function for destroy all kubernetes vaults
     """
+    # Convert date in seconds
+    time_delete = time.time() - older_than_seconds
+
     # Define connection
     glacier = boto3.client('glacier')
 
@@ -19,7 +23,7 @@ def nuke_all_glacier(logger):
         return
 
     # List all glacier vault
-    glacier_vault_list = glacier_list_vaults()
+    glacier_vault_list = glacier_list_vaults(time_delete)
 
     # Nuke all glacier vault
     for vault in glacier_vault_list:
@@ -29,7 +33,7 @@ def nuke_all_glacier(logger):
         logger.info("Nuke glacier vault %s", vault)
 
 
-def glacier_list_vaults():
+def glacier_list_vaults(time_delete):
     """
        Aws glacier container service, list name of
        all glacier vault and return it in list.
@@ -46,8 +50,9 @@ def glacier_list_vaults():
     # Retrieve all glacier vault
     for page in page_iterator:
         for vault in page['VaultList']:
+            if vault['CreationDate'].timestamp() < time_delete:
 
-            glacier_vault = vault['VaultName']
-            glacier_vault_list.insert(0, glacier_vault)
+                glacier_vault = vault['VaultName']
+                glacier_vault_list.insert(0, glacier_vault)
 
     return glacier_vault_list

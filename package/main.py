@@ -10,14 +10,12 @@ from compute.loadbalancing import nuke_all_loadbalancing
 from compute.ebs import nuke_all_ebs
 from compute.key_pair import nuke_all_key_pair
 from compute.ecr import nuke_all_ecr
-from compute.ecs import nuke_all_ecs
 from compute.eks import nuke_all_eks
 from storage.s3 import nuke_all_s3
 from storage.efs import nuke_all_efs
 from storage.glacier import nuke_all_glacier
 from database.rds import nuke_all_rds
 from database.dynamodb import nuke_all_dynamodb
-from database.dax import nuke_all_dax
 from database.elasticache import nuke_all_elasticache
 from database.neptune import nuke_all_neptune
 from database.redshift import nuke_all_redshift
@@ -63,9 +61,6 @@ def lambda_handler(event, context):
     if "ecr" not in exclude_resources:
         nuke_all_ecr(older_than_seconds, LOGGER)
 
-    if "ecs" not in exclude_resources:
-        nuke_all_ecs(LOGGER)
-
     if "eks" not in exclude_resources:
         nuke_all_eks(older_than_seconds, LOGGER)
 
@@ -76,16 +71,13 @@ def lambda_handler(event, context):
         nuke_all_efs(older_than_seconds, LOGGER)
 
     if "glacier" not in exclude_resources:
-        nuke_all_glacier(LOGGER)
+        nuke_all_glacier(older_than_seconds, LOGGER)
 
     if "rds" not in exclude_resources:
         nuke_all_rds(older_than_seconds, LOGGER)
 
     if "dynamodb" not in exclude_resources:
         nuke_all_dynamodb(older_than_seconds, LOGGER)
-
-    if "dax" not in exclude_resources:
-        nuke_all_dax(LOGGER)
 
     if "elasticache" not in exclude_resources:
         nuke_all_elasticache(older_than_seconds, LOGGER)

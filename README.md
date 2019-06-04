@@ -23,9 +23,8 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Target Groups
     -   Key Pairs
     -   Placement Groups
-    -   Elastic Container Registry
-    -   Elastic Container Clusters
-    -   Elastic Kubernetes Services
+    -   ECR
+    -   EKS
     -   Elastic Beanstalk
 *   Storage resources nuke:
     -   S3
@@ -35,7 +34,6 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Rds instances
     -   Rds Clusters
     -   Dynamodb
-    -   Dax
     -   Elasticache
     -   Neptune
     -   Redshift
@@ -47,6 +45,14 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   Eip
     -   Route table
     -   Internet/egress gateway
+
+## Caveats
+This following resources are not supported because creation timestamp are not present:
+
+*   Compute
+    -   ECS
+*   Database:
+    -   Dax
 
 ## Usage
 ```hcl
