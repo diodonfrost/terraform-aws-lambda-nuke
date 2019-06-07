@@ -7,7 +7,7 @@ from botocore.exceptions import EndpointConnectionError, ClientError
 
 def nuke_all_elasticache(older_than_seconds, logger):
     """
-         elasticache function for destroy all elasticache cluster
+         elasticache function for destroy all elasticache resources
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -21,6 +21,20 @@ def nuke_all_elasticache(older_than_seconds, logger):
     except EndpointConnectionError:
         print('elasticache resource is not available in this aws region')
         return
+
+    # Nuke all elasticachec clusters
+    elasticache_nuke_clusters(time_delete, logger)
+    elasticache_nuke_snapshots(time_delete, logger)
+    elasticache_nuke_subnets(logger)
+    elasticache_nuke_param_groups(logger)
+
+
+def elasticache_nuke_clusters(time_delete, logger):
+    """
+         elasticache function for destroy all elasticache cluster
+    """
+    # define connection
+    elasticache = boto3.client('elasticache')
 
     # List all elasticache clusters
     elasticache_cluster_list = elasticache_list_clusters(time_delete)
@@ -37,6 +51,14 @@ def nuke_all_elasticache(older_than_seconds, logger):
             else:
                 print("Unexpected error: %s" % e)
 
+
+def elasticache_nuke_snapshots(time_delete, logger):
+    """
+         elasticache function for destroy all elasticache snapshots
+    """
+    # define connection
+    elasticache = boto3.client('elasticache')
+
     # List all elasticache snapshots
     elasticache_snapshot_list = elasticache_list_snapshots(time_delete)
 
@@ -51,6 +73,14 @@ def nuke_all_elasticache(older_than_seconds, logger):
                 logger.info("cache snapshot %s is not in available state", snapshot)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def elasticache_nuke_subnets(logger):
+    """
+         elasticache function for destroy all elasticache subnets
+    """
+    # define connection
+    elasticache = boto3.client('elasticache')
 
     # List all elasticache subnets
     elasticache_subnet_list = elasticache_list_subnets()
@@ -69,6 +99,14 @@ def nuke_all_elasticache(older_than_seconds, logger):
                 logger.info("cache %s cannot be deleted", subnet)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def elasticache_nuke_param_groups(logger):
+    """
+         elasticache function for destroy all elasticache param groups
+    """
+    # define connection
+    elasticache = boto3.client('elasticache')
 
     # List all elasticache cluster parameters
     elasticache_param_group_list = elasticache_list_param_groups()
