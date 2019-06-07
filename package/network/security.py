@@ -30,7 +30,9 @@ def nuke_all_network_security(logger):
             logger.info("Nuke ec2 security group %s", sec_grp)
         except ClientError as e:
             if e.response['Error']['Code'] == 'CannotDelete':
-                logger.info("security group %s cannot be deleted", sec_grp)
+                logger.info("security grp %s cannot be deleted", sec_grp)
+            elif e.response['Error']['Code'] == 'DependencyViolation':
+                logger.info("security grp %s has a dependent object", sec_grp)
             else:
                 print("Unexpected error: %s" % e)
 
