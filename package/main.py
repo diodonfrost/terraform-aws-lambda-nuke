@@ -52,9 +52,6 @@ def lambda_handler(event, context):
     if "loadbalancing" not in exclude_resources:
         nuke_all_loadbalancing(older_than_seconds, LOGGER)
 
-    if "ebs" not in exclude_resources:
-        nuke_all_ebs(older_than_seconds, LOGGER)
-
     if "key_pair" not in exclude_resources:
         nuke_all_key_pair(LOGGER)
 
@@ -87,6 +84,9 @@ def lambda_handler(event, context):
 
     if "redshift" not in exclude_resources:
         nuke_all_redshift(older_than_seconds, LOGGER)
+
+    if "ebs" not in exclude_resources:
+        nuke_all_ebs(older_than_seconds, LOGGER)
 
     if "network_security" not in exclude_resources:
         nuke_all_network_security(LOGGER)
