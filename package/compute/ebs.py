@@ -1,8 +1,8 @@
-
 """This script nuke all ebs resources"""
 
 import time
 import boto3
+from botocore.exceptions import ClientError
 
 
 def nuke_all_ebs(older_than_seconds, logger):
@@ -24,20 +24,16 @@ def nuke_all_ebs(older_than_seconds, logger):
     for volume in ebs_volume_list:
 
         # Nuke all ebs volume
-        ec2.delete_volume(VolumeId=volume)
-        logger.info("Nuke EBS Volume %s", volume)
-
-    # Nuke all snapshots
-#    response = ec2.describe_snapshots()
-
-#
-#    for snapshot in response['Snapshots']:
-#        print(snapshot)
-#        if snapshot['StartTime'].timestamp() < time_delete and \
-#        snapshot['OwnerAlias'] == 'self':
-#
-#            # Nuke all ebs volume
-#            ec2.delete_snapshot(SnapshotId=snapshot['SnapshotId'])
+        try:
+            ec2.delete_volume(VolumeId=volume)
+            logger.info("Nuke EBS Volume %s", volume)
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'VolumeInUse':
+                logger.info("volume %s is already used", volume)
+            elif e.response['Error']['Code'] == 'InvalidVolume':
+                logger.info("volume %s has already been deleted", volume)
+            else:
+                print("Unexpected error: %s" % e)
 
     # List all dlm policies
     dlm_policy_list = dlm_list_policy(time_delete)
@@ -69,12 +65,11 @@ def ebs_list_volumes(time_delete):
     # Retrieve all volume ID in available state
     for page in page_iterator:
         for volume in page['Volumes']:
-            if volume['State'] == 'available':
-                if volume['CreateTime'].timestamp() < time_delete:
+            if volume['CreateTime'].timestamp() < time_delete:
 
-                    # Retrieve and add in list ebs volume ID
-                    ebs_volume = volume['VolumeId']
-                    ebs_volumes_list.insert(0, ebs_volume)
+                # Retrieve and add in list ebs volume ID
+                ebs_volume = volume['VolumeId']
+                ebs_volumes_list.insert(0, ebs_volume)
 
     return ebs_volumes_list
 
