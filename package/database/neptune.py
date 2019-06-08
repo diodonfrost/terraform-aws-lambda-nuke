@@ -7,7 +7,7 @@ from botocore.exceptions import EndpointConnectionError, ClientError
 
 def nuke_all_neptune(older_than_seconds, logger):
     """
-         neptune function for destroy all neptune database
+         neptune function for destroy all neptune resources
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -22,6 +22,48 @@ def nuke_all_neptune(older_than_seconds, logger):
         print('neptune resource is not available in this aws region')
         return
 
+    # Nuke all aws neptune resources
+    neptune_nuke_instances(time_delete, logger)
+    neptune_nuke_clusters(time_delete, logger)
+    neptune_nuke_snapshots(time_delete, logger)
+    neptune_nuke_subnets(logger)
+    neptune_nuke_cluster_params(logger)
+    neptune_nuke_group_params(logger)
+
+
+def neptune_nuke_instances(time_delete, logger):
+    """
+         neptune function for destroy all neptune instances
+    """
+    # define connection
+    neptune = boto3.client('neptune')
+
+    # List all neptune clusters
+    neptune_instance_list = neptune_list_instances(time_delete)
+
+    # Nuke all neptune clusters
+    for instance in neptune_instance_list:
+
+        try:
+            neptune.delete_db_instance(
+                DBInstanceIdentifier=instance,
+                SkipFinalSnapshot=True)
+            logger.info("Nuke neptune instance %s", instance)
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'InvalidDBInstanceState':
+                logger.info(
+                    "neptune instance %s is already being deleted", instance)
+            else:
+                print("Unexpected error: %s" % e)
+
+
+def neptune_nuke_clusters(time_delete, logger):
+    """
+         neptune function for destroy all neptune clusters
+    """
+    # define connection
+    neptune = boto3.client('neptune')
+
     # List all neptune clusters
     neptune_cluster_list = neptune_list_clusters(time_delete)
 
@@ -35,9 +77,18 @@ def nuke_all_neptune(older_than_seconds, logger):
             logger.info("Nuke neptune cluster %s", cluster)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidDBClusterStateFault':
-                logger.info("neptune cluster %s is not in state started", cluster)
+                logger.info(
+                    "neptune cluster %s is not in started state", cluster)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def neptune_nuke_snapshots(time_delete, logger):
+    """
+         neptune function for destroy all neptune snapshots
+    """
+    # define connection
+    neptune = boto3.client('neptune')
 
     # List all neptune snapshots
     neptune_snapshot_list = neptune_list_snapshots(time_delete)
@@ -45,8 +96,17 @@ def nuke_all_neptune(older_than_seconds, logger):
     # Nuke all neptune snapshots
     for snapshot in neptune_snapshot_list:
 
-        neptune.delete_db_cluster_snapshot(DBClusterSnapshotIdentifier=snapshot)
+        neptune.delete_db_cluster_snapshot(
+            DBClusterSnapshotIdentifier=snapshot)
         logger.info("Nuke neptune snapshot %s", snapshot)
+
+
+def neptune_nuke_subnets(logger):
+    """
+         neptune function for destroy all neptune subnets
+    """
+    # define connection
+    neptune = boto3.client('neptune')
 
     # List all neptune subnets
     neptune_subnet_list = neptune_list_subnet()
@@ -55,13 +115,22 @@ def nuke_all_neptune(older_than_seconds, logger):
     for subnet in neptune_subnet_list:
 
         try:
-            neptune.delete_db_subnet_group(DBSubnetGroupName=subnet)
+            neptune.delete_db_subnet_group(
+                DBSubnetGroupName=subnet)
             logger.info("Nuke neptune subnet %s", subnet)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidDBSubnetGroupStateFault':
                 logger.info("%s is reserved and cannot be modified.", subnet)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def neptune_nuke_cluster_params(logger):
+    """
+         neptune function for destroy all neptune cluster params
+    """
+    # define connection
+    neptune = boto3.client('neptune')
 
     # List all neptune cluster parameters
     neptune_cluster_param_list = neptune_list_cluster_params()
@@ -70,13 +139,22 @@ def nuke_all_neptune(older_than_seconds, logger):
     for param in neptune_cluster_param_list:
 
         try:
-            neptune.delete_db_cluster_parameter_group(DBClusterParameterGroupName=param)
+            neptune.delete_db_cluster_parameter_group(
+                DBClusterParameterGroupName=param)
             logger.info("Nuke neptune param %s", param)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidDBParameterGroupState':
                 logger.info("%s is reserved and cannot be modified.", param)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def neptune_nuke_group_params(logger):
+    """
+         neptune function for destroy all neptune group params
+    """
+    # define connection
+    neptune = boto3.client('neptune')
 
     # List all neptune parameters
     neptune_param_list = neptune_list_params()
@@ -85,13 +163,37 @@ def nuke_all_neptune(older_than_seconds, logger):
     for param in neptune_param_list:
 
         try:
-            neptune.delete_db_parameter_group(DBParameterGroupName=param)
+            neptune.delete_db_parameter_group(
+                DBParameterGroupName=param)
             logger.info("Nuke neptune param %s", param)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidDBParameterGroupState':
                 logger.info("%s is reserved and cannot be modified.", param)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def neptune_list_instances(time_delete):
+    """
+       Aws neptune list instances, list name of
+       all neptune instances and return it in list.
+    """
+
+    # define connection
+    neptune = boto3.client('neptune')
+    response = neptune.describe_db_instances()
+
+    # Initialize neptune instance list
+    neptune_instance_list = []
+
+    # Retrieve all neptune instance identifier
+    for instance in response['DBInstances']:
+        if instance['InstanceCreateTime'].timestamp() < time_delete:
+
+            neptune_instance = instance['DBInstanceIdentifier']
+            neptune_instance_list.insert(0, neptune_instance)
+
+    return neptune_instance_list
 
 
 def neptune_list_clusters(time_delete):
