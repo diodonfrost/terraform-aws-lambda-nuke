@@ -47,7 +47,8 @@ def elasticache_nuke_clusters(time_delete, logger):
             logger.info("Nuke elasticache cluster %s", cluster)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidCacheClusterStateFault':
-                logger.info("cache cluster %s is not in available state", cluster)
+                logger.info(
+                    "cache cluster %s is not in available state", cluster)
             else:
                 print("Unexpected error: %s" % e)
 
@@ -70,7 +71,8 @@ def elasticache_nuke_snapshots(time_delete, logger):
             logger.info("Nuke elasticache snapshot %s", snapshot)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidSnapshotStateFault':
-                logger.info("cache snapshot %s is not in available state", snapshot)
+                logger.info(
+                    "cache snapshot %s is not in available state", snapshot)
             else:
                 print("Unexpected error: %s" % e)
 
