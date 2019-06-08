@@ -7,7 +7,7 @@ from botocore.exceptions import EndpointConnectionError, ClientError
 
 def nuke_all_redshift(older_than_seconds, logger):
     """
-         redshift function for destroy all redshift database
+         redshift function for destroy all redshift resources
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -22,6 +22,20 @@ def nuke_all_redshift(older_than_seconds, logger):
         print('redshift resource is not available in this aws region')
         return
 
+    # Nuke all aws redshift resources
+    redshift_nuke_clusters(time_delete, logger)
+    redshift_nuke_snapshots(time_delete, logger)
+    redshift_nuke_subnets(logger)
+    redshift_nuke_param_groups(logger)
+
+
+def redshift_nuke_clusters(time_delete, logger):
+    """
+         redshift function for destroy all redshift databases
+    """
+    # define connection
+    redshift = boto3.client('redshift')
+
     # List all redshift clusters
     redshift_cluster_list = redshift_list_clusters(time_delete)
 
@@ -35,9 +49,18 @@ def nuke_all_redshift(older_than_seconds, logger):
             logger.info("Nuke redshift cluster %s", cluster)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidClusterStateFault':
-                logger.info("redshift cluster %s is not in state started", cluster)
+                logger.info(
+                    "redshift cluster %s is not in state started", cluster)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def redshift_nuke_snapshots(time_delete, logger):
+    """
+         redshift function for destroy all redshift snapshots
+    """
+    # define connection
+    redshift = boto3.client('redshift')
 
     # List all redshift snapshots
     redshift_snapshot_list = redshift_list_snapshots(time_delete)
@@ -50,9 +73,18 @@ def nuke_all_redshift(older_than_seconds, logger):
             logger.info("Nuke redshift snapshot %s", snapshot)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidClusterSnapshotStateFault':
-                logger.info("redshift snap %s is not in state available", snapshot)
+                logger.info(
+                    "redshift snap %s is not in state available", snapshot)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def redshift_nuke_subnets(logger):
+    """
+         redshift function for destroy all redshift subnets
+    """
+    # define connection
+    redshift = boto3.client('redshift')
 
     # List all redshift subnets
     redshift_subnet_list = redshift_list_subnet()
@@ -65,9 +97,18 @@ def nuke_all_redshift(older_than_seconds, logger):
             logger.info("Nuke redshift subnet %s", subnet)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidClusterSubnetGroupStateFault':
-                logger.info("redshift subnet %s is not in state available", subnet)
+                logger.info(
+                    "redshift subnet %s is not in state available", subnet)
             else:
                 print("Unexpected error: %s" % e)
+
+
+def redshift_nuke_param_groups(logger):
+    """
+         redshift function for destroy all redshift param groups
+    """
+    # define connection
+    redshift = boto3.client('redshift')
 
     # List all redshift cluster parameters
     redshift_cluster_param_list = redshift_list_cluster_params()
@@ -80,9 +121,11 @@ def nuke_all_redshift(older_than_seconds, logger):
             logger.info("Nuke redshift param %s", param)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidClusterParameterGroupStateFault':
-                logger.info("redshift param %s is not in state available", param)
+                logger.info(
+                    "redshift param %s is not in state available", param)
             elif e.response['Error']['Code'] == 'InvalidParameterValue':
-                logger.info("default %s parameter group cannot be deleted", param)
+                logger.info(
+                    "default %s parameter group cannot be deleted", param)
             else:
                 print("Unexpected error: %s" % e)
 
