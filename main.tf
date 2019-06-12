@@ -35,6 +35,7 @@ EOF
 
 # Create custom policy for allow destroying all compute resources
 resource "aws_iam_role_policy" "nuke_compute" {
+  name = "${var.name}-nuke-compute"
   role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
@@ -86,6 +87,7 @@ EOF
 
 # Create custom policy for allow destroying all storage resources
 resource "aws_iam_role_policy" "nuke_storage" {
+  name = "${var.name}-nuke-storage"
   role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
@@ -113,6 +115,7 @@ EOF
 
 # Create custom policy for allow destroying all rds resources
 resource "aws_iam_role_policy" "nuke_database" {
+  name = "${var.name}-nuke-database"
   role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
@@ -166,6 +169,7 @@ EOF
 
 # Create custom policy for allow destroying all network resources
 resource "aws_iam_role_policy" "nuke_network" {
+  name = "${var.name}-nuke-network"
   role = "${aws_iam_role.nuke_lambda.id}"
 
   policy = <<EOF
