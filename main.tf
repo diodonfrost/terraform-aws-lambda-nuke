@@ -18,17 +18,17 @@ resource "aws_iam_role" "nuke_lambda" {
 
   assume_role_policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "lambda.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
 }
 EOF
 }
@@ -40,47 +40,47 @@ resource "aws_iam_role_policy" "nuke_compute" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-        "Action": [
-            "ec2:DescribeInstances",
-            "ec2:TerminateInstances",
-            "ec2:DescribeLaunchTemplates",
-            "ec2:DeleteLaunchTemplate",
-            "ec2:DescribeSnapshots",
-            "ec2:DeleteSnapshot",
-            "ec2:DescribeVolumes",
-            "ec2:DeleteVolume",
-            "ec2:DescribeKeyPairs",
-            "ec2:DeleteKeyPair",
-            "ec2:DescribePlacementGroups",
-            "ec2:DeletePlacementGroup",
-            "dlm:GetLifecyclePolicy",
-            "dlm:GetLifecyclePolicies",
-            "dlm:DeleteLifecyclePolicy",
-            "autoscaling:DescribeAutoScalingGroups",
-            "autoscaling:DeleteAutoScalingGroup",
-            "autoscaling:DescribeLaunchConfigurations",
-            "autoscaling:DeleteLaunchConfiguration",
-            "elasticloadbalancing:DescribeLoadBalancers",
-            "elasticloadbalancing:DeleteLoadBalancer",
-            "elasticloadbalancing:DescribeTargetGroups",
-            "elasticloadbalancing:DeleteTargetGroup",
-            "ecr:DescribeRepositories",
-            "ecr:DeleteRepository",
-            "eks:ListClusters",
-            "eks:DescribeCluster",
-            "eks:DeleteCluster",
-            "elasticbeanstalk:DescribeApplications",
-            "elasticbeanstalk:DescribeEnvironments",
-            "elasticbeanstalk:DeleteApplication",
-            "elasticbeanstalk:TerminateEnvironment"
-        ],
-        "Resource": "*",
-        "Effect": "Allow"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "ec2:DescribeInstances",
+                "ec2:TerminateInstances",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:DeleteLaunchTemplate",
+                "ec2:DescribeSnapshots",
+                "ec2:DeleteSnapshot",
+                "ec2:DescribeVolumes",
+                "ec2:DeleteVolume",
+                "ec2:DescribeKeyPairs",
+                "ec2:DeleteKeyPair",
+                "ec2:DescribePlacementGroups",
+                "ec2:DeletePlacementGroup",
+                "dlm:GetLifecyclePolicy",
+                "dlm:GetLifecyclePolicies",
+                "dlm:DeleteLifecyclePolicy",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DeleteAutoScalingGroup",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DeleteLaunchConfiguration",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DeleteLoadBalancer",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DeleteTargetGroup",
+                "ecr:DescribeRepositories",
+                "ecr:DeleteRepository",
+                "eks:ListClusters",
+                "eks:DescribeCluster",
+                "eks:DeleteCluster",
+                "elasticbeanstalk:DescribeApplications",
+                "elasticbeanstalk:DescribeEnvironments",
+                "elasticbeanstalk:DeleteApplication",
+                "elasticbeanstalk:TerminateEnvironment"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
 }
 EOF
 }
@@ -92,23 +92,23 @@ resource "aws_iam_role_policy" "nuke_storage" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-        "Action": [
-            "s3:ListAllMyBuckets",
-            "s3:DeleteBucketPolicy",
-            "s3:DeleteBucket",
-            "elasticfilesystem:DescribeFileSystems",
-            "elasticfilesystem:DeleteFileSystem",
-            "glacier:ListVaults",
-            "glacier:DescribeVault",
-            "glacier:DeleteVault"
-        ],
-        "Resource": "*",
-        "Effect": "Allow"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucket",
+                "elasticfilesystem:DescribeFileSystems",
+                "elasticfilesystem:DeleteFileSystem",
+                "glacier:ListVaults",
+                "glacier:DescribeVault",
+                "glacier:DeleteVault"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
 }
 EOF
 }
@@ -120,49 +120,49 @@ resource "aws_iam_role_policy" "nuke_database" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "rds:DescribeDBClusters",
-        "rds:DeleteDBCluster",
-        "rds:DescribeDBInstances",
-        "rds:DeleteDBInstance",
-        "rds:DescribeDBSubnetGroups",
-        "rds:DeleteDBSubnetGroup",
-        "rds:DescribeDBClusterParameterGroups",
-        "rds:DeleteDBClusterParameterGroup",
-        "rds:DescribeDBParameterGroups",
-        "rds:DeleteDBParameterGroup",
-        "rds:DescribeDBClusterSnapshots",
-        "rds:DeleteDBClusterSnapshot",
-        "dynamodb:ListTables",
-        "dynamodb:DescribeTable",
-        "dynamodb:DeleteTable",
-        "dynamodb:ListBackups",
-        "dynamodb:DescribeBackup",
-        "dynamodb:DeleteBackup",
-        "elasticache:DescribeCacheClusters",
-        "elasticache:DeleteCacheCluster",
-        "elasticache:DescribeSnapshots",
-        "elasticache:DeleteSnapshot",
-        "elasticache:DescribeCacheSubnetGroups",
-        "elasticache:DeleteCacheSubnetGroup",
-        "elasticache:DescribeCacheParameterGroups",
-        "elasticache:DeleteCacheParameterGroup",
-        "redshift:DescribeClusters",
-        "redshift:DeleteCluster",
-        "redshift:DescribeClusterSnapshots",
-        "redshift:DeleteClusterSnapshot",
-        "redshift:DescribeClusterParameterGroups",
-        "redshift:DeleteClusterParameterGroup",
-        "redshift:DescribeClusterSubnetGroups",
-        "redshift:DeleteClusterSubnetGroup"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "rds:DescribeDBClusters",
+                "rds:DeleteDBCluster",
+                "rds:DescribeDBInstances",
+                "rds:DeleteDBInstance",
+                "rds:DescribeDBSubnetGroups",
+                "rds:DeleteDBSubnetGroup",
+                "rds:DescribeDBClusterParameterGroups",
+                "rds:DeleteDBClusterParameterGroup",
+                "rds:DescribeDBParameterGroups",
+                "rds:DeleteDBParameterGroup",
+                "rds:DescribeDBClusterSnapshots",
+                "rds:DeleteDBClusterSnapshot",
+                "dynamodb:ListTables",
+                "dynamodb:DescribeTable",
+                "dynamodb:DeleteTable",
+                "dynamodb:ListBackups",
+                "dynamodb:DescribeBackup",
+                "dynamodb:DeleteBackup",
+                "elasticache:DescribeCacheClusters",
+                "elasticache:DeleteCacheCluster",
+                "elasticache:DescribeSnapshots",
+                "elasticache:DeleteSnapshot",
+                "elasticache:DescribeCacheSubnetGroups",
+                "elasticache:DeleteCacheSubnetGroup",
+                "elasticache:DescribeCacheParameterGroups",
+                "elasticache:DeleteCacheParameterGroup",
+                "redshift:DescribeClusters",
+                "redshift:DeleteCluster",
+                "redshift:DescribeClusterSnapshots",
+                "redshift:DeleteClusterSnapshot",
+                "redshift:DescribeClusterParameterGroups",
+                "redshift:DeleteClusterParameterGroup",
+                "redshift:DescribeClusterSubnetGroups",
+                "redshift:DeleteClusterSubnetGroup"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
 }
 EOF
 }
@@ -174,34 +174,34 @@ resource "aws_iam_role_policy" "nuke_network" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:DescribeSecurityGroups",
-        "ec2:DeleteSecurityGroup",
-        "ec2:DescribeNetworkAcls",
-        "ec2:DeleteNetworkAcl",
-        "ec2:DescribeVpcEndpoints",
-        "ec2:DeleteVpcEndpoints",
-        "ec2:DescribeVpcEndpointServices",
-        "ec2:DescribeVpcEndpointServiceConfigurations",
-        "ec2:DeleteVpcEndpointServiceConfigurations",
-        "ec2:DescribeNatGateways",
-        "ec2:DeleteNatGateway",
-        "ec2:DescribeAddresses",
-        "ec2:ReleaseAddress",
-        "ec2:DescribeRouteTables",
-        "ec2:DeleteRouteTable",
-        "ec2:DescribeInternetGateways",
-        "ec2:DeleteInternetGateway",
-        "ec2:DescribeEgressOnlyInternetGateways",
-        "ec2:DeleteEgressOnlyInternetGateway"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "ec2:DescribeSecurityGroups",
+                "ec2:DeleteSecurityGroup",
+                "ec2:DescribeNetworkAcls",
+                "ec2:DeleteNetworkAcl",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DeleteVpcEndpoints",
+                "ec2:DescribeVpcEndpointServices",
+                "ec2:DescribeVpcEndpointServiceConfigurations",
+                "ec2:DeleteVpcEndpointServiceConfigurations",
+                "ec2:DescribeNatGateways",
+                "ec2:DeleteNatGateway",
+                "ec2:DescribeAddresses",
+                "ec2:ReleaseAddress",
+                "ec2:DescribeRouteTables",
+                "ec2:DeleteRouteTable",
+                "ec2:DescribeInternetGateways",
+                "ec2:DeleteInternetGateway",
+                "ec2:DescribeEgressOnlyInternetGateways",
+                "ec2:DeleteEgressOnlyInternetGateway"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
 }
 EOF
 }
