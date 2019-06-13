@@ -1,7 +1,10 @@
+# Get all availability zones
+data "aws_availability_zones" "available" {}
+
 # Create ebs volume
 resource "aws_ebs_volume" "nuke" {
   count             = 3
-  availability_zone = "eu-west-3a"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
   size              = 20
 }
 

@@ -1,7 +1,10 @@
+# Get all availability zones
+data "aws_availability_zones" "available" {}
+
 # Create rds aurora cluster
 resource "aws_rds_cluster" "aurora_nuke" {
   cluster_identifier  = "aurora-cluster-nuke"
-  availability_zones  = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
+  availability_zones  = ["data.aws_availability_zones.availability.names"]
   database_name       = "auroranuke"
   master_username     = "foo"
   master_password     = "barbut8chars"
