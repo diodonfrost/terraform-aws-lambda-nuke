@@ -44,7 +44,6 @@ script:
   - terraform validate
   - terraform -v
 
-after_success:
   # Run sonar-scanner (https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-nuke)
   - cd ../..
   - >
