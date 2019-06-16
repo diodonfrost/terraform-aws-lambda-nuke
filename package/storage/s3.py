@@ -2,6 +2,7 @@
 
 import time
 import boto3
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_s3(older_than_seconds, logger):
@@ -13,19 +14,35 @@ def nuke_all_s3(older_than_seconds, logger):
 
     # Define connection
     s3 = boto3.client('s3')
+    s3_resource = boto3.resource('s3')
+
+    # Test if s3 is available
+    try:
+        s3.list_buckets()
+    except EndpointConnectionError:
+        print('s3 resource is not available in this aws region')
+        return
 
     # List all s3 bucket names
     s3_bucket_list = s3_list_buckets(time_delete)
 
     # Nuke all s3 buckets
-    for bucket in s3_bucket_list:
+    for s3_bucket in s3_bucket_list:
 
-        # Delete bucket policy
-        s3.delete_bucket_policy(Bucket=bucket)
+        try:
+            # Delete bucket policy
+            s3.delete_bucket_policy(Bucket=s3_bucket)
 
-        # Delete bucket
-        s3.delete_bucket(Bucket=bucket)
-        logger.info("Nuke s3 bucket %s", bucket)
+            # Delete all objects in bucket
+            bucket = s3_resource.Bucket(s3_bucket)
+            for key in bucket.objects.all():
+                key.delete()
+
+            # Delete bucket
+            s3.delete_bucket(Bucket=s3_bucket)
+            logger.info("Nuke s3 bucket %s", s3_bucket)
+        except ClientError as e:
+            logger.info(e)
 
 
 def s3_list_buckets(time_delete):
