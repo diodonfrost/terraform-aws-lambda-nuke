@@ -1,15 +1,20 @@
+# Get aws availability zones
+data "aws_availability_zones" "available" {}
+
 resource "aws_vpc" "main" {
   cidr_block = "10.96.0.0/16"
 }
 
 resource "aws_subnet" "primary" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "10.96.98.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  vpc_id            = "${aws_vpc.main.id}"
+  cidr_block        = "10.96.98.0/24"
 }
 
 resource "aws_subnet" "secondary" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "10.96.99.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+  vpc_id            = "${aws_vpc.main.id}"
+  cidr_block        = "10.96.99.0/24"
 }
 
 # Create elasticache subnet

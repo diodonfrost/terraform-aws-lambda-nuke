@@ -8,16 +8,16 @@ resource "aws_vpc" "main" {
 
 # Create subnets for elb
 resource "aws_subnet" "primary" {
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
   vpc_id            = "${aws_vpc.main.id}"
   cidr_block        = "10.0.10.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
 }
 
 # Create subnets for elb
 resource "aws_subnet" "secondary" {
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
   vpc_id            = "${aws_vpc.main.id}"
   cidr_block        = "10.0.20.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[1]}"
 }
 
 # Create application load balancer

@@ -1,19 +1,24 @@
 # Get current region
 data "aws_region" "current" {}
 
+# Get all availability zones
+data "aws_availability_zones" "available" {}
+
 # Create vpc
 resource "aws_vpc" "main" {
   cidr_block = "10.120.0.0/16"
 }
 
 resource "aws_subnet" "primary" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "10.120.98.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  vpc_id            = "${aws_vpc.main.id}"
+  cidr_block        = "10.120.98.0/24"
 }
 
 resource "aws_subnet" "secondary" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "10.120.99.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+  vpc_id            = "${aws_vpc.main.id}"
+  cidr_block        = "10.120.99.0/24"
 }
 
 # Create a loadbalancer

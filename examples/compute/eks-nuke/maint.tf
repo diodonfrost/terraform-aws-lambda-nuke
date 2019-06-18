@@ -8,15 +8,15 @@ resource "aws_vpc" "main" {
 
 # Create subnets for EKS cluster
 resource "aws_subnet" "primary" {
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
   vpc_id            = "${aws_vpc.main.id}"
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
 }
 
 resource "aws_subnet" "secondary" {
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
   vpc_id            = "${aws_vpc.main.id}"
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "${data.aws_availability_zones.available.names[1]}"
 }
 
 # Create role for EKS cluster
