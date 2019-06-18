@@ -1,6 +1,6 @@
 # terraform-aws-lambda-nuke
 
-[![Build Status](https://api.travis-ci.org/diodonfrost/terraform-aws-lambda-nuke.svg?branch=master)](https://travis-ci.org/diodonfrost/terraform-aws-lambda-nuke) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=diodonfrost_terraform-aws-lambda-nuke&metric=alert_status)](https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-nuke) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=diodonfrost_terraform-aws-lambda-nuke&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-nuke)
+[![Build Status](https://api.travis-ci.org/diodonfrost/terraform-aws-lambda-nuke.svg?branch=master)](https://travis-ci.org/diodonfrost/terraform-aws-lambda-nuke) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=diodonfrost_terraform-aws-lambda-nuke&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-nuke)
 
 
 Terraform module which create lambda which nuke all resources on aws account
