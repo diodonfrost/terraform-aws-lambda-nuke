@@ -3,7 +3,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_glacier(older_than_seconds, logger):
@@ -29,8 +29,11 @@ def nuke_all_glacier(older_than_seconds, logger):
     for vault in glacier_vault_list:
 
         # Delete glacier vault
-        glacier.delete_vault(vaultName=vault)
-        logger.info("Nuke glacier vault %s", vault)
+        try:
+            glacier.delete_vault(vaultName=vault)
+            print("Nuke glacier vault {0}".format(vault))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def glacier_list_vaults(time_delete):

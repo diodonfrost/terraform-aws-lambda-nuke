@@ -2,7 +2,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_efs(older_than_seconds, logger):
@@ -29,8 +29,11 @@ def nuke_all_efs(older_than_seconds, logger):
     for efs in efs_filesystem_list:
 
         # Delete efs file system
-        efs.delete_file_system(FileSystemId=efs)
-        logger.info("Nuke EFS share %s", efs)
+        try:
+            efs.delete_file_system(FileSystemId=efs)
+            print("Nuke EFS share {0}".format(efs))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def efs_list_file_systems(time_delete):

@@ -40,9 +40,9 @@ def nuke_all_s3(older_than_seconds, logger):
 
             # Delete bucket
             s3.delete_bucket(Bucket=s3_bucket)
-            logger.info("Nuke s3 bucket %s", s3_bucket)
+            print("Nuke s3 bucket {0}".format(s3_bucket))
         except ClientError as e:
-            logger.info(e)
+            logger.error("Unexpected error: %s" % e)
 
 
 def s3_list_buckets(time_delete):
