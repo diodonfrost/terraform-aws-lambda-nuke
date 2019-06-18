@@ -26,7 +26,7 @@ def nuke_all_ebs(older_than_seconds, logger):
         # Nuke all ebs volume
         try:
             ec2.delete_volume(VolumeId=volume)
-            print("Nuke EBS Volume %s", volume)
+            print("Nuke EBS Volume {0}".format(volume))
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'VolumeInUse':
@@ -45,7 +45,7 @@ def nuke_all_ebs(older_than_seconds, logger):
         # Nuke all dlm lifecycle policy
         try:
             dlm.delete_lifecycle_policy(PolicyId=policy)
-            print("Nuke EBS Lifecycle Policy %s", policy)
+            print("Nuke EBS Lifecycle Policy {0}".format(policy))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 

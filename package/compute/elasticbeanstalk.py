@@ -35,7 +35,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds, logger):
                 elasticbeanstalk.delete_application(
                     ApplicationName=app,
                     TerminateEnvByForce=True)
-                print("Nuke elasticbeanstalk application %s", app)
+                print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
                 logger.error("Unexpected error: %s" % e)
 
@@ -51,7 +51,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds, logger):
                 elasticbeanstalk.terminate_environment(
                     EnvironmentId=env,
                     ForceTerminate=True)
-                print("Nuke elasticbeanstalk environment %s", env)
+                print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
                 logger.error("Unexpected error: %s" % e)
 

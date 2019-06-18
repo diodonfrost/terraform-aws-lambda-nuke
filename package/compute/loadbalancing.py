@@ -32,7 +32,7 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
         # Delete load balancer
         try:
             elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
-            print("Nuke Load Balancer %s", loadbalancer)
+            print("Nuke Load Balancer{0}".format(loadbalancer))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 
@@ -44,7 +44,7 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
         # Nuke all target group
         try:
             elbv2.delete_target_group(TargetGroupArn=targetgroup)
-            print("Nuke Target Group %s", targetgroup)
+            print("Nuke Target Group {0}".format(targetgroup))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 

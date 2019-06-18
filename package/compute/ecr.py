@@ -30,7 +30,7 @@ def nuke_all_ecr(older_than_seconds, logger):
         # Delete ecr registry
         try:
             ecr.delete_repository(repositoryName=registry, force=True)
-            print("Nuke ECR Registry %s", registry)
+            print("Nuke ECR Registry{0}".format(registry))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 

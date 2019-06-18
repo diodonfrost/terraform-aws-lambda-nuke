@@ -20,7 +20,7 @@ def nuke_all_key_pair(logger):
         # Delete ec2 key pair
         try:
             ec2.delete_key_pair(KeyName=keypair)
-            print("Nuke Key Pair %s", keypair)
+            print("Nuke Key Pair {0}".format(keypair))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 

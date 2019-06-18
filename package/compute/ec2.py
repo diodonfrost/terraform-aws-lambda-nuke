@@ -22,7 +22,7 @@ def nuke_all_ec2(older_than_seconds, logger):
 
     try:
         ec2.terminate_instances(InstanceIds=ec2_instance_list)
-        print("Terminate instances %s", ec2_instance_list)
+        print("Terminate instances {0}".format(ec2_instance_list))
     except ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == 'OperationNotPermitted':
@@ -39,7 +39,7 @@ def nuke_all_ec2(older_than_seconds, logger):
         # Delete launch template
         try:
             ec2.delete_launch_template(LaunchTemplateId=template)
-            print("Nuke Launch Template %s", template)
+            print("Nuke Launch Template{0}".format(template))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 
@@ -52,7 +52,7 @@ def nuke_all_ec2(older_than_seconds, logger):
         # Delete ec2 placement group
         try:
             ec2.delete_placement_group(GroupName=placementgroup)
-            print("Nuke Placement Group %s", placementgroup)
+            print("Nuke Placement Group {0}".format(placementgroup))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 

@@ -35,7 +35,7 @@ def nuke_all_autoscaling(older_than_seconds, logger):
             autoscaling.delete_auto_scaling_group(
                 AutoScalingGroupName=scaling,
                 ForceDelete=True)
-            print("Nuke Autoscaling Group %s", scaling)
+            print("Nuke Autoscaling Group {0}".format(scaling))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 
@@ -49,7 +49,7 @@ def nuke_all_autoscaling(older_than_seconds, logger):
         try:
             autoscaling.delete_launch_configuration(
                 LaunchConfigurationName=launchconfiguration)
-            print("Nuke Launch Configuration %s", launchconfiguration)
+            print("Nuke Launch Configuration {0}".format(launchconfiguration))
         except ClientError as e:
             logger.error("Unexpected error: %s" % e)
 
