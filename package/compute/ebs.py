@@ -26,14 +26,15 @@ def nuke_all_ebs(older_than_seconds, logger):
         # Nuke all ebs volume
         try:
             ec2.delete_volume(VolumeId=volume)
-            logger.info("Nuke EBS Volume %s", volume)
+            print("Nuke EBS Volume %s", volume)
         except ClientError as e:
-            if e.response['Error']['Code'] == 'VolumeInUse':
+            error_code = e.response['Error']['Code']
+            if error_code == 'VolumeInUse':
                 logger.info("volume %s is already used", volume)
-            elif e.response['Error']['Code'] == 'InvalidVolume':
+            elif error_code == 'InvalidVolume':
                 logger.info("volume %s has already been deleted", volume)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
     # List all dlm policies
     dlm_policy_list = dlm_list_policy(time_delete)
@@ -41,9 +42,12 @@ def nuke_all_ebs(older_than_seconds, logger):
     # Nuke all ebs lifecycle manager
     for policy in dlm_policy_list:
 
-        # Nuke all ebs volume
-        dlm.delete_lifecycle_policy(PolicyId=policy)
-        logger.info("Nuke EBS Lifecycle Policy %s", policy)
+        # Nuke all dlm lifecycle policy
+        try:
+            dlm.delete_lifecycle_policy(PolicyId=policy)
+            print("Nuke EBS Lifecycle Policy %s", policy)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def ebs_list_volumes(time_delete):
@@ -82,8 +86,6 @@ def dlm_list_policy(time_delete):
 
     # Define connection
     dlm = boto3.client('dlm')
-
-    # Paginator dlm list
     response = dlm.get_lifecycle_policies()
 
     # Initialize data lifecycle manager list
@@ -91,10 +93,10 @@ def dlm_list_policy(time_delete):
 
     # Retrieve dlm policies
     for policy in response['Policies']:
-        detailed = dlm.get_lifecycle_policy(PolicyId=policy)
+        detailed = dlm.get_lifecycle_policy(PolicyId=policy['PolicyId'])
         if detailed['Policy']['DateCreated'].timestamp() < time_delete:
 
-            dlm_policy = dlm['PolicyId']
+            dlm_policy = policy['PolicyId']
             dlm_policy_list.insert(0, dlm_policy)
 
     return dlm_policy_list
