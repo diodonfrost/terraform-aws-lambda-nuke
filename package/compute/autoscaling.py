@@ -82,16 +82,18 @@ def autoscaling_list_launch_confs(time_delete):
 
     # Define connection
     autoscaling = boto3.client('autoscaling')
-    response = autoscaling.describe_launch_configurations()
+    paginator = autoscaling.get_paginator('describe_launch_configurations')
+    page_iterator = paginator.paginate()
 
     # Initialize autoscaling launch configuration list
     autoscaling_launch_conf_list = []
 
     # Retrieve autoscaling launch configuration names
-    for launchconf in response['LaunchConfigurations']:
-        if launchconf['CreatedTime'].timestamp() < time_delete:
+    for page in page_iterator:
+        for launchconf in page['LaunchConfigurations']:
+            if launchconf['CreatedTime'].timestamp() < time_delete:
 
-            launch_configuration = launchconf['LaunchConfigurationName']
-            autoscaling_launch_conf_list.insert(0, launch_configuration)
+                launch_configuration = launchconf['LaunchConfigurationName']
+                autoscaling_launch_conf_list.insert(0, launch_configuration)
 
     return autoscaling_launch_conf_list
