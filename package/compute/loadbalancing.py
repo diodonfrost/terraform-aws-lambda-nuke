@@ -3,7 +3,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_loadbalancing(older_than_seconds, logger):
@@ -30,8 +30,11 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
     for loadbalancer in elbv2_loadbalancer_list:
 
         # Delete load balancer
-        elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
-        logger.info("Nuke Load Balancer %s", loadbalancer)
+        try:
+            elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
+            print("Nuke Load Balancer %s", loadbalancer)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
     # List all elbv2 target group arn
     elbv2_targetgroup_list = elbv2_list_target_groups()
@@ -39,8 +42,11 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
     for targetgroup in elbv2_targetgroup_list:
 
         # Nuke all target group
-        elbv2.delete_target_group(TargetGroupArn=targetgroup)
-        logger.info("Nuke Target Group %s", targetgroup)
+        try:
+            elbv2.delete_target_group(TargetGroupArn=targetgroup)
+            print("Nuke Target Group %s", targetgroup)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def elbv2_list_loadbalancers(time_delete):

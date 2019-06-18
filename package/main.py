@@ -31,7 +31,7 @@ older_than = os.getenv('OLDER_THAN', 'none')
 
 # Setup simple logging for INFO
 LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(logging.WARNING)
 
 
 def lambda_handler(event, context):

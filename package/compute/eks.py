@@ -3,7 +3,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_eks(older_than_seconds, logger):
@@ -29,8 +29,11 @@ def nuke_all_eks(older_than_seconds, logger):
     for cluster in eks_cluster_list:
 
         # Delete eks cluster
-        eks.delete_cluster(name=cluster)
-        logger.info("Nuke EKS Cluster %s", cluster)
+        try:
+            eks.delete_cluster(name=cluster)
+            print("Nuke EKS Cluster %s", cluster)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def eks_list_clusters(time_delete):

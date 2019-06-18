@@ -2,7 +2,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_ecr(older_than_seconds, logger):
@@ -28,8 +28,11 @@ def nuke_all_ecr(older_than_seconds, logger):
     for registry in ecr_registry_list:
 
         # Delete ecr registry
-        ecr.delete_repository(repositoryName=registry, force=True)
-        logger.info("Nuke ECR Registry %s", registry)
+        try:
+            ecr.delete_repository(repositoryName=registry, force=True)
+            print("Nuke ECR Registry %s", registry)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def ecr_list_registry(time_delete):

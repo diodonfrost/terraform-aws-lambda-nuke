@@ -3,7 +3,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_autoscaling(older_than_seconds, logger):
@@ -31,10 +31,13 @@ def nuke_all_autoscaling(older_than_seconds, logger):
     for scaling in autoscaling_group_list:
 
         # Delete autoscaling group
-        autoscaling.delete_auto_scaling_group(
-            AutoScalingGroupName=scaling,
-            ForceDelete=True)
-        logger.info("Nuke Autoscaling Group %s", scaling)
+        try:
+            autoscaling.delete_auto_scaling_group(
+                AutoScalingGroupName=scaling,
+                ForceDelete=True)
+            print("Nuke Autoscaling Group %s", scaling)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
     # List all launch configurations
     launch_list_configuration = autoscaling_list_launch_confs(time_delete)
@@ -43,9 +46,12 @@ def nuke_all_autoscaling(older_than_seconds, logger):
     for launchconfiguration in launch_list_configuration:
 
         # Delete launch configuration
-        autoscaling.delete_launch_configuration(
-            LaunchConfigurationName=launchconfiguration)
-        logger.info("Nuke Launch Configuration %s", launchconfiguration)
+        try:
+            autoscaling.delete_launch_configuration(
+                LaunchConfigurationName=launchconfiguration)
+            print("Nuke Launch Configuration %s", launchconfiguration)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def autoscaling_list_groups(time_delete):

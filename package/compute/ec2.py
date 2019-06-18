@@ -22,9 +22,13 @@ def nuke_all_ec2(older_than_seconds, logger):
 
     try:
         ec2.terminate_instances(InstanceIds=ec2_instance_list)
-        logger.info("Terminate instances %s", ec2_instance_list)
-    except ClientError:
-        print('No instance found')
+        print("Terminate instances %s", ec2_instance_list)
+    except ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code == 'OperationNotPermitted':
+            logger.warning("Protected policy enable on %s", ec2_instance_list)
+        else:
+            logger.error("Unexpected error: %s" % e)
 
     # List all ec2 template
     ec2_template_list = ec2_list_templates(time_delete)
@@ -33,8 +37,11 @@ def nuke_all_ec2(older_than_seconds, logger):
     for template in ec2_template_list:
 
         # Delete launch template
-        ec2.delete_launch_template(LaunchTemplateId=template)
-        logger.info("Nuke Launch Template %s", template)
+        try:
+            ec2.delete_launch_template(LaunchTemplateId=template)
+            print("Nuke Launch Template %s", template)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
     # List all ec2 placement group
     ec2_placement_group_list = ec2_list_placement_group()
@@ -43,8 +50,11 @@ def nuke_all_ec2(older_than_seconds, logger):
     for placementgroup in ec2_placement_group_list:
 
         # Delete ec2 placement group
-        ec2.delete_placement_group(GroupName=placementgroup)
-        logger.info("Nuke Placement Group %s", placementgroup)
+        try:
+            ec2.delete_placement_group(GroupName=placementgroup)
+            print("Nuke Placement Group %s", placementgroup)
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def ec2_list_instances(time_delete):
