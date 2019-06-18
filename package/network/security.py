@@ -27,14 +27,15 @@ def nuke_all_network_security(logger):
 
         try:
             ec2.delete_security_group(GroupId=sec_grp)
-            logger.info("Nuke ec2 security group %s", sec_grp)
+            print("Nuke ec2 security group {0}".format(sec_grp))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'CannotDelete':
+            error_code = e.response['Error']['Code']
+            if error_code == 'CannotDelete':
                 logger.info("security grp %s cannot be deleted", sec_grp)
-            elif e.response['Error']['Code'] == 'DependencyViolation':
+            elif error_code == 'DependencyViolation':
                 logger.info("security grp %s has a dependent object", sec_grp)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
     # List all ec2 network acl
     ec2_network_acl_list = ec2_list_network_acls()
@@ -44,12 +45,13 @@ def nuke_all_network_security(logger):
 
         try:
             ec2.delete_network_acl(NetworkAclId=net_acl)
-            logger.info("Nuke ec2 network acl %s", net_acl)
+            print("Nuke ec2 network acl {0}".format(net_acl))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidParameterValue':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidParameterValue':
                 logger.info("network acl %s cannot be deleted", net_acl)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def ec2_list_security_groups():

@@ -2,7 +2,7 @@
 
 import time
 import boto3
-from botocore.exceptions import EndpointConnectionError
+from botocore.exceptions import EndpointConnectionError, ClientError
 
 
 def nuke_all_natgateway(older_than_seconds, logger):
@@ -28,8 +28,12 @@ def nuke_all_natgateway(older_than_seconds, logger):
     # Nuke all ec2 nat gateway
     for nat_gw in ec2_nat_gateway_list:
 
-        ec2.delete_nat_gateway(NatGatewayId=nat_gw)
-        logger.info("Nuke nate gateway %s", nat_gw)
+        # Delete nat gateway
+        try:
+            ec2.delete_nat_gateway(NatGatewayId=nat_gw)
+            print("Nuke nate gateway {0}".format(nat_gw))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def ec2_list_nat_gateways(time_delete):

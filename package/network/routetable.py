@@ -24,15 +24,16 @@ def nuke_all_routetable(logger):
     # Nuke all ec2 route table
     for route_table in ec2_route_table_list:
 
+        # Delete ec2 route table
         try:
-            # Nuke ec2 route table
             ec2.delete_route_table(RouteTableId=route_table)
-            logger.info("Nuke route table %s", route_table)
+            print("Nuke route table {0}".format(route_table))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'DependencyViolation':
+            error_code = e.response['Error']['Code']
+            if error_code == 'DependencyViolation':
                 logger.info("route %s cannot be deleted", route_table)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def ec2_list_route_tables():
