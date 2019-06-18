@@ -48,13 +48,14 @@ def neptune_nuke_instances(time_delete, logger):
             neptune.delete_db_instance(
                 DBInstanceIdentifier=instance,
                 SkipFinalSnapshot=True)
-            logger.info("Nuke neptune instance %s", instance)
+            print("Nuke neptune instance {0}".format(instance))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBInstanceState':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBInstanceState':
                 logger.info(
                     "neptune instance %s is already being deleted", instance)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def neptune_nuke_clusters(time_delete, logger):
@@ -74,13 +75,14 @@ def neptune_nuke_clusters(time_delete, logger):
             neptune.delete_db_cluster(
                 DBClusterIdentifier=cluster,
                 SkipFinalSnapshot=True)
-            logger.info("Nuke neptune cluster %s", cluster)
+            print("Nuke neptune cluster {0}".format(cluster))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBClusterStateFault':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBClusterStateFault':
                 logger.info(
                     "neptune cluster %s is not in started state", cluster)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def neptune_nuke_snapshots(time_delete, logger):
@@ -96,9 +98,13 @@ def neptune_nuke_snapshots(time_delete, logger):
     # Nuke all neptune snapshots
     for snapshot in neptune_snapshot_list:
 
-        neptune.delete_db_cluster_snapshot(
-            DBClusterSnapshotIdentifier=snapshot)
-        logger.info("Nuke neptune snapshot %s", snapshot)
+        # Delete netptune snapshot
+        try:
+            neptune.delete_db_cluster_snapshot(
+                DBClusterSnapshotIdentifier=snapshot)
+            print("Nuke neptune snapshot{0}".format(snapshot))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def neptune_nuke_subnets(logger):
@@ -117,12 +123,13 @@ def neptune_nuke_subnets(logger):
         try:
             neptune.delete_db_subnet_group(
                 DBSubnetGroupName=subnet)
-            logger.info("Nuke neptune subnet %s", subnet)
+            print("Nuke neptune subnet {0}".format(subnet))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBSubnetGroupStateFault':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBSubnetGroupStateFault':
                 logger.info("%s is reserved and cannot be modified.", subnet)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def neptune_nuke_cluster_params(logger):
@@ -141,12 +148,13 @@ def neptune_nuke_cluster_params(logger):
         try:
             neptune.delete_db_cluster_parameter_group(
                 DBClusterParameterGroupName=param)
-            logger.info("Nuke neptune param %s", param)
+            print("Nuke neptune param {0}".format(param))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBParameterGroupState':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBParameterGroupState':
                 logger.info("%s is reserved and cannot be modified.", param)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def neptune_nuke_group_params(logger):
@@ -165,12 +173,13 @@ def neptune_nuke_group_params(logger):
         try:
             neptune.delete_db_parameter_group(
                 DBParameterGroupName=param)
-            logger.info("Nuke neptune param %s", param)
+            print("Nuke neptune param {0}".format(param))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBParameterGroupState':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBParameterGroupState':
                 logger.info("%s is reserved and cannot be modified.", param)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def neptune_list_instances(time_delete):

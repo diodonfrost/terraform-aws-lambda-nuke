@@ -28,14 +28,16 @@ def nuke_all_rds(older_than_seconds, logger):
     # Nuke all rds instances
     for instance in rds_instance_list:
 
+        # Delete rds instance
         try:
             rds.delete_db_instance(DBInstanceIdentifier=instance)
-            logger.info("Stop rds instance %s", instance)
+            print("Stop rds instance {0}".format(instance))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBInstanceState':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBInstanceState':
                 logger.info("rds instance %s is not started", instance)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
     # List all rds clusters
     rds_cluster_list = rds_list_clusters(time_delete)
@@ -43,14 +45,16 @@ def nuke_all_rds(older_than_seconds, logger):
     # Nuke all rds clusters
     for cluster in rds_cluster_list:
 
+        # Delete Aurora cluster
         try:
             rds.delete_db_cluster(DBClusterIdentifier=cluster)
-            logger.info("Nuke rds cluster %s", cluster)
+            print("Nuke rds cluster {0}".format(cluster))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidDBClusterStateFault':
+            error_code = e.response['Error']['Code']
+            if error_code == 'InvalidDBClusterStateFault':
                 logger.info("rds cluster %s is not started", cluster)
             else:
-                print("Unexpected error: %s" % e)
+                logger.error("Unexpected error: %s" % e)
 
 
 def rds_list_instances(time_delete):

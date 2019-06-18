@@ -28,8 +28,12 @@ def nuke_all_dynamodb(older_than_seconds, logger):
     # Nuke all dynamodb tables
     for table in dynamodb_table_list:
 
-        dynamodb.delete_table(TableName=table)
-        logger.info("Nuke rds table %s", table)
+        # Delete dynamodb table
+        try:
+            dynamodb.delete_table(TableName=table)
+            print("Nuke rds table{0}".format(table))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
     # List all dynamodb backup
     dynamodb_table_backup = dynamodb_list_backups(time_delete)
@@ -37,8 +41,12 @@ def nuke_all_dynamodb(older_than_seconds, logger):
     # Nuke all dynamodb backup
     for backup in dynamodb_table_backup:
 
-        dynamodb.delete_backup(BackupArn=backup)
-        logger.info("Nuke rds backup %s", backup)
+        # Delete dynamodb backup
+        try:
+            dynamodb.delete_backup(BackupArn=backup)
+            print("Nuke rds backup {0}".format(backup))
+        except ClientError as e:
+            logger.error("Unexpected error: %s" % e)
 
 
 def dynamodb_list_tables(time_delete):
