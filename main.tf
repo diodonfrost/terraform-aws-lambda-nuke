@@ -209,7 +209,7 @@ resource "aws_iam_role_policy" "nuke_network" {
 EOF
 }
 
-# Allow lambda to log in CloudWatch
+# Allow lambda cloudwatch logs
 resource "aws_iam_role_policy" "lambda_logging" {
   name = "${var.name}-lambda-logging"
   role = "${aws_iam_role.nuke_lambda.id}"
@@ -221,8 +221,7 @@ resource "aws_iam_role_policy" "lambda_logging" {
     {
       "Action": [
         "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        "logs:CreateLogGroup"
+        "logs:PutLogEvents"
       ],
       "Resource": "arn:aws:logs:*:*:*",
       "Effect": "Allow"
@@ -291,7 +290,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_nuke" {
   source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
 }
 
-# Create CloudWatch log for lambda function
+# Enable lambda cloudwatch logs
 resource "aws_cloudwatch_log_group" "lambda_Logging" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
