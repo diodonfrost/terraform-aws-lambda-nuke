@@ -4,9 +4,6 @@ language: python
 python:
   - "3.7"
 
-git:
-  depth: false
-
 env:
   global:
     - AWS_REGION='eu-west-1'
@@ -17,9 +14,7 @@ install:
   # Install the latest version of terraform with ansible and sonar-scanner
   - sudo pip install ansible
   - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
-  - sudo ansible-galaxy install diodonfrost.sonar_scanner && sudo ln -s ~/.ansible/roles/diodonfrost.sonar_scanner ~/.ansible/roles/ansible-role-sonar-scanner
   - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
-  - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-sonar-scanner tests/test.yml -e "sonar_scanner_version=3.3.0.1492"
 
 before_script:
   - terraform -version
@@ -47,12 +42,3 @@ script:
   - terraform validate
   - terraform -v
 
-  # Run sonar-scanner (https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-nuke)
-  - cd ../..
-  - >
-    sonar-scanner \
-      -Dsonar.projectKey=diodonfrost_terraform-aws-lambda-nuke \
-      -Dsonar.organization=diodonfrost-github \
-      -Dsonar.sources=. \
-      -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=${SONAR_TOKEN}
