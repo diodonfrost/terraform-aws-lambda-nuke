@@ -1,10 +1,11 @@
 """This script nuke all eip resources"""
 
+import logging
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_eip(logger):
+def nuke_all_eip():
     """
          ec2 function for destroy all elastic
     """
@@ -29,7 +30,7 @@ def nuke_all_eip(logger):
             ec2.release_address(AllocationId=eip)
             print("Nuke elastic ip {0}".format(eip))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_eips():

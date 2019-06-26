@@ -1,11 +1,12 @@
 """This script nuke all nat_gateway resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_natgateway(older_than_seconds, logger):
+def nuke_all_natgateway(older_than_seconds):
     """
          ec2 function for destroy all ec2 nat gateway
     """
@@ -33,7 +34,7 @@ def nuke_all_natgateway(older_than_seconds, logger):
             ec2.delete_nat_gateway(NatGatewayId=nat_gw)
             print("Nuke nate gateway {0}".format(nat_gw))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_nat_gateways(time_delete):

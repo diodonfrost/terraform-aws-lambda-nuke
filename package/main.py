@@ -1,6 +1,5 @@
 """Main entrypoint function for destroy all aws resources"""
 
-import logging
 import os
 import timeparse
 
@@ -29,76 +28,72 @@ from network.internetgateway import nuke_all_internetgateway
 exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
 older_than = os.getenv('OLDER_THAN', 'none')
 
-# Setup simple logging for INFO
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.WARNING)
-
 
 def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
 
     # Convert older_than variable to seconds
-    older_than_seconds = timeparse.timeparse(older_than, LOGGER)
+    older_than_seconds = timeparse.timeparse(older_than)
 
     if "endpoint" not in exclude_resources:
-        nuke_all_endpoint(older_than_seconds, LOGGER)
+        nuke_all_endpoint(older_than_seconds)
 
     if "ec2" not in exclude_resources:
-        nuke_all_ec2(older_than_seconds, LOGGER)
+        nuke_all_ec2(older_than_seconds)
 
     if "autoscaling" not in exclude_resources:
-        nuke_all_autoscaling(older_than_seconds, LOGGER)
+        nuke_all_autoscaling(older_than_seconds)
 
     if "loadbalancing" not in exclude_resources:
-        nuke_all_loadbalancing(older_than_seconds, LOGGER)
+        nuke_all_loadbalancing(older_than_seconds)
 
     if "key_pair" not in exclude_resources:
-        nuke_all_key_pair(LOGGER)
+        nuke_all_key_pair()
 
     if "ecr" not in exclude_resources:
-        nuke_all_ecr(older_than_seconds, LOGGER)
+        nuke_all_ecr(older_than_seconds)
 
     if "eks" not in exclude_resources:
-        nuke_all_eks(older_than_seconds, LOGGER)
+        nuke_all_eks(older_than_seconds)
 
     if "s3" not in exclude_resources:
-        nuke_all_s3(older_than_seconds, LOGGER)
+        nuke_all_s3(older_than_seconds)
 
     if "efs" not in exclude_resources:
-        nuke_all_efs(older_than_seconds, LOGGER)
+        nuke_all_efs(older_than_seconds)
 
     if "glacier" not in exclude_resources:
-        nuke_all_glacier(older_than_seconds, LOGGER)
+        nuke_all_glacier(older_than_seconds)
 
     if "rds" not in exclude_resources:
-        nuke_all_rds(older_than_seconds, LOGGER)
+        nuke_all_rds(older_than_seconds)
 
     if "dynamodb" not in exclude_resources:
-        nuke_all_dynamodb(older_than_seconds, LOGGER)
+        nuke_all_dynamodb(older_than_seconds)
 
     if "elasticache" not in exclude_resources:
-        nuke_all_elasticache(older_than_seconds, LOGGER)
+        nuke_all_elasticache(older_than_seconds)
 
     if "neptune" not in exclude_resources:
-        nuke_all_neptune(older_than_seconds, LOGGER)
+        nuke_all_neptune(older_than_seconds)
 
     if "redshift" not in exclude_resources:
-        nuke_all_redshift(older_than_seconds, LOGGER)
+        nuke_all_redshift(older_than_seconds)
 
     if "ebs" not in exclude_resources:
-        nuke_all_ebs(older_than_seconds, LOGGER)
+        nuke_all_ebs(older_than_seconds)
 
     if "network_security" not in exclude_resources:
-        nuke_all_network_security(LOGGER)
+        nuke_all_network_security()
 
     if "natgateway" not in exclude_resources:
-        nuke_all_natgateway(older_than_seconds, LOGGER)
+        nuke_all_natgateway(older_than_seconds)
 
     if "eip" not in exclude_resources:
-        nuke_all_eip(LOGGER)
+        nuke_all_eip()
 
     if "routetable" not in exclude_resources:
-        nuke_all_routetable(LOGGER)
+        nuke_all_routetable()
 
     if "internetgateway" not in exclude_resources:
-        nuke_all_internetgateway(LOGGER)
+        nuke_all_internetgateway()

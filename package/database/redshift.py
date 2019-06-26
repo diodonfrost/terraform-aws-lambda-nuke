@@ -1,11 +1,12 @@
 """This script nuke all redshift resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_redshift(older_than_seconds, logger):
+def nuke_all_redshift(older_than_seconds):
     """
          redshift function for destroy all redshift resources
     """
@@ -23,13 +24,13 @@ def nuke_all_redshift(older_than_seconds, logger):
         return
 
     # Nuke all aws redshift resources
-    redshift_nuke_clusters(time_delete, logger)
-    redshift_nuke_snapshots(time_delete, logger)
-    redshift_nuke_subnets(logger)
-    redshift_nuke_param_groups(logger)
+    redshift_nuke_clusters(time_delete)
+    redshift_nuke_snapshots(time_delete)
+    redshift_nuke_subnets()
+    redshift_nuke_param_groups()
 
 
-def redshift_nuke_clusters(time_delete, logger):
+def redshift_nuke_clusters(time_delete):
     """
          redshift function for destroy all redshift databases
     """
@@ -50,13 +51,13 @@ def redshift_nuke_clusters(time_delete, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidClusterStateFault':
-                logger.info(
+                logging.info(
                     "redshift cluster %s is not in state started", cluster)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def redshift_nuke_snapshots(time_delete, logger):
+def redshift_nuke_snapshots(time_delete):
     """
          redshift function for destroy all redshift snapshots
     """
@@ -75,13 +76,13 @@ def redshift_nuke_snapshots(time_delete, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidClusterSnapshotStateFault':
-                logger.info(
+                logging.info(
                     "redshift snap %s is not in state available", snapshot)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def redshift_nuke_subnets(logger):
+def redshift_nuke_subnets():
     """
          redshift function for destroy all redshift subnets
     """
@@ -100,13 +101,13 @@ def redshift_nuke_subnets(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidClusterSubnetGroupStateFault':
-                logger.info(
+                logging.info(
                     "redshift subnet %s is not in state available", subnet)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def redshift_nuke_param_groups(logger):
+def redshift_nuke_param_groups():
     """
          redshift function for destroy all redshift param groups
     """
@@ -125,13 +126,13 @@ def redshift_nuke_param_groups(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidClusterParameterGroupStateFault':
-                logger.info(
+                logging.info(
                     "redshift param %s is not in state available", param)
             elif error_code == 'InvalidParameterValue':
-                logger.info(
+                logging.info(
                     "default %s parameter group cannot be deleted", param)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def redshift_list_clusters(time_delete):

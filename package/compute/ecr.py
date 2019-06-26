@@ -1,11 +1,12 @@
 """This script nuke all ecr resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_ecr(older_than_seconds, logger):
+def nuke_all_ecr(older_than_seconds):
     """
          ecr function for destroy all ecr registry
     """
@@ -32,7 +33,7 @@ def nuke_all_ecr(older_than_seconds, logger):
             ecr.delete_repository(repositoryName=registry, force=True)
             print("Nuke ECR Registry{0}".format(registry))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def ecr_list_registry(time_delete):

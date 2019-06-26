@@ -1,11 +1,12 @@
 """This script nuke all elasticache resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_elasticache(older_than_seconds, logger):
+def nuke_all_elasticache(older_than_seconds):
     """
          elasticache function for destroy all elasticache resources
     """
@@ -23,13 +24,13 @@ def nuke_all_elasticache(older_than_seconds, logger):
         return
 
     # Nuke all elasticachec clusters
-    elasticache_nuke_clusters(time_delete, logger)
-    elasticache_nuke_snapshots(time_delete, logger)
-    elasticache_nuke_subnets(logger)
-    elasticache_nuke_param_groups(logger)
+    elasticache_nuke_clusters(time_delete)
+    elasticache_nuke_snapshots(time_delete)
+    elasticache_nuke_subnets()
+    elasticache_nuke_param_groups()
 
 
-def elasticache_nuke_clusters(time_delete, logger):
+def elasticache_nuke_clusters(time_delete):
     """
          elasticache function for destroy all elasticache cluster
     """
@@ -48,13 +49,13 @@ def elasticache_nuke_clusters(time_delete, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidCacheClusterState':
-                logger.info(
+                logging.info(
                     "cache cluster %s is not in available state", cluster)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def elasticache_nuke_snapshots(time_delete, logger):
+def elasticache_nuke_snapshots(time_delete):
     """
          elasticache function for destroy all elasticache snapshots
     """
@@ -73,13 +74,13 @@ def elasticache_nuke_snapshots(time_delete, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidSnapshotState':
-                logger.info(
+                logging.info(
                     "cache snapshot %s is not in available state", snapshot)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def elasticache_nuke_subnets(logger):
+def elasticache_nuke_subnets():
     """
          elasticache function for destroy all elasticache subnets
     """
@@ -99,14 +100,14 @@ def elasticache_nuke_subnets(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidCacheSubnetState':
-                logger.info("cache %s is not in available state", subnet)
+                logging.info("cache %s is not in available state", subnet)
             elif error_code == 'InvalidParameterValue':
-                logger.info("cache %s cannot be deleted", subnet)
+                logging.info("cache %s cannot be deleted", subnet)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
-def elasticache_nuke_param_groups(logger):
+def elasticache_nuke_param_groups():
     """
          elasticache function for destroy all elasticache param groups
     """
@@ -126,11 +127,11 @@ def elasticache_nuke_param_groups(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidCacheParameterGroupState':
-                logger.info("cache param %s is not in available state", param)
+                logging.info("cache param %s is not in available state", param)
             elif error_code == 'InvalidParameterValue':
-                logger.info("cache %s param group cannot be deleted", param)
+                logging.info("cache %s param group cannot be deleted", param)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def elasticache_list_clusters(time_delete):

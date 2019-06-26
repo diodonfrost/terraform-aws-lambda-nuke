@@ -1,11 +1,12 @@
 """This script nuke all rds resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_rds(older_than_seconds, logger):
+def nuke_all_rds(older_than_seconds):
     """
          rds function for destroy all rds database
     """
@@ -35,9 +36,9 @@ def nuke_all_rds(older_than_seconds, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidDBInstanceState':
-                logger.info("rds instance %s is not started", instance)
+                logging.info("rds instance %s is not started", instance)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
     # List all rds clusters
     rds_cluster_list = rds_list_clusters(time_delete)
@@ -52,9 +53,9 @@ def nuke_all_rds(older_than_seconds, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidDBClusterStateFault':
-                logger.info("rds cluster %s is not started", cluster)
+                logging.info("rds cluster %s is not started", cluster)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def rds_list_instances(time_delete):

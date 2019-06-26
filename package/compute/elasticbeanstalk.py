@@ -1,12 +1,12 @@
-
 """This script nuke all elasticbeanstalk resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_elasticbeanstalk(older_than_seconds, logger):
+def nuke_all_elasticbeanstalk(older_than_seconds):
     """
          elasticbeanstalk function for nuke all
          elasticbeanstalk stack
@@ -37,7 +37,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds, logger):
                     TerminateEnvByForce=True)
                 print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
     # List all elastic beanstalk env
     elasticbeanstalk_env_list = elasticbeanstalk_list_envs()
@@ -53,7 +53,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds, logger):
                     ForceTerminate=True)
                 print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def elasticbeanstalk_list_apps():

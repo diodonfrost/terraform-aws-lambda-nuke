@@ -1,11 +1,12 @@
 """This script nuke all efs resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_efs(older_than_seconds, logger):
+def nuke_all_efs(older_than_seconds):
     """
          efs function for destroy all efs share
     """
@@ -33,7 +34,7 @@ def nuke_all_efs(older_than_seconds, logger):
             efs.delete_file_system(FileSystemId=efs)
             print("Nuke EFS share {0}".format(efs))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def efs_list_file_systems(time_delete):

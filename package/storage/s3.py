@@ -1,11 +1,12 @@
 """This script nuke all s3 bucket"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_s3(older_than_seconds, logger):
+def nuke_all_s3(older_than_seconds):
     """
          s3 function for nuke all s3 buckets
     """
@@ -41,9 +42,9 @@ def nuke_all_s3(older_than_seconds, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'AccessDenied':
-                logger.warning("Protected policy enable on %s", s3_bucket)
+                logging.warning("Protected policy enable on %s", s3_bucket)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def s3_list_buckets(time_delete):

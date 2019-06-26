@@ -1,11 +1,12 @@
 """This script nuke all endpoint resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_endpoint(older_than_seconds, logger):
+def nuke_all_endpoint(older_than_seconds):
     """
          ec2 function for destroy all endpoint
     """
@@ -33,9 +34,9 @@ def nuke_all_endpoint(older_than_seconds, logger):
     except ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == 'RequestLimitExceeded':
-            logger.info("DeleteVpcEndpoints operation max retries reached")
+            logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
     # List all ec2 endpoint services
     ec2_endpoint_service_list = ec2_list_endpoint_services()
@@ -48,9 +49,9 @@ def nuke_all_endpoint(older_than_seconds, logger):
     except ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == 'InternalError':
-            logger.info("DeleteVpcEndpoints operation max retries reached")
+            logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_endpoints(time_delete):

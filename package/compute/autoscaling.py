@@ -1,12 +1,12 @@
-
 """This script nuke all autoscaling resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_autoscaling(older_than_seconds, logger):
+def nuke_all_autoscaling(older_than_seconds):
     """
         Function for destroy every autoscaling,
         launch_configuration aws resources
@@ -37,7 +37,7 @@ def nuke_all_autoscaling(older_than_seconds, logger):
                 ForceDelete=True)
             print("Nuke Autoscaling Group {0}".format(scaling))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
     # List all launch configurations
     launch_list_configuration = autoscaling_list_launch_confs(time_delete)
@@ -51,7 +51,7 @@ def nuke_all_autoscaling(older_than_seconds, logger):
                 LaunchConfigurationName=launchconfiguration)
             print("Nuke Launch Configuration {0}".format(launchconfiguration))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def autoscaling_list_groups(time_delete):

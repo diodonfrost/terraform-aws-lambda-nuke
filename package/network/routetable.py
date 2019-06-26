@@ -1,10 +1,11 @@
 """This script nuke all route_table resources"""
 
+import logging
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_routetable(logger):
+def nuke_all_routetable():
     """
          ec2 function for destroy all route table
     """
@@ -31,9 +32,9 @@ def nuke_all_routetable(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'DependencyViolation':
-                logger.info("route %s cannot be deleted", route_table)
+                logging.info("route %s cannot be deleted", route_table)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_route_tables():

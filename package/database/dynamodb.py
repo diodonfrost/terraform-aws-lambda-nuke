@@ -1,11 +1,12 @@
 """This script nuke all dynamodb resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_dynamodb(older_than_seconds, logger):
+def nuke_all_dynamodb(older_than_seconds):
     """
          dynamodb function for destroy all dynamodb database
     """
@@ -33,7 +34,7 @@ def nuke_all_dynamodb(older_than_seconds, logger):
             dynamodb.delete_table(TableName=table)
             print("Nuke rds table{0}".format(table))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
     # List all dynamodb backup
     dynamodb_table_backup = dynamodb_list_backups(time_delete)
@@ -46,7 +47,7 @@ def nuke_all_dynamodb(older_than_seconds, logger):
             dynamodb.delete_backup(BackupArn=backup)
             print("Nuke rds backup {0}".format(backup))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def dynamodb_list_tables(time_delete):

@@ -1,10 +1,11 @@
 """This script nuke all security_group resources"""
 
+import logging
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_network_security(logger):
+def nuke_all_network_security():
     """
          ec2 function for destroy all security group and
          network acl resources
@@ -31,11 +32,11 @@ def nuke_all_network_security(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'CannotDelete':
-                logger.info("security grp %s cannot be deleted", sec_grp)
+                logging.info("security grp %s cannot be deleted", sec_grp)
             elif error_code == 'DependencyViolation':
-                logger.info("security grp %s has a dependent object", sec_grp)
+                logging.info("security grp %s has a dependent object", sec_grp)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
     # List all ec2 network acl
     ec2_network_acl_list = ec2_list_network_acls()
@@ -49,9 +50,9 @@ def nuke_all_network_security(logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'InvalidParameterValue':
-                logger.info("network acl %s cannot be deleted", net_acl)
+                logging.info("network acl %s cannot be deleted", net_acl)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_security_groups():

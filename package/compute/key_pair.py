@@ -1,10 +1,11 @@
 """This script nuke all key pairs"""
 
+import logging
 import boto3
 from botocore.exceptions import ClientError
 
 
-def nuke_all_key_pair(logger):
+def nuke_all_key_pair():
     """
          ec2 function for nuke all key pairs
     """
@@ -22,7 +23,7 @@ def nuke_all_key_pair(logger):
             ec2.delete_key_pair(KeyName=keypair)
             print("Nuke Key Pair {0}".format(keypair))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_keypair():

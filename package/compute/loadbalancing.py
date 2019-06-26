@@ -1,12 +1,12 @@
-
 """This script nuke all autoscaling resources"""
 
+import logging
 import time
 import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_loadbalancing(older_than_seconds, logger):
+def nuke_all_loadbalancing(older_than_seconds):
     """
         Function for destroy every loadbalancer and
         target groups aws resources
@@ -36,9 +36,9 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'OperationNotPermitted':
-                logger.warning("Protected policy enable on %s", loadbalancer)
+                logging.warning("Protected policy enable on %s", loadbalancer)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
     # List all elbv2 target group arn
     elbv2_targetgroup_list = elbv2_list_target_groups()
@@ -52,9 +52,9 @@ def nuke_all_loadbalancing(older_than_seconds, logger):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'ResourceInUse':
-                logger.warning("%s is use by listener or rule", targetgroup)
+                logging.warning("%s is use by listener or rule", targetgroup)
             else:
-                logger.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s" % e)
 
 
 def elbv2_list_loadbalancers(time_delete):
