@@ -30,9 +30,6 @@ def nuke_all_s3(older_than_seconds, logger):
     for s3_bucket in s3_bucket_list:
 
         try:
-            # Delete bucket policy
-            s3.delete_bucket_policy(Bucket=s3_bucket)
-
             # Delete all objects in bucket
             bucket = s3_resource.Bucket(s3_bucket)
             for key in bucket.objects.all():
@@ -42,7 +39,11 @@ def nuke_all_s3(older_than_seconds, logger):
             s3.delete_bucket(Bucket=s3_bucket)
             print("Nuke s3 bucket {0}".format(s3_bucket))
         except ClientError as e:
-            logger.error("Unexpected error: %s" % e)
+            error_code = e.response['Error']['Code']
+            if error_code == 'AccessDenied':
+                logger.warning("Protected policy enable on %s", s3_bucket)
+            else:
+                logger.error("Unexpected error: %s" % e)
 
 
 def s3_list_buckets(time_delete):
