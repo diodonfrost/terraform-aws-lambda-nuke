@@ -89,7 +89,7 @@ module "nuke_everything_older_than_7d" {
 
 | Name | Description |
 |------|-------------|
-| lambda_iam_role_arn | The Amazon Resource Name (ARN) identifying your Lambda Function |
+| lambda_iam_role_arn | The ARN of the IAM role used by Lambda function |
 | lambda_iam_role_name | The name of the IAM role used by Lambda function |
 | nuke_lambda_arn | The ARN of the Lambda function |
 | nuke_function_name | The name of the Lambda function |
