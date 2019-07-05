@@ -57,7 +57,7 @@ resource "aws_redshift_cluster" "cluster_nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "diodonfrost/lambda-nuke/aws"
+  source                         = "../../../"
   name                           = "nuke-redshift"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

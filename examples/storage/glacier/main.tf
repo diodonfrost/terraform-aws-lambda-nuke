@@ -6,7 +6,7 @@ resource "aws_glacier_vault" "my_archive" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "diodonfrost/lambda-nuke/aws"
+  source                         = "../../../"
   name                           = "nuke-s3"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

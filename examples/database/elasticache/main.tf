@@ -64,7 +64,7 @@ resource "aws_elasticache_cluster" "nuke_redis" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "diodonfrost/lambda-nuke/aws"
+  source                         = "../../../"
   name                           = "nuke-elasticache"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

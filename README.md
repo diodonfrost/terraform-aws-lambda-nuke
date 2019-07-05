@@ -118,13 +118,13 @@ Launch kitchen tests:
 kitchen list
 
 # Build, and tests terraform module
-kitchen test lambda-scheduler-aws
+kitchen test
 
 # for development, create environment
-kitchen converge lambda-scheduler-aws
+kitchen converge
 
 # Apply awspec tests
-kitchen verify lambda-scheduler-aws
+kitchen verify
 ```
 
 ## Authors

@@ -32,7 +32,7 @@ resource "aws_spot_instance_request" "nuke" {
 
 module "nuke-everything" {
   source                         = "../../../"
-  name                           = "nuke-ec2"
+  name                           = "nuke-spot"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""
   older_than                     = "0d"
