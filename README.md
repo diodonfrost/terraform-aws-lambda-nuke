@@ -13,18 +13,20 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
 
 *   Aws lambda runtine Python 3.6
 *   Compute resources nuke:
-    -   ec2 Instances
-    -   launch Templates
-    -   launch Configurations
-    -   ebs Volumes
-    -   ebs Life Cycle Manager
+    -   ec2 instances
+    -   spot instance request
+    -   spot fleet request
+    -   launch templates
+    -   launch configurations
+    -   ebs volumes
+    -   ebs life cycle manager
     -   elb
     -   elbv2
-    -   target Groups
-    -   auto Scaling Groups
-    -   target Groups
-    -   key Pairs
-    -   placement Groups
+    -   target groups
+    -   auto scaling groups
+    -   target groups
+    -   key pairs
+    -   placement groups
     -   ecr
     -   eks
     -   elastic beanstalk
@@ -34,24 +36,24 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   glacier
 *   Database resources nuke:
     -   rds instances
-    -   rds Clusters
+    -   rds clusters
     -   dynamodb
     -   elasticache
     -   neptune
     -   redshift
 *   Network resources nuke:
-    -   Security group
-    -   Network acl
-    -   Vpc endpoint
-    -   Eip
+    -   security group
+    -   network acl
+    -   vpc endpoint
+    -   eip
 
 ## Caveats
 This following resources are not supported because creation timestamp are not present:
 
 *   Compute
-    -   ECS
+    -   ecs
 *   Database:
-    -   Dax
+    -   dax
 
 ## Usage
 ```hcl
