@@ -6,9 +6,9 @@ import boto3
 from botocore.exceptions import EndpointConnectionError, ClientError
 
 
-def nuke_all_loadbalancing(older_than_seconds):
+def nuke_all_elbv2(older_than_seconds):
     """
-        Function for destroy every loadbalancer and
+        Function for destroy every elbv2 and
         target groups aws resources
     """
     # Convert date in seconds
@@ -32,7 +32,7 @@ def nuke_all_loadbalancing(older_than_seconds):
         # Delete load balancer
         try:
             elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
-            print("Nuke Load Balancer{0}".format(loadbalancer))
+            print("Nuke Load Balancer {0}".format(loadbalancer))
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code == 'OperationNotPermitted':

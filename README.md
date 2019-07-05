@@ -13,31 +13,32 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
 
 *   Aws lambda runtine Python 3.6
 *   Compute resources nuke:
-    -   Ec2 Instances
-    -   Launch Templates
-    -   Ebs Volumes
-    -   Ebs Life Cycle Manager
-    -   Load Balancers
-    -   Target Groups
-    -   Launch Configurations
-    -   Auto Scaling Groups
-    -   Target Groups
-    -   Key Pairs
-    -   Placement Groups
-    -   ECR
-    -   EKS
-    -   Elastic Beanstalk
+    -   ec2 Instances
+    -   launch Templates
+    -   launch Configurations
+    -   ebs Volumes
+    -   ebs Life Cycle Manager
+    -   elb
+    -   elbv2
+    -   target Groups
+    -   auto Scaling Groups
+    -   target Groups
+    -   key Pairs
+    -   placement Groups
+    -   ecr
+    -   eks
+    -   elastic beanstalk
 *   Storage resources nuke:
-    -   S3
-    -   EFS
-    -   Glacier
+    -   s3
+    -   efs
+    -   glacier
 *   Database resources nuke:
-    -   Rds instances
-    -   Rds Clusters
-    -   Dynamodb
-    -   Elasticache
-    -   Neptune
-    -   Redshift
+    -   rds instances
+    -   rds Clusters
+    -   dynamodb
+    -   elasticache
+    -   neptune
+    -   redshift
 *   Network resources nuke:
     -   Security group
     -   Network acl

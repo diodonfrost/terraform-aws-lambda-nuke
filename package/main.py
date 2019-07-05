@@ -4,8 +4,10 @@ import os
 import timeparse
 
 from compute.ec2 import nuke_all_ec2
+from compute.spot import nuke_all_spot
 from compute.autoscaling import nuke_all_autoscaling
-from compute.loadbalancing import nuke_all_loadbalancing
+from compute.elb import nuke_all_elb
+from compute.elbv2 import nuke_all_elbv2
 from compute.ebs import nuke_all_ebs
 from compute.key_pair import nuke_all_key_pair
 from compute.ecr import nuke_all_ecr
@@ -39,11 +41,15 @@ def lambda_handler(event, context):
     if "ec2" not in exclude_resources:
         nuke_all_ec2(older_than_seconds)
 
+    if "spot" not in exclude_resources:
+        nuke_all_spot(older_than_seconds)
+
     if "autoscaling" not in exclude_resources:
         nuke_all_autoscaling(older_than_seconds)
 
-    if "loadbalancing" not in exclude_resources:
-        nuke_all_loadbalancing(older_than_seconds)
+    if "elb" not in exclude_resources:
+        nuke_all_elb(older_than_seconds)
+        nuke_all_elbv2(older_than_seconds)
 
     if "key_pair" not in exclude_resources:
         nuke_all_key_pair()

@@ -20,15 +20,16 @@ def nuke_all_ec2(older_than_seconds):
     # List all ec2 instances
     ec2_instance_list = ec2_list_instances(time_delete)
 
-    try:
-        ec2.terminate_instances(InstanceIds=ec2_instance_list)
-        print("Terminate instances {0}".format(ec2_instance_list))
-    except ClientError as e:
-        error_code = e.response['Error']['Code']
-        if error_code == 'OperationNotPermitted':
-            logging.warning("Protected policy enable on %s", ec2_instance_list)
-        else:
-            logging.error("Unexpected error: %s" % e)
+    for ec2_instance in ec2_instance_list:
+        try:
+            ec2.terminate_instances(InstanceIds=[ec2_instance])
+            print("Terminate instances {0}".format(ec2_instance))
+        except ClientError as e:
+            error_code = e.response['Error']['Code']
+            if error_code == 'OperationNotPermitted':
+                logging.warning("Protected policy enable on %s", ec2_instance)
+            else:
+                logging.error("Unexpected error: %s" % e)
 
     # List all ec2 template
     ec2_template_list = ec2_list_templates(time_delete)
