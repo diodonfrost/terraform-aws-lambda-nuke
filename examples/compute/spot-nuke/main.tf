@@ -31,7 +31,7 @@ resource "aws_spot_instance_request" "nuke" {
 ### Terraform modules ###
 
 module "nuke-everything" {
-  source                         = "diodonfrost/lambda-nuke/aws"
+  source                         = "../../../"
   name                           = "nuke-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""

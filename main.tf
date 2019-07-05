@@ -47,6 +47,8 @@ resource "aws_iam_role_policy" "nuke_compute" {
                 "ec2:DescribeInstances",
                 "ec2:TerminateInstances",
                 "ec2:DescribeSpotInstanceRequests",
+                "ec2:CancelSpotInstanceRequests",
+                "ec2:DescribeSpotFleetRequests",
                 "ec2:DeleteSpotInstanceRequest",
                 "ec2:DescribeLaunchTemplates",
                 "ec2:DeleteLaunchTemplate",

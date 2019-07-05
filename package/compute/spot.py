@@ -24,7 +24,7 @@ def nuke_all_spot(older_than_seconds):
     # Nuke all aws spot instance request
     for spot_request in spot_request_list:
         try:
-            ec2.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request)
+            ec2.cancel_spot_instance_requests(SpotInstanceRequestIds=[spot_request])
             print("Cancel spot instance request {0}".format(spot_request))
         except ClientError as e:
             logging.error("Unexpected error: %s" % e)
@@ -35,7 +35,7 @@ def nuke_all_spot(older_than_seconds):
     # nuke all aws spot fleet request
     for spot_fleet in spot_fleet_list:
         try:
-            ec2.cancel_spot_fleet_requests(SpotFleetRequestIds=spot_fleet)
+            ec2.cancel_spot_fleet_requests(SpotFleetRequestIds=[spot_fleet])
             print("Nuke spot fleet request {0}".format(spot_fleet))
         except ClientError as e:
             logging.error("Unexpected error: %s" % e)
@@ -45,18 +45,10 @@ def spot_list_requests(time_delete):
     """
        Aws spot request list function, list name of all spot request
     """
-    # Add exponential back off
-    config = Config(
-        retries=dict(
-            max_attempts=10
-        )
-    )
-
     # Define the connection
-    ec2 = boto3.client("ec2", config=config)
+    ec2 = boto3.client("ec2")
     response = ec2.describe_spot_instance_requests(
-        Filters=[{'Name': 'state ', 'Values': ['open',
-                                               'active']}])
+        Filters=[{'Name': 'state', 'Values': ['active']}])
 
     # Initialize spot request list
     spot_request_list = []
@@ -77,22 +69,15 @@ def spot_list_fleet(time_delete):
        Aws spot fleet list function, list name of
        all spot fleet request and return it in list.
     """
-    # Add exponential back off
-    config = Config(
-        retries=dict(
-            max_attempts=10
-        )
-    )
-
     # Define the connection
-    ec2 = boto3.client("ec2", config=config)
+    ec2 = boto3.client("ec2")
     response = ec2.describe_spot_fleet_requests()
 
     # Initialize spot fleet list
     spot_fleet_list = []
 
     # Retrieve all spot fleet request
-    for fleet in response['describe_spot_instance_requests']:
+    for fleet in response['SpotFleetRequestConfigs']:
         if fleet['CreateTime'].timestamp() < time_delete:
 
             spot_fleet_list = fleet['SpotFleetRequestId']
