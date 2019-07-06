@@ -1,0 +1,93 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.9.1] - 2019-07-05
+### Added
+-   Spot deletion support
+-   Classic loadbalancer deletion support
+
+### Changed
+-   Delete s3 bucket with objects
+-   Don't delete s3 bucket with policy
+-   Refactoring python logging
+-   Use local module in Terraform examples
+
+### Removed
+-   AWS nat gateway deletion
+-   AWS internet gateway deletion
+-   AWS route table deletion
+
+## [0.9.0] - 2019-06-19
+### Added
+-   Paginator for Python launch_configuration resources
+
+### Changed
+-   Refactoring all Python exception handling
+-   Fix Python dlm nuke function
+-   Update aws update availability zones in Terraform examples
+-   Fix Terraform CloudWatch policy
+
+## [0.8.1] - 2019-06-17
+### Added
+-   Enable CloudWatch loggings
+
+### Changed
+-   Fix s3 objects deletion
+
+## [0.8.0] - 2019-06-15
+### Added
+-   Sonarqube scan
+
+### Changed
+-   Improve order deletion
+-   Refactoring python code
+
+## [0.0.4] - 2019-05-09
+### Changed
+-   Improve awspec tests
+-   Use inline policy instead of custom managed policy
+-   Set default aws region to eu-west-1
+
+## [v0.0.3] - 2019-04-17
+### Added
+-   AWS eip deletion support
+-   AWS endpoint deletion support
+-   AWS internet gateway deletion support
+-   AWS nat gateway deletion support
+-   AWS route table deletion support
+-   AWS security group and acl deletion support
+
+## [v0.0.2] - 2019-03-15
+### Added
+-   AWS dynamodb deletion support
+-   AWS elasticache deletion support
+-   AWS neptune deletion support
+-   AWS rds deletion support
+-   AWS redshift deletion support
+
+## [v0.0.1] - 2019-03-07
+### Added
+-   AWS autoscaling group deletion support
+-   AWS ebs deletion support
+-   AWS ec2 instances deletion support
+-   AWS ecr deletion support
+-   AWS ecs deletion support
+-   AWS eks deletion support
+-   AWS elasticbeanstalk deletion support
+-   AWS elbv2 deletion support
+-   AWS keypair deletion support
+
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/0.9.1...HEAD
+[0.9.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/0.9.0...0.9.1
+[0.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/0.9.0...0.9.1
+[0.8.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/0.8.1...0.9.1
+[0.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/0.8.0...0.8.1
+[0.0.4]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/v0.0.3...0.0.4
+[v0.0.3]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/v0.0.2...v0.0.3
+[v0.0.2]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/v0.0.1...v0.0.2
+[v0.0.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/releases/tag/v0.0.1
