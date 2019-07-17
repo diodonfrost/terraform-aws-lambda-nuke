@@ -38,7 +38,7 @@ def nuke_all_rds(older_than_seconds):
             if error_code == 'InvalidDBInstanceState':
                 logging.info("rds instance %s is not started", instance)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
     # List all rds clusters
     rds_cluster_list = rds_list_clusters(time_delete)
@@ -55,7 +55,7 @@ def nuke_all_rds(older_than_seconds):
             if error_code == 'InvalidDBClusterStateFault':
                 logging.info("rds cluster %s is not started", cluster)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def rds_list_instances(time_delete):

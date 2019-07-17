@@ -44,7 +44,7 @@ def nuke_all_s3(older_than_seconds):
             if error_code == 'AccessDenied':
                 logging.warning("Protected policy enable on %s", s3_bucket)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def s3_list_buckets(time_delete):

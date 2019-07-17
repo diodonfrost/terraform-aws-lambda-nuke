@@ -52,7 +52,7 @@ def elasticache_nuke_clusters(time_delete):
                 logging.info(
                     "cache cluster %s is not in available state", cluster)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elasticache_nuke_snapshots(time_delete):
@@ -77,7 +77,7 @@ def elasticache_nuke_snapshots(time_delete):
                 logging.info(
                     "cache snapshot %s is not in available state", snapshot)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elasticache_nuke_subnets():
@@ -104,7 +104,7 @@ def elasticache_nuke_subnets():
             elif error_code == 'InvalidParameterValue':
                 logging.info("cache %s cannot be deleted", subnet)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elasticache_nuke_param_groups():
@@ -131,7 +131,7 @@ def elasticache_nuke_param_groups():
             elif error_code == 'InvalidParameterValue':
                 logging.info("cache %s param group cannot be deleted", param)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elasticache_list_clusters(time_delete):

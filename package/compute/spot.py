@@ -27,7 +27,7 @@ def nuke_all_spot(older_than_seconds):
             ec2.cancel_spot_instance_requests(SpotInstanceRequestIds=[spot_request])
             print("Cancel spot instance request {0}".format(spot_request))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
     # List all spot fleet
     spot_fleet_list = spot_list_fleet(time_delete)
@@ -38,7 +38,7 @@ def nuke_all_spot(older_than_seconds):
             ec2.cancel_spot_fleet_requests(SpotFleetRequestIds=[spot_fleet])
             print("Nuke spot fleet request {0}".format(spot_fleet))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def spot_list_requests(time_delete):

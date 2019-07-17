@@ -38,7 +38,7 @@ def nuke_all_elb(older_than_seconds):
             if error_code == 'OperationNotPermitted':
                 logging.warning("Protected policy enable on %s", loadbalancer)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elb_list_loadbalancers(time_delete):

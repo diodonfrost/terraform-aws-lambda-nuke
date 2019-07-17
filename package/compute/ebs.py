@@ -35,7 +35,7 @@ def nuke_all_ebs(older_than_seconds):
             elif error_code == 'InvalidVolume':
                 logging.info("volume %s has already been deleted", volume)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
     # List all dlm policies
     dlm_policy_list = dlm_list_policy(time_delete)
@@ -48,7 +48,7 @@ def nuke_all_ebs(older_than_seconds):
             dlm.delete_lifecycle_policy(PolicyId=policy)
             print("Nuke EBS Lifecycle Policy {0}".format(policy))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def ebs_list_volumes(time_delete):

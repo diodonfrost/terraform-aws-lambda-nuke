@@ -33,7 +33,7 @@ def nuke_all_eks(older_than_seconds):
             eks.delete_cluster(name=cluster)
             print("Nuke EKS Cluster{0}".format(cluster))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def eks_list_clusters(time_delete):

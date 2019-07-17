@@ -34,7 +34,7 @@ def nuke_all_efs(older_than_seconds):
             efs.delete_file_system(FileSystemId=efs)
             print("Nuke EFS share {0}".format(efs))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def efs_list_file_systems(time_delete):

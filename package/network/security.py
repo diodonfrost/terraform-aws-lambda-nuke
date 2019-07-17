@@ -36,7 +36,7 @@ def nuke_all_network_security():
             elif error_code == 'DependencyViolation':
                 logging.info("security grp %s has a dependent object", sec_grp)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
     # List all ec2 network acl
     ec2_network_acl_list = ec2_list_network_acls()
@@ -52,7 +52,7 @@ def nuke_all_network_security():
             if error_code == 'InvalidParameterValue':
                 logging.info("network acl %s cannot be deleted", net_acl)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def ec2_list_security_groups():

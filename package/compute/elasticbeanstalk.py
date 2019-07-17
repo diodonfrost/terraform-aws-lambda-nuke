@@ -37,7 +37,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
                     TerminateEnvByForce=True)
                 print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
     # List all elastic beanstalk env
     elasticbeanstalk_env_list = elasticbeanstalk_list_envs()
@@ -53,7 +53,7 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
                     ForceTerminate=True)
                 print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elasticbeanstalk_list_apps():

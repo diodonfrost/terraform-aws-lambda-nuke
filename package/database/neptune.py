@@ -56,7 +56,7 @@ def neptune_nuke_instances(time_delete):
                 logging.info(
                     "neptune instance %s is already being deleted", instance)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def neptune_nuke_clusters(time_delete):
@@ -83,7 +83,7 @@ def neptune_nuke_clusters(time_delete):
                 logging.info(
                     "neptune cluster %s is not in started state", cluster)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def neptune_nuke_snapshots(time_delete):
@@ -105,7 +105,7 @@ def neptune_nuke_snapshots(time_delete):
                 DBClusterSnapshotIdentifier=snapshot)
             print("Nuke neptune snapshot{0}".format(snapshot))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def neptune_nuke_subnets():
@@ -130,7 +130,7 @@ def neptune_nuke_subnets():
             if error_code == 'InvalidDBSubnetGroupStateFault':
                 logging.info("%s is reserved and cannot be modified.", subnet)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def neptune_nuke_cluster_params():
@@ -155,7 +155,7 @@ def neptune_nuke_cluster_params():
             if error_code == 'InvalidDBParameterGroupState':
                 logging.info("%s is reserved and cannot be modified.", param)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def neptune_nuke_group_params():
@@ -180,7 +180,7 @@ def neptune_nuke_group_params():
             if error_code == 'InvalidDBParameterGroupState':
                 logging.info("%s is reserved and cannot be modified.", param)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def neptune_list_instances(time_delete):

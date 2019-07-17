@@ -38,7 +38,7 @@ def nuke_all_elbv2(older_than_seconds):
             if error_code == 'OperationNotPermitted':
                 logging.warning("Protected policy enable on %s", loadbalancer)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
     # List all elbv2 target group arn
     elbv2_targetgroup_list = elbv2_list_target_groups()
@@ -54,7 +54,7 @@ def nuke_all_elbv2(older_than_seconds):
             if error_code == 'ResourceInUse':
                 logging.warning("%s is use by listener or rule", targetgroup)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def elbv2_list_loadbalancers(time_delete):

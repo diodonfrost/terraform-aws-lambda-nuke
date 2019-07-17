@@ -36,7 +36,7 @@ def nuke_all_endpoint(older_than_seconds):
         if error_code == 'RequestLimitExceeded':
             logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
     # List all ec2 endpoint services
     ec2_endpoint_service_list = ec2_list_endpoint_services()
@@ -51,7 +51,7 @@ def nuke_all_endpoint(older_than_seconds):
         if error_code == 'InternalError':
             logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def ec2_list_endpoints(time_delete):

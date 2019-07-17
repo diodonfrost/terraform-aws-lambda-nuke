@@ -54,7 +54,7 @@ def redshift_nuke_clusters(time_delete):
                 logging.info(
                     "redshift cluster %s is not in state started", cluster)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def redshift_nuke_snapshots(time_delete):
@@ -79,7 +79,7 @@ def redshift_nuke_snapshots(time_delete):
                 logging.info(
                     "redshift snap %s is not in state available", snapshot)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def redshift_nuke_subnets():
@@ -104,7 +104,7 @@ def redshift_nuke_subnets():
                 logging.info(
                     "redshift subnet %s is not in state available", subnet)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def redshift_nuke_param_groups():
@@ -132,7 +132,7 @@ def redshift_nuke_param_groups():
                 logging.info(
                     "default %s parameter group cannot be deleted", param)
             else:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def redshift_list_clusters(time_delete):

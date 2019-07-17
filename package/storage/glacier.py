@@ -33,7 +33,7 @@ def nuke_all_glacier(older_than_seconds):
             glacier.delete_vault(vaultName=vault)
             print("Nuke glacier vault {0}".format(vault))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def glacier_list_vaults(time_delete):

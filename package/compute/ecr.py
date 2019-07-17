@@ -33,7 +33,7 @@ def nuke_all_ecr(older_than_seconds):
             ecr.delete_repository(repositoryName=registry, force=True)
             print("Nuke ECR Registry{0}".format(registry))
         except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+            logging.error("Unexpected error: %s", e)
 
 
 def ecr_list_registry(time_delete):
