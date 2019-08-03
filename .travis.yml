@@ -1,8 +1,7 @@
 ---
 dist: xenial   # required for Python >= 3.7
 language: python
-python:
-  - "3.7"
+install: pip install tox boto3 botocore
 
 env:
   global:
@@ -10,35 +9,75 @@ env:
     - TF_VAR_region=${AWS_REGION}
     - TF_WARN_OUTPUT_ERRORS=1
 
-install:
-  # Install the latest version of terraform with ansible and sonar-scanner
-  - sudo pip install ansible
-  - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
-  - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
+jobs:
+  include:
+#----------------------------------------------------------------------
+# Terraform tests
+#----------------------------------------------------------------------
+    - stage: Terraform tests
+      python: 3.7
+      env: terraform_version="latest"
+      script: test/sanity/terraform_tests.sh
 
-before_script:
-  - terraform -version
+    - stage: Terraform tests
+      python: 3.7
+      env: terraform_version="0.12.0"
+      script: test/sanity/terraform_tests.sh
 
-script:
-  # Download Terraform requirements
-  - terraform init
+    - stage: Terraform tests
+      python: 3.7
+      env: terraform_version="0.11.14"
+      script: test/sanity/terraform_tests.sh
 
-  # Rewrites config files to canonical format
-  - terraform fmt -check=true
+    - stage: Terraform tests
+      python: 3.7
+      env: terraform_version="0.11.0"
+      script: test/sanity/terraform_tests.sh
 
-  # Test Terraform module
-  - >
-    terraform validate \
-      -var "region=${AWS_REGION}" \
-      -var "name=nuke-all" \
-      -var "cloudwatch_schedule_expression=cron(0 4 ? * MON-FRI *)" \
-      -var "exclude_resources=glacier,eip,rds" \
-      -var "older_than=14d"
+#----------------------------------------------------------------------
+# Python tests
+#----------------------------------------------------------------------
+    - stage: Python tests
+      python: 2.7
+      env: TOXENV=py27
+      script: tox
 
-  # Test Terraform fixture example
-  - cd examples/test_fixture
-  - terraform init
-  - terraform fmt -check=true
-  - terraform validate
-  - terraform -v
+    - stage: Python tests
+      python: 3.4
+      env: TOXENV=py34
+      script: tox
 
+    - stage: Python tests
+      python: 3.5
+      env: TOXENV=py35
+      script: tox
+
+    - stage: Python tests
+      python: 3.6
+      env: TOXENV=py36
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=py37
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=flake8
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=pylint
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=bandit
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=black
+      script: tox
