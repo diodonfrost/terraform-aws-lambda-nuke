@@ -16,4 +16,4 @@ suites:
   - name: "lambda-scheduler"
     verifier:
       patterns:
-        - "test/awspec/*.rb"
+        - "test/integration/awspec/*.rb"
