@@ -14,12 +14,12 @@ def nuke_all_ecr(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # Define the connection
-    ecr = boto3.client('ecr')
+    ecr = boto3.client("ecr")
 
     try:
         ecr.describe_repositories()
     except EndpointConnectionError:
-        print('ecr resource is not available in this aws region')
+        print("ecr resource is not available in this aws region")
         return
 
     # List all ecr registry
@@ -43,8 +43,8 @@ def ecr_list_registry(time_delete):
     """
 
     # Define the connection
-    ecr = boto3.client('ecr')
-    paginator = ecr.get_paginator('describe_repositories')
+    ecr = boto3.client("ecr")
+    paginator = ecr.get_paginator("describe_repositories")
     page_iterator = paginator.paginate()
 
     # Initialize ecr registry list
@@ -52,10 +52,10 @@ def ecr_list_registry(time_delete):
 
     # Retrieve all ecr registry
     for page in page_iterator:
-        for registry in page['repositories']:
-            if registry['createdAt'].timestamp() < time_delete:
+        for registry in page["repositories"]:
+            if registry["createdAt"].timestamp() < time_delete:
 
-                ecr_registry = registry['repositoryName']
+                ecr_registry = registry["repositoryName"]
                 ecr_registry_list.insert(0, ecr_registry)
 
     return ecr_registry_list

@@ -25,8 +25,8 @@ from network.endpoint import nuke_all_endpoint
 from network.eip import nuke_all_eip
 
 
-exclude_resources = os.getenv('EXCLUDE_RESOURCES', 'none')
-older_than = os.getenv('OLDER_THAN', 'none')
+exclude_resources = os.getenv("EXCLUDE_RESOURCES", "none")
+older_than = os.getenv("OLDER_THAN", "none")
 
 
 def lambda_handler(event, context):

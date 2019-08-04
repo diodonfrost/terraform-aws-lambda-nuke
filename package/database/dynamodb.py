@@ -14,13 +14,13 @@ def nuke_all_dynamodb(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # define connection
-    dynamodb = boto3.client('dynamodb')
+    dynamodb = boto3.client("dynamodb")
 
     # Test if dynamodb services is present in current aws region
     try:
         dynamodb.list_tables()
     except EndpointConnectionError:
-        print('dynamodb resource is not available in this aws region')
+        print("dynamodb resource is not available in this aws region")
         return
 
     # List all dynamodb tables
@@ -57,10 +57,10 @@ def dynamodb_list_tables(time_delete):
     """
 
     # define connection
-    dynamodb = boto3.client('dynamodb')
+    dynamodb = boto3.client("dynamodb")
 
     # Define the connection
-    paginator = dynamodb.get_paginator('list_tables')
+    paginator = dynamodb.get_paginator("list_tables")
     page_iterator = paginator.paginate()
 
     # Initialize dynamodb table list
@@ -68,10 +68,12 @@ def dynamodb_list_tables(time_delete):
 
     # Retrieve all dynamodb table name
     for page in page_iterator:
-        for table in page['TableNames']:
+        for table in page["TableNames"]:
             table_desc = dynamodb.describe_table(TableName=table)
-            if table_desc['Table'][
-                    'CreationDateTime'].timestamp() < time_delete:
+            if (
+                table_desc["Table"]["CreationDateTime"].timestamp()
+                < time_delete
+            ):
 
                 dynamodb_table = table
                 dynamodb_table_list.insert(0, dynamodb_table)
@@ -86,10 +88,10 @@ def dynamodb_list_backups(time_delete):
     """
 
     # define connection
-    dynamodb = boto3.client('dynamodb')
+    dynamodb = boto3.client("dynamodb")
 
     # Define the connection
-    paginator = dynamodb.get_paginator('list_backups')
+    paginator = dynamodb.get_paginator("list_backups")
     page_iterator = paginator.paginate()
 
     # Initialize dynamodb backup list
@@ -97,13 +99,18 @@ def dynamodb_list_backups(time_delete):
 
     # Retrieve all dynamodb backup name
     for page in page_iterator:
-        for backup in page['BackupSummaries']:
+        for backup in page["BackupSummaries"]:
             backup_desc = dynamodb.describe_backup(
-                BackupArn=backup['BackupArn'])
-            if (backup_desc['BackupDescription']['BackupDetails'][
-                    'BackupCreationDateTime'].timestamp() < time_delete):
+                BackupArn=backup["BackupArn"]
+            )
+            if (
+                backup_desc["BackupDescription"]["BackupDetails"][
+                    "BackupCreationDateTime"
+                ].timestamp()
+                < time_delete
+            ):
 
-                dynamodb_backup = backup['BackupArn']
+                dynamodb_backup = backup["BackupArn"]
                 dynamodb_backup_list.insert(0, dynamodb_backup)
 
     return dynamodb_backup_list

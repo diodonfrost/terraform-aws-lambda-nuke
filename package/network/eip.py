@@ -10,13 +10,13 @@ def nuke_all_eip():
          ec2 function for destroy all elastic
     """
     # define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
 
     # Test if Elastic ip services is present in current aws region
     try:
         ec2.describe_addresses()
     except EndpointConnectionError:
-        print('ec2 resource is not available in this aws region')
+        print("ec2 resource is not available in this aws region")
         return
 
     # List all ec2 elastic ip
@@ -40,16 +40,16 @@ def ec2_list_eips():
     """
 
     # define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
     response = ec2.describe_addresses()
 
     # Initialize ec2 elastic ip list
     ec2_eip_list = []
 
     # Retrieve all ec2 elastic ip Id
-    for eip in response['Addresses']:
+    for eip in response["Addresses"]:
 
-        ec2_eip = eip['AllocationId']
+        ec2_eip = eip["AllocationId"]
         ec2_eip_list.insert(0, ec2_eip)
 
     return ec2_eip_list

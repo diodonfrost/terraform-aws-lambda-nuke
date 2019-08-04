@@ -14,12 +14,12 @@ def nuke_all_eks(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # Define connection
-    eks = boto3.client('eks')
+    eks = boto3.client("eks")
 
     try:
         eks.list_clusters()
     except EndpointConnectionError:
-        print('eks resource is not available in this aws region')
+        print("eks resource is not available in this aws region")
         return
 
     # List all eks cluster
@@ -43,16 +43,16 @@ def eks_list_clusters(time_delete):
     """
 
     # Define the connection
-    eks = boto3.client('eks')
+    eks = boto3.client("eks")
     response = eks.list_clusters()
 
     # Initialize eks cluster list
     eks_cluster_list = []
 
     # Retrieve all eks cluster
-    for kube in response['clusters']:
+    for kube in response["clusters"]:
         k8s = eks.describe_cluster(name=kube)
-        if k8s['cluster']['createdAt'].timestamp() < time_delete:
+        if k8s["cluster"]["createdAt"].timestamp() < time_delete:
 
             eks_cluster = kube
             eks_cluster_list.insert(0, eks_cluster)

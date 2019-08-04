@@ -14,13 +14,13 @@ def nuke_all_redshift(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # Test if redshift services is present in current aws region
     try:
         redshift.describe_clusters()
     except EndpointConnectionError:
-        print('redshift resource is not available in this aws region')
+        print("redshift resource is not available in this aws region")
         return
 
     # Nuke all aws redshift resources
@@ -35,7 +35,7 @@ def redshift_nuke_clusters(time_delete):
          redshift function for destroy all redshift databases
     """
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # List all redshift clusters
     redshift_cluster_list = redshift_list_clusters(time_delete)
@@ -45,14 +45,15 @@ def redshift_nuke_clusters(time_delete):
 
         try:
             redshift.delete_cluster(
-                ClusterIdentifier=cluster,
-                SkipFinalClusterSnapshot=True)
+                ClusterIdentifier=cluster, SkipFinalClusterSnapshot=True
+            )
             print("Nuke redshift cluster{0}".format(cluster))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidClusterStateFault':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidClusterStateFault":
                 logging.info(
-                    "redshift cluster %s is not in state started", cluster)
+                    "redshift cluster %s is not in state started", cluster
+                )
             else:
                 logging.error("Unexpected error: %s", e)
 
@@ -62,7 +63,7 @@ def redshift_nuke_snapshots(time_delete):
          redshift function for destroy all redshift snapshots
     """
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # List all redshift snapshots
     redshift_snapshot_list = redshift_list_snapshots(time_delete)
@@ -74,10 +75,11 @@ def redshift_nuke_snapshots(time_delete):
             redshift.delete_cluster_snapshot(SnapshotIdentifier=snapshot)
             print("Nuke redshift snapshot {0}".format(snapshot))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidClusterSnapshotStateFault':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidClusterSnapshotStateFault":
                 logging.info(
-                    "redshift snap %s is not in state available", snapshot)
+                    "redshift snap %s is not in state available", snapshot
+                )
             else:
                 logging.error("Unexpected error: %s", e)
 
@@ -87,7 +89,7 @@ def redshift_nuke_subnets():
          redshift function for destroy all redshift subnets
     """
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # List all redshift subnets
     redshift_subnet_list = redshift_list_subnet()
@@ -96,13 +98,16 @@ def redshift_nuke_subnets():
     for subnet in redshift_subnet_list:
 
         try:
-            redshift.delete_cluster_subnet_group(ClusterSubnetGroupName=subnet)
+            redshift.delete_cluster_subnet_group(
+                ClusterSubnetGroupName=subnet
+            )
             print("Nuke redshift subnet {0}".format(subnet))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidClusterSubnetGroupStateFault':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidClusterSubnetGroupStateFault":
                 logging.info(
-                    "redshift subnet %s is not in state available", subnet)
+                    "redshift subnet %s is not in state available", subnet
+                )
             else:
                 logging.error("Unexpected error: %s", e)
 
@@ -112,7 +117,7 @@ def redshift_nuke_param_groups():
          redshift function for destroy all redshift param groups
     """
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # List all redshift cluster parameters
     redshift_cluster_param_list = redshift_list_cluster_params()
@@ -124,13 +129,15 @@ def redshift_nuke_param_groups():
             redshift.delete_cluster_parameter_group(ParameterGroupName=param)
             print("Nuke redshift param {0}".format(param))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidClusterParameterGroupStateFault':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidClusterParameterGroupStateFault":
                 logging.info(
-                    "redshift param %s is not in state available", param)
-            elif error_code == 'InvalidParameterValue':
+                    "redshift param %s is not in state available", param
+                )
+            elif error_code == "InvalidParameterValue":
                 logging.info(
-                    "default %s parameter group cannot be deleted", param)
+                    "default %s parameter group cannot be deleted", param
+                )
             else:
                 logging.error("Unexpected error: %s", e)
 
@@ -142,10 +149,10 @@ def redshift_list_clusters(time_delete):
     """
 
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # Define the connection
-    paginator = redshift.get_paginator('describe_clusters')
+    paginator = redshift.get_paginator("describe_clusters")
     page_iterator = paginator.paginate()
 
     # Initialize redshift cluster list
@@ -153,10 +160,10 @@ def redshift_list_clusters(time_delete):
 
     # Retrieve all redshift cluster name
     for page in page_iterator:
-        for cluster in page['Clusters']:
-            if cluster['ClusterCreateTime'].timestamp() < time_delete:
+        for cluster in page["Clusters"]:
+            if cluster["ClusterCreateTime"].timestamp() < time_delete:
 
-                redshift_cluster = cluster['ClusterIdentifier']
+                redshift_cluster = cluster["ClusterIdentifier"]
                 redshift_cluster_list.insert(0, redshift_cluster)
 
     return redshift_cluster_list
@@ -169,10 +176,10 @@ def redshift_list_snapshots(time_delete):
     """
 
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # Define the connection
-    paginator = redshift.get_paginator('describe_cluster_snapshots')
+    paginator = redshift.get_paginator("describe_cluster_snapshots")
     page_iterator = paginator.paginate()
 
     # Initialize redshift snapshot list
@@ -180,10 +187,10 @@ def redshift_list_snapshots(time_delete):
 
     # Retrieve all redshift snapshot identifier
     for page in page_iterator:
-        for snapshot in page['Snapshots']:
-            if snapshot['SnapshotCreateTime'].timestamp() < time_delete:
+        for snapshot in page["Snapshots"]:
+            if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
 
-                redshift_snapshot = snapshot['SnapshotIdentifier']
+                redshift_snapshot = snapshot["SnapshotIdentifier"]
                 redshift_snapshot_list.insert(0, redshift_snapshot)
 
     return redshift_snapshot_list
@@ -196,10 +203,10 @@ def redshift_list_subnet():
     """
 
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # Define the connection
-    paginator = redshift.get_paginator('describe_cluster_subnet_groups')
+    paginator = redshift.get_paginator("describe_cluster_subnet_groups")
     page_iterator = paginator.paginate()
 
     # Initialize redshift subnet list
@@ -207,9 +214,9 @@ def redshift_list_subnet():
 
     # Retrieve all redshift subnet name
     for page in page_iterator:
-        for subnet in page['ClusterSubnetGroups']:
+        for subnet in page["ClusterSubnetGroups"]:
 
-            redshift_subnet = subnet['ClusterSubnetGroupName']
+            redshift_subnet = subnet["ClusterSubnetGroupName"]
             redshift_subnet_list.insert(0, redshift_subnet)
 
     return redshift_subnet_list
@@ -222,10 +229,10 @@ def redshift_list_cluster_params():
     """
 
     # define connection
-    redshift = boto3.client('redshift')
+    redshift = boto3.client("redshift")
 
     # Define the connection
-    paginator = redshift.get_paginator('describe_cluster_parameter_groups')
+    paginator = redshift.get_paginator("describe_cluster_parameter_groups")
     page_iterator = paginator.paginate()
 
     # Initialize redshift cluster parameters list
@@ -233,9 +240,9 @@ def redshift_list_cluster_params():
 
     # Retrieve all redshift cluster parameter names
     for page in page_iterator:
-        for param in page['ParameterGroups']:
+        for param in page["ParameterGroups"]:
 
-            redshift_cluster_param = param['ParameterGroupName']
+            redshift_cluster_param = param["ParameterGroupName"]
             redshift_cluster_param_list.insert(0, redshift_cluster_param)
 
     return redshift_cluster_param_list

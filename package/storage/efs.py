@@ -14,13 +14,13 @@ def nuke_all_efs(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # define connection
-    efs = boto3.client('efs')
+    efs = boto3.client("efs")
 
     # Test if efs services is present in current aws region
     try:
         efs.describe_file_systems()
     except EndpointConnectionError:
-        print('EFS resource is not available in this aws region')
+        print("EFS resource is not available in this aws region")
         return
 
     # List all efs file systems
@@ -44,10 +44,10 @@ def efs_list_file_systems(time_delete):
     """
 
     # define connection
-    efs = boto3.client('efs')
+    efs = boto3.client("efs")
 
     # Define the connection
-    paginator = efs.get_paginator('describe_file_systems')
+    paginator = efs.get_paginator("describe_file_systems")
     page_iterator = paginator.paginate()
 
     # Initialize efs file system list
@@ -55,10 +55,10 @@ def efs_list_file_systems(time_delete):
 
     # Retrieve all efs file system Id
     for page in page_iterator:
-        for filesystem in page['FileSystems']:
-            if efs['CreationTime'].timestamp() < time_delete:
+        for filesystem in page["FileSystems"]:
+            if efs["CreationTime"].timestamp() < time_delete:
 
-                efs_filesystem = filesystem['FileSystemId']
+                efs_filesystem = filesystem["FileSystemId"]
                 efs_filesystem_list.insert(0, efs_filesystem)
 
     return efs_filesystem_list

@@ -15,12 +15,12 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # Define connection
-    elasticbeanstalk = boto3.client('elasticbeanstalk')
+    elasticbeanstalk = boto3.client("elasticbeanstalk")
 
     try:
         elasticbeanstalk.describe_applications()
     except EndpointConnectionError:
-        print('elasticbeanstalk resource is not available in this aws region')
+        print("elasticbeanstalk resource is not available in this aws region")
         return
 
     # List all elastic beanstalk app
@@ -28,13 +28,13 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
 
     # Nuke elasticbeanstalk application
     for app in elasticbeanstalk_app_list:
-        if app['DateCreated'].timestamp() < time_delete:
+        if app["DateCreated"].timestamp() < time_delete:
 
             # Delete elasticbeanstalk app
             try:
                 elasticbeanstalk.delete_application(
-                    ApplicationName=app,
-                    TerminateEnvByForce=True)
+                    ApplicationName=app, TerminateEnvByForce=True
+                )
                 print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
                 logging.error("Unexpected error: %s", e)
@@ -44,13 +44,13 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
 
     # Nuke elasticbeanstalk application
     for env in elasticbeanstalk_env_list:
-        if env['DateCreated'].timestamp() < time_delete:
+        if env["DateCreated"].timestamp() < time_delete:
 
             # Delete elasticbeanstalk env
             try:
                 elasticbeanstalk.terminate_environment(
-                    EnvironmentId=env,
-                    ForceTerminate=True)
+                    EnvironmentId=env, ForceTerminate=True
+                )
                 print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
                 logging.error("Unexpected error: %s", e)
@@ -63,8 +63,8 @@ def elasticbeanstalk_list_apps():
     """
 
     # Define the connection
-    elasticbeanstalk = boto3.client('elasticbeanstalk')
-    paginator = elasticbeanstalk.get_paginator('describe_applications')
+    elasticbeanstalk = boto3.client("elasticbeanstalk")
+    paginator = elasticbeanstalk.get_paginator("describe_applications")
     page_iterator = paginator.paginate()
 
     # Initialize elastic beanstalk app list
@@ -72,9 +72,9 @@ def elasticbeanstalk_list_apps():
 
     # Retrieve all elastic beanstalk apps
     for page in page_iterator:
-        for app in page['Applications']:
+        for app in page["Applications"]:
 
-            elasticbeanstalk_app = app['ApplicationName']
+            elasticbeanstalk_app = app["ApplicationName"]
             elasticbeanstalk_app_list.insert(0, elasticbeanstalk_app)
 
     return elasticbeanstalk_app_list
@@ -87,8 +87,8 @@ def elasticbeanstalk_list_envs():
     """
 
     # Define the connection
-    elasticbeanstalk = boto3.client('elasticbeanstalk')
-    paginator = elasticbeanstalk.get_paginator('describe_environments')
+    elasticbeanstalk = boto3.client("elasticbeanstalk")
+    paginator = elasticbeanstalk.get_paginator("describe_environments")
     page_iterator = paginator.paginate()
 
     # Initialize elastic beanstalk env list
@@ -96,9 +96,9 @@ def elasticbeanstalk_list_envs():
 
     # Retrieve all elastic beanstalk envs
     for page in page_iterator:
-        for env in page['Environments']:
+        for env in page["Environments"]:
 
-            elasticbeanstalk_env = env['EnvironmentId']
+            elasticbeanstalk_env = env["EnvironmentId"]
             elasticbeanstalk_env_list.insert(0, elasticbeanstalk_env)
 
     return elasticbeanstalk_env_list

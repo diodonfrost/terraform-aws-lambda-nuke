@@ -14,13 +14,13 @@ def nuke_all_endpoint(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
 
     # Test if endpoint services is present in current aws region
     try:
         ec2.describe_vpc_endpoints()
     except EndpointConnectionError:
-        print('ec2 endpoint resource is not available in this aws region')
+        print("ec2 endpoint resource is not available in this aws region")
         return
 
     # List all ec2 endpoints
@@ -28,12 +28,11 @@ def nuke_all_endpoint(older_than_seconds):
 
     # Nuke all vpc endpoints
     try:
-        ec2.delete_vpc_endpoints(
-            VpcEndpointIds=ec2_endpoint_list)
+        ec2.delete_vpc_endpoints(VpcEndpointIds=ec2_endpoint_list)
         print("Nuke ec2 endpoint {0}".format(ec2_endpoint_list))
     except ClientError as e:
-        error_code = e.response['Error']['Code']
-        if error_code == 'RequestLimitExceeded':
+        error_code = e.response["Error"]["Code"]
+        if error_code == "RequestLimitExceeded":
             logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
             logging.error("Unexpected error: %s", e)
@@ -44,11 +43,12 @@ def nuke_all_endpoint(older_than_seconds):
     # Nuke all vpc service endpoints
     try:
         ec2.delete_vpc_endpoint_service_configurations(
-            ServiceIds=ec2_endpoint_service_list)
+            ServiceIds=ec2_endpoint_service_list
+        )
         print("Nuke ec2 endpoint {0}".format(ec2_endpoint_service_list))
     except ClientError as e:
-        error_code = e.response['Error']['Code']
-        if error_code == 'InternalError':
+        error_code = e.response["Error"]["Code"]
+        if error_code == "InternalError":
             logging.info("DeleteVpcEndpoints operation max retries reached")
         else:
             logging.error("Unexpected error: %s", e)
@@ -61,17 +61,17 @@ def ec2_list_endpoints(time_delete):
     """
 
     # define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
     response = ec2.describe_vpc_endpoints()
 
     # Initialize ec2 endpoint list
     ec2_endpoint_list = []
 
     # Retrieve all ec2 endpoint Id
-    for endpoint in response['VpcEndpoints']:
-        if endpoint['CreationTimestamp'].timestamp() < time_delete:
+    for endpoint in response["VpcEndpoints"]:
+        if endpoint["CreationTimestamp"].timestamp() < time_delete:
 
-            ec2_endpoint = endpoint['VpcEndpointId']
+            ec2_endpoint = endpoint["VpcEndpointId"]
             ec2_endpoint_list.insert(0, ec2_endpoint)
 
     return ec2_endpoint_list
@@ -84,16 +84,16 @@ def ec2_list_endpoint_services():
     """
 
     # define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
     response = ec2.describe_vpc_endpoint_service_configurations()
 
     # Initialize ec2 endpoint list
     ec2_endpoint_service_list = []
 
     # Retrieve all ec2 endpoint Id
-    for endpoint in response['ServiceConfigurations']:
+    for endpoint in response["ServiceConfigurations"]:
 
-        ec2_endpoint_service = endpoint['ServiceId']
+        ec2_endpoint_service = endpoint["ServiceId"]
         ec2_endpoint_service_list.insert(0, ec2_endpoint_service)
 
     return ec2_endpoint_service_list

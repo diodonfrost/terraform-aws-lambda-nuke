@@ -14,13 +14,13 @@ def nuke_all_rds(older_than_seconds):
     time_delete = time.time() - older_than_seconds
 
     # define connection
-    rds = boto3.client('rds')
+    rds = boto3.client("rds")
 
     # Test if rds services is present in current aws region
     try:
         rds.describe_db_instances()
     except EndpointConnectionError:
-        print('rds resource is not available in this aws region')
+        print("rds resource is not available in this aws region")
         return
 
     # List all rds instances
@@ -34,8 +34,8 @@ def nuke_all_rds(older_than_seconds):
             rds.delete_db_instance(DBInstanceIdentifier=instance)
             print("Stop rds instance {0}".format(instance))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidDBInstanceState':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidDBInstanceState":
                 logging.info("rds instance %s is not started", instance)
             else:
                 logging.error("Unexpected error: %s", e)
@@ -51,8 +51,8 @@ def nuke_all_rds(older_than_seconds):
             rds.delete_db_cluster(DBClusterIdentifier=cluster)
             print("Nuke rds cluster {0}".format(cluster))
         except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'InvalidDBClusterStateFault':
+            error_code = e.response["Error"]["Code"]
+            if error_code == "InvalidDBClusterStateFault":
                 logging.info("rds cluster %s is not started", cluster)
             else:
                 logging.error("Unexpected error: %s", e)
@@ -65,10 +65,10 @@ def rds_list_instances(time_delete):
     """
 
     # define connection
-    rds = boto3.client('rds')
+    rds = boto3.client("rds")
 
     # Define the connection
-    paginator = rds.get_paginator('describe_db_instances')
+    paginator = rds.get_paginator("describe_db_instances")
     page_iterator = paginator.paginate()
 
     # Initialize rds instance list
@@ -76,10 +76,10 @@ def rds_list_instances(time_delete):
 
     # Retrieve all rds instance identifier
     for page in page_iterator:
-        for instance in page['DBInstances']:
-            if instance['InstanceCreateTime'].timestamp() < time_delete:
+        for instance in page["DBInstances"]:
+            if instance["InstanceCreateTime"].timestamp() < time_delete:
 
-                rds_instance = instance['DBInstanceIdentifier']
+                rds_instance = instance["DBInstanceIdentifier"]
                 rds_instance_list.insert(0, rds_instance)
 
     return rds_instance_list
@@ -92,10 +92,10 @@ def rds_list_clusters(time_delete):
     """
 
     # define connection
-    rds = boto3.client('rds')
+    rds = boto3.client("rds")
 
     # Define the connection
-    paginator = rds.get_paginator('describe_db_clusters')
+    paginator = rds.get_paginator("describe_db_clusters")
     page_iterator = paginator.paginate()
 
     # Initialize rds cluster list
@@ -103,10 +103,10 @@ def rds_list_clusters(time_delete):
 
     # Retrieve all rds cluster identifier
     for page in page_iterator:
-        for cluster in page['DBClusters']:
-            if cluster['ClusterCreateTime'].timestamp() < time_delete:
+        for cluster in page["DBClusters"]:
+            if cluster["ClusterCreateTime"].timestamp() < time_delete:
 
-                rds_cluster = cluster['DBClusterIdentifier']
+                rds_cluster = cluster["DBClusterIdentifier"]
                 rds_cluster_list.insert(0, rds_cluster)
 
     return rds_cluster_list

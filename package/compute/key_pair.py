@@ -10,7 +10,7 @@ def nuke_all_key_pair():
          ec2 function for nuke all key pairs
     """
     # Define connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
 
     # List all ec2 keypair
     ec2_keypair_list = ec2_list_keypair()
@@ -33,16 +33,16 @@ def ec2_list_keypair():
     """
 
     # Define the connection
-    ec2 = boto3.client('ec2')
+    ec2 = boto3.client("ec2")
     response = ec2.describe_key_pairs()
 
     # Initialize ec2 keypair list
     ec2_keypair_list = []
 
     # Retrieve all ec2 keypairs
-    for keypair in response['KeyPairs']:
+    for keypair in response["KeyPairs"]:
 
-        ec2_keypair = keypair['KeyName']
+        ec2_keypair = keypair["KeyName"]
         ec2_keypair_list.insert(0, ec2_keypair)
 
     return ec2_keypair_list

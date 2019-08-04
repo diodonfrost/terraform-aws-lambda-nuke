@@ -25,7 +25,8 @@ def nuke_all_spot(older_than_seconds):
     for spot_request in spot_request_list:
         try:
             ec2.cancel_spot_instance_requests(
-                SpotInstanceRequestIds=[spot_request])
+                SpotInstanceRequestIds=[spot_request]
+            )
             print("Cancel spot instance request {0}".format(spot_request))
         except ClientError as e:
             logging.error("Unexpected error: %s", e)
