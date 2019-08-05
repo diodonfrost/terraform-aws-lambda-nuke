@@ -1,4 +1,6 @@
-"""This script nuke all autoscaling resources"""
+# -*- coding: utf-8 -*-
+
+"""This script nuke all autoscaling resources."""
 
 import logging
 import time

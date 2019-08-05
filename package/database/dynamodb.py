@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """This script nuke all dynamodb resources"""
 
 import logging
