@@ -1,8 +1,10 @@
 """This script nuke all security_group resources"""
 
 import logging
+
 import boto3
-from botocore.exceptions import EndpointConnectionError, ClientError
+
+from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_network_security():

@@ -1,36 +1,38 @@
-"""Main entrypoint function for destroy all aws resources"""
-
+"""Main entrypoint function for destroy all aws resources."""
 import os
-import timeparse
 
-from compute.ec2 import nuke_all_ec2
-from compute.spot import nuke_all_spot
 from compute.autoscaling import nuke_all_autoscaling
-from compute.elb import nuke_all_elb
-from compute.elbv2 import nuke_all_elbv2
 from compute.ebs import nuke_all_ebs
-from compute.key_pair import nuke_all_key_pair
+from compute.ec2 import nuke_all_ec2
 from compute.ecr import nuke_all_ecr
 from compute.eks import nuke_all_eks
-from storage.s3 import nuke_all_s3
-from storage.efs import nuke_all_efs
-from storage.glacier import nuke_all_glacier
-from database.rds import nuke_all_rds
+from compute.elb import nuke_all_elb
+from compute.elbv2 import nuke_all_elbv2
+from compute.key_pair import nuke_all_key_pair
+from compute.spot import nuke_all_spot
+
 from database.dynamodb import nuke_all_dynamodb
 from database.elasticache import nuke_all_elasticache
 from database.neptune import nuke_all_neptune
+from database.rds import nuke_all_rds
 from database.redshift import nuke_all_redshift
-from network.security import nuke_all_network_security
-from network.endpoint import nuke_all_endpoint
-from network.eip import nuke_all_eip
 
+from network.eip import nuke_all_eip
+from network.endpoint import nuke_all_endpoint
+from network.security import nuke_all_network_security
+
+from storage.efs import nuke_all_efs
+from storage.glacier import nuke_all_glacier
+from storage.s3 import nuke_all_s3
+
+import timeparse
 
 exclude_resources = os.getenv("EXCLUDE_RESOURCES", "none")
 older_than = os.getenv("OLDER_THAN", "none")
 
 
 def lambda_handler(event, context):
-    """ Main function entrypoint for lambda """
+    """Main function entrypoint for lambda."""
 
     # Convert older_than variable to seconds
     older_than_seconds = timeparse.timeparse(older_than)

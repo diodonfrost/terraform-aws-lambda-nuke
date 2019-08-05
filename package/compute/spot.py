@@ -2,9 +2,10 @@
 
 import logging
 import time
+
 import boto3
+
 from botocore.exceptions import ClientError
-from botocore.config import Config
 
 
 def nuke_all_spot(older_than_seconds):

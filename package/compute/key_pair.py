@@ -1,7 +1,9 @@
 """This script nuke all key pairs"""
 
 import logging
+
 import boto3
+
 from botocore.exceptions import ClientError
 
 
