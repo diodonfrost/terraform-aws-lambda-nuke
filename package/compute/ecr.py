@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all ecr resources"""
+"""Module deleting all aws Elastic Container Registry resources."""
 
 import logging
 import time
@@ -11,10 +11,16 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_ecr(older_than_seconds):
+    """Elastic Container Registry deleting function.
+
+    Deleting all Elastic Container Registry with
+    a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
-         ecr function for destroy all ecr registry
-    """
-    # Convert date in seconds
+    # Creating Unix timestamp
     time_delete = time.time() - older_than_seconds
 
     # Define the connection
@@ -41,12 +47,19 @@ def nuke_all_ecr(older_than_seconds):
 
 
 def ecr_list_registry(time_delete):
-    """
-       Aws ecr registry, list name of
-       all ecr container registries and return it in list.
-    """
+    """Elastic Container Registry list function.
 
-    # Define the connection
+    List the names of all Elastic Container Registry with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Elastic Container Registry
+    :returns:
+        List of Elastic Container Registry names
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     ecr = boto3.client("ecr")
     paginator = ecr.get_paginator("describe_repositories")
     page_iterator = paginator.paginate()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all autoscaling resources"""
+"""Module deleting all aws Classic Load Balancer resources."""
 
 import logging
 import time
@@ -11,9 +11,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_elb(older_than_seconds):
-    """
-        Function for destroy every elb and
-        target groups aws resources
+    """Classic Load Balancer deleting function.
+
+    Deleting all classic lb with a timestamp greater
+    than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -46,12 +51,19 @@ def nuke_all_elb(older_than_seconds):
 
 
 def elb_list_loadbalancers(time_delete):
-    """
-       Aws elb list load balancer, list name of
-       all elastic load balancers and return it in list.
-    """
+    """Elastic Load Balancer list function.
 
-    # Define the connection
+    List the names of all Elastic Load Balancer with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Elastic Load Balancer
+    :returns:
+        List of Elastic Load Balancer names
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     elb = boto3.client("elb")
     paginator = elb.get_paginator("describe_load_balancers")
     page_iterator = paginator.paginate()

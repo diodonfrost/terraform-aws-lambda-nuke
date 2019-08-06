@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all autoscaling resources"""
+"""Module deleting all aws Elastic Load Balancer v2 resources."""
 
 import logging
 import time
@@ -11,9 +11,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_elbv2(older_than_seconds):
-    """
-        Function for destroy every elbv2 and
-        target groups aws resources
+    """Elastic Load Balancer v2 deleting function.
+
+    Deleting all elb v2 with a timestamp greater
+    than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -62,12 +67,19 @@ def nuke_all_elbv2(older_than_seconds):
 
 
 def elbv2_list_loadbalancers(time_delete):
-    """
-       Aws elb list load balancer, list name of
-       all elastic load balancers and return it in list.
-    """
+    """Elastic Load Balancer v2 list function.
 
-    # Define the connection
+    List ARN of all Elastic Load Balancer v2 with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter elbv2
+    :returns:
+        List of elbv2 ARN
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_load_balancers")
     page_iterator = paginator.paginate()
@@ -87,12 +99,19 @@ def elbv2_list_loadbalancers(time_delete):
 
 
 def elbv2_list_target_groups():
-    """
-       Aws elb list target group, list name of
-       all target groups and return it in list.
-    """
+    """Elastic Load Balancer Target Group list function.
 
-    # Define the connection
+    List ARN of all elbv2 Target Group with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter elbv2 Target Groups
+    :returns:
+        List of elbv2 ARN
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_target_groups")
     page_iterator = paginator.paginate()

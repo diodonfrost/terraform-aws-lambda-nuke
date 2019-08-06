@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all ebs resources"""
+"""Module deleting all aws ebs volume and dlm policie resources."""
 
 import logging
 import time
@@ -11,9 +11,14 @@ from botocore.exceptions import ClientError
 
 
 def nuke_all_ebs(older_than_seconds):
-    """
-         ebs function for destroy all snapshots,
-         volumes and lifecycle manager
+    """Ebs and dlm policies deleting function.
+
+    Deleting all ebs volumes and dlm policy resources with
+    a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -56,15 +61,20 @@ def nuke_all_ebs(older_than_seconds):
 
 
 def ebs_list_volumes(time_delete):
-    """
-       Aws ebs list function, list name of
-       all ebs volumes and return it in list.
-    """
+    """Ebs volume list function.
 
-    # Define connection
+    List the IDs of all ebs volumes with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter ebs volumes
+    :returns:
+        List of ebs volumes IDs
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     ec2 = boto3.client("ec2")
-
-    # Paginator volume list
     paginator = ec2.get_paginator("describe_volumes")
     page_iterator = paginator.paginate()
 
@@ -84,11 +94,18 @@ def ebs_list_volumes(time_delete):
 
 
 def dlm_list_policy(time_delete):
-    """
-       Aws dlm list function, list name of
-       all data lifecycle manager and return it in list.
-    """
+    """Data Lifecycle Policies list function.
 
+    Returns the IDs of all Data Lifecycle Policies with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Data Lifecycle policies
+    :returns:
+        List of Data Lifecycle policies IDs
+    :rtype:
+        [str]
+    """
     # Define connection
     dlm = boto3.client("dlm")
     response = dlm.get_lifecycle_policies()

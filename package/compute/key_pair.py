@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all key pairs"""
+"""Module deleting all keypairs."""
 
 import logging
 
@@ -10,8 +10,9 @@ from botocore.exceptions import ClientError
 
 
 def nuke_all_key_pair():
-    """
-         ec2 function for nuke all key pairs
+    """Keypair deleting function.
+
+    Deleting all Keypair
     """
     # Define connection
     ec2 = boto3.client("ec2")
@@ -31,11 +32,15 @@ def nuke_all_key_pair():
 
 
 def ec2_list_keypair():
-    """
-       Aws ec2 list keypair, list name of
-       all keypairs and return it in list.
-    """
+    """Keypair list function.
 
+    List the names of all Keypair
+
+    :returns:
+        List of Keypair names
+    :rtype:
+        [str]
+    """
     # Define the connection
     ec2 = boto3.client("ec2")
     response = ec2.describe_key_pairs()

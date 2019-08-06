@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all eks resources"""
+"""Module deleting all aws EKS cluster resources."""
 
 import logging
 import time
@@ -11,8 +11,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_eks(older_than_seconds):
-    """
-         eks function for destroy all kubernetes clusters
+    """EKS cluster deleting function.
+
+    Deleting all EKS clusters with a timestamp greater
+    than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -41,11 +47,18 @@ def nuke_all_eks(older_than_seconds):
 
 
 def eks_list_clusters(time_delete):
-    """
-       Aws eks container service, list name of
-       all eks cluster container and return it in list.
-    """
+    """EKS cluster list function.
 
+    List the names of all EKS clusters with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter EKS clusters
+    :returns:
+        List of EKS cluster names
+    :rtype:
+        [str]
+    """
     # Define the connection
     eks = boto3.client("eks")
     response = eks.list_clusters()

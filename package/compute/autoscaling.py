@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all autoscaling resources."""
+"""Module deleting all aws autoscaling resources."""
 
 import logging
 import time
@@ -11,11 +11,16 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_autoscaling(older_than_seconds):
-    """
-        Function for destroy every autoscaling,
-        launch_configuration aws resources
-    """
+    """Autoscaling deleting function.
 
+    Deleting all Autoscaling Groups and Launch
+    Configurations resources with a timestamp greater
+    than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
+    """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
 
@@ -60,12 +65,19 @@ def nuke_all_autoscaling(older_than_seconds):
 
 
 def autoscaling_list_groups(time_delete):
-    """
-       Aws autoscaling list function, list name of
-       all autoscaling group and return it in list.
-    """
+    """Autoscaling Group list function.
 
-    # Define connection
+    List the names of all Autoscaling Groups with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Autoscaling Groups
+    :returns:
+        List of Autoscaling Groups names
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     autoscaling = boto3.client("autoscaling")
     paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
     page_iterator = paginator.paginate()
@@ -86,12 +98,19 @@ def autoscaling_list_groups(time_delete):
 
 
 def autoscaling_list_launch_confs(time_delete):
-    """
-       Aws launch configuration list function, list name of
-       all ec2 launch configuration group and return it in list.
-    """
+    """Launch configuration list function.
 
-    # Define connection
+    Returns the names of all Launch Configuration Groups with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Launch Configuration Groups
+    :returns:
+        List of Launch Configurations names
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     autoscaling = boto3.client("autoscaling")
     paginator = autoscaling.get_paginator("describe_launch_configurations")
     page_iterator = paginator.paginate()

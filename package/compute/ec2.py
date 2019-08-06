@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all ec2 resources"""
+"""Module deleting all ec2 instances, placement groups and launch templates."""
 
 import logging
 import time
@@ -11,9 +11,14 @@ from botocore.exceptions import ClientError
 
 
 def nuke_all_ec2(older_than_seconds):
-    """
-        ec2 function for destroy all ec2 instances
-        and launchtemplate resources
+    """Ec2 instance, placement group and template deleting function.
+
+    Deleting all ec2 instances, placement groups and launch templates with
+    a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -63,12 +68,19 @@ def nuke_all_ec2(older_than_seconds):
 
 
 def ec2_list_instances(time_delete):
-    """
-       Aws ec2 instance list function, list name of all ec2 instances
-       all ec2 instances with specific tag and return it in list.
-    """
+    """Ec2 instance list function.
 
-    # Define the connection
+    List IDs of all ec2 instances with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter ec2 instances
+    :returns:
+        List of ec2 instances IDs
+    :rtype:
+        [str]
+    """
+    # Define connection with paginator
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_instances")
     page_iterator = paginator.paginate(
@@ -97,11 +109,18 @@ def ec2_list_instances(time_delete):
 
 
 def ec2_list_templates(time_delete):
-    """
-       Aws ec2 template list function, list name of
-       all ec2 templates and return it in list.
-    """
+    """Launch Template list function.
 
+    List Ids of all Launch Templates with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Launch Templates
+    :returns:
+        List of Launch Templates Ids
+    :rtype:
+        [str]
+    """
     # Define the connection
     ec2 = boto3.client("ec2")
     response = ec2.describe_launch_templates()
@@ -120,11 +139,15 @@ def ec2_list_templates(time_delete):
 
 
 def ec2_list_placement_group():
-    """
-       Aws ec2 placement group list function, list name of
-       all ec2 placement group and return it in list.
-    """
+    """Placement Group list function.
 
+    List name of all placement group.
+
+    :returns:
+        List of placement groups names
+    :rtype:
+        [str]
+    """
     # Define the connection
     ec2 = boto3.client("ec2")
     response = ec2.describe_placement_groups()

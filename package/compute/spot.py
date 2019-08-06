@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all ec2 resources"""
+"""Module deleting all spot requests and spot fleets."""
 
 import logging
 import time
@@ -11,9 +11,14 @@ from botocore.exceptions import ClientError
 
 
 def nuke_all_spot(older_than_seconds):
-    """
-        Function for destroy all spot fleet
-        and spot request resources
+    """Spot request and spot fleet deleting function.
+
+    Deleting all Spot request and spot fleet deleting function with
+    a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -47,8 +52,17 @@ def nuke_all_spot(older_than_seconds):
 
 
 def spot_list_requests(time_delete):
-    """
-       Aws spot request list function, list name of all spot request
+    """Spot Request list function.
+
+    List IDs of all Spot Requests with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter spot requests
+    :returns:
+        List of  Spot requests IDs
+    :rtype:
+        [str]
     """
     # Define the connection
     ec2 = boto3.client("ec2")
@@ -71,9 +85,17 @@ def spot_list_requests(time_delete):
 
 
 def spot_list_fleet(time_delete):
-    """
-       Aws spot fleet list function, list name of
-       all spot fleet request and return it in list.
+    """Spot Fleet list function.
+
+    List IDs of all Spot Fleets with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter  Spot Fleet
+    :returns:
+        List of  Spot Fleet IDs
+    :rtype:
+        [str]
     """
     # Define the connection
     ec2 = boto3.client("ec2")
