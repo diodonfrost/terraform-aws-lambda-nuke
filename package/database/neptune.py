@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all neptune resources"""
+"""Module deleting all neptune resources."""
 
 import logging
 import time
@@ -11,8 +11,21 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_neptune(older_than_seconds):
-    """
-         neptune function for destroy all neptune resources
+    """Neptune resources deleting function.
+
+    Deleting all neptune resources with
+    a timestamp greater than older_than_seconds.
+    That include:
+      - clusters
+      - instances
+      - snapshots
+      - subnets
+      - param groups
+      - cluster params
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -37,8 +50,19 @@ def nuke_all_neptune(older_than_seconds):
 
 
 def neptune_nuke_instances(time_delete):
-    """
-         neptune function for destroy all neptune instances
+    """Neptune resources deleting function.
+
+    Deleting all neptune resources with
+    a timestamp greater than older_than_seconds.
+    That include:
+      - clusters
+      - snapshots
+      - subnets
+      - param groups
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # define connection
     neptune = boto3.client("neptune")
@@ -65,9 +89,7 @@ def neptune_nuke_instances(time_delete):
 
 
 def neptune_nuke_clusters(time_delete):
-    """
-         neptune function for destroy all neptune clusters
-    """
+    """Neptune cluster deleting function."""
     # define connection
     neptune = boto3.client("neptune")
 
@@ -93,9 +115,7 @@ def neptune_nuke_clusters(time_delete):
 
 
 def neptune_nuke_snapshots(time_delete):
-    """
-         neptune function for destroy all neptune snapshots
-    """
+    """Neptune snapshot deleting function."""
     # define connection
     neptune = boto3.client("neptune")
 
@@ -116,9 +136,7 @@ def neptune_nuke_snapshots(time_delete):
 
 
 def neptune_nuke_subnets():
-    """
-         neptune function for destroy all neptune subnets
-    """
+    """Neptune subnet deleting function."""
     # define connection
     neptune = boto3.client("neptune")
 
@@ -140,9 +158,7 @@ def neptune_nuke_subnets():
 
 
 def neptune_nuke_cluster_params():
-    """
-         neptune function for destroy all neptune cluster params
-    """
+    """Neptune cluster params function."""
     # define connection
     neptune = boto3.client("neptune")
 
@@ -166,9 +182,7 @@ def neptune_nuke_cluster_params():
 
 
 def neptune_nuke_group_params():
-    """
-         neptune function for destroy all neptune group params
-    """
+    """Neptune group parameter function."""
     # define connection
     neptune = boto3.client("neptune")
 
@@ -190,11 +204,18 @@ def neptune_nuke_group_params():
 
 
 def neptune_list_instances(time_delete):
-    """
-       Aws neptune list instances, list name of
-       all neptune instances and return it in list.
-    """
+    """Neptune instance list function.
 
+    List IDs of all neptune instances with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter neptune instances
+    :returns:
+        List of neptune instances IDs
+    :rtype:
+        [str]
+    """
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_instances()
@@ -213,11 +234,18 @@ def neptune_list_instances(time_delete):
 
 
 def neptune_list_clusters(time_delete):
-    """
-       Aws neptune list clusters, list name of
-       all neptune clusters and return it in list.
-    """
+    """Neptune cluster list function.
 
+    List IDs of all neptune clusters with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter neptune clusters
+    :returns:
+        List of neptune clusters IDs
+    :rtype:
+        [str]
+    """
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_clusters()
@@ -236,11 +264,18 @@ def neptune_list_clusters(time_delete):
 
 
 def neptune_list_snapshots(time_delete):
-    """
-       Aws neptune list snapshots, list name of
-       all neptune snapshots and return it in list.
-    """
+    """Neptune snapshot list function.
 
+    List IDs of all neptune snapshots with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter neptune snapshots
+    :returns:
+        List of neptune snapshots IDs
+    :rtype:
+        [str]
+    """
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_cluster_snapshots()
@@ -259,11 +294,7 @@ def neptune_list_snapshots(time_delete):
 
 
 def neptune_list_subnet():
-    """
-       Aws neptune list subnets, list name of
-       all neptune subnets and return it in list.
-    """
-
+    """Neptune subnet list function."""
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_subnet_groups()
@@ -281,11 +312,7 @@ def neptune_list_subnet():
 
 
 def neptune_list_cluster_params():
-    """
-       Aws neptune list cluster parameters, list name of
-       all neptune cluster parameters and return it in list.
-    """
-
+    """Neptune cluster param list function."""
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_cluster_parameter_groups()
@@ -303,11 +330,7 @@ def neptune_list_cluster_params():
 
 
 def neptune_list_params():
-    """
-       Aws neptune list parameters, list name of
-       all neptune parameters and return it in list.
-    """
-
+    """Neptune parameter group list function."""
     # define connection
     neptune = boto3.client("neptune")
     response = neptune.describe_db_parameter_groups()

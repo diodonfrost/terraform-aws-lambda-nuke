@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all rds resources"""
+"""Module deleting all rds resources."""
 
 import logging
 import time
@@ -11,8 +11,20 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_rds(older_than_seconds):
-    """
-         rds function for destroy all rds database
+    """Rds resources deleting function.
+
+    Deleting all rds resources with
+    a timestamp greater than older_than_seconds.
+    That include:
+      - Aurora clusters
+      - rds instances
+      - snapshots
+      - subnets
+      - param groups
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -63,11 +75,18 @@ def nuke_all_rds(older_than_seconds):
 
 
 def rds_list_instances(time_delete):
-    """
-       Aws rds list db instances, list name of
-       all rds db instances and return it in list.
-    """
+    """Rds instance list function.
 
+    List IDs of all rds instances with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter rds instances
+    :returns:
+        List of rds instances IDs
+    :rtype:
+        [str]
+    """
     # define connection
     rds = boto3.client("rds")
 
@@ -90,11 +109,18 @@ def rds_list_instances(time_delete):
 
 
 def rds_list_clusters(time_delete):
-    """
-       Aws rds list db clusters, list name of
-       all rds db clusters and return it in list.
-    """
+    """Aurora cluster list function.
 
+    List IDs of all aurora clusters with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter aurora clusters
+    :returns:
+        List of aurora clusters IDs
+    :rtype:
+        [str]
+    """
     # define connection
     rds = boto3.client("rds")
 

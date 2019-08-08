@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all elasticache resources"""
+"""Module deleting all elasticache resources."""
 
 import logging
 import time
@@ -11,8 +11,19 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_elasticache(older_than_seconds):
-    """
-         elasticache function for destroy all elasticache resources
+    """Elasticache resources deleting function.
+
+    Deleting all elasticache resources with
+    a timestamp greater than older_than_seconds.
+    That include:
+      - clusters
+      - snapshots
+      - subnets
+      - param groups
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -35,9 +46,7 @@ def nuke_all_elasticache(older_than_seconds):
 
 
 def elasticache_nuke_clusters(time_delete):
-    """
-         elasticache function for destroy all elasticache cluster
-    """
+    """Elasticache cluster deleting function."""
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -61,9 +70,7 @@ def elasticache_nuke_clusters(time_delete):
 
 
 def elasticache_nuke_snapshots(time_delete):
-    """
-         elasticache function for destroy all elasticache snapshots
-    """
+    """Elasticache snapshot deleting function."""
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -87,9 +94,7 @@ def elasticache_nuke_snapshots(time_delete):
 
 
 def elasticache_nuke_subnets():
-    """
-         elasticache function for destroy all elasticache subnets
-    """
+    """Elasticache subnet deleting function."""
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -113,9 +118,7 @@ def elasticache_nuke_subnets():
 
 
 def elasticache_nuke_param_groups():
-    """
-         elasticache function for destroy all elasticache param groups
-    """
+    """Elasticache param group deleting function."""
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -143,11 +146,18 @@ def elasticache_nuke_param_groups():
 
 
 def elasticache_list_clusters(time_delete):
-    """
-       Aws elasticache list clusters, list name of
-       all elasticache clusters and return it in list.
-    """
+    """Elasticache cluster list function.
 
+    List IDs of all elasticache clusters with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter elasticache clusters
+    :returns:
+        List of elasticache clusters IDs
+    :rtype:
+        [str]
+    """
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -170,11 +180,18 @@ def elasticache_list_clusters(time_delete):
 
 
 def elasticache_list_snapshots(time_delete):
-    """
-       Aws elasticache list snapshots, list name of
-       all elasticache snapshots and return it in list.
-    """
+    """Elasticache snapshots list function.
 
+    List names of all elasticache snapshots with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter elasticache snapshots
+    :returns:
+        List of elasticache snpashots names
+    :rtype:
+        [str]
+    """
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -189,8 +206,8 @@ def elasticache_list_snapshots(time_delete):
     for page in page_iterator:
         for snapshot in page["Snapshots"]:
             if (
-                snapshot["NodeSnapshots"][0]["SnapshotCreateTime"].timestamp()
-                < time_delete
+                    snapshot["NodeSnapshots"][0][
+                        "SnapshotCreateTime"].timestamp() < time_delete
             ):
 
                 elasticache_snapshot = snapshot["SnapshotName"]
@@ -200,11 +217,7 @@ def elasticache_list_snapshots(time_delete):
 
 
 def elasticache_list_subnets():
-    """
-       Aws elasticache list subnets, list name of
-       all elasticache subnets and return it in list.
-    """
-
+    """Elasticache subnet list function."""
     # define connection
     elasticache = boto3.client("elasticache")
 
@@ -226,11 +239,7 @@ def elasticache_list_subnets():
 
 
 def elasticache_list_param_groups():
-    """
-       Aws elasticache list subnets, list name of
-       all elasticache subnets and return it in list.
-    """
-
+    """Elasticache parameters group list function."""
     # define connection
     elasticache = boto3.client("elasticache")
 

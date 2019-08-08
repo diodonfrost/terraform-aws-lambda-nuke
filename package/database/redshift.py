@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all redshift resources"""
+"""Module deleting all redshift resources."""
 
 import logging
 import time
@@ -11,8 +11,19 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_redshift(older_than_seconds):
-    """
-         redshift function for destroy all redshift resources
+    """Redshift resources deleting function.
+
+    Deleting all redshift resources with
+    a timestamp greater than older_than_seconds.
+    That include:
+      - clusters
+      - snapshots
+      - subnets
+      - param groups
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -35,9 +46,7 @@ def nuke_all_redshift(older_than_seconds):
 
 
 def redshift_nuke_clusters(time_delete):
-    """
-         redshift function for destroy all redshift databases
-    """
+    """Redshift cluster deleting function."""
     # define connection
     redshift = boto3.client("redshift")
 
@@ -63,9 +72,7 @@ def redshift_nuke_clusters(time_delete):
 
 
 def redshift_nuke_snapshots(time_delete):
-    """
-         redshift function for destroy all redshift snapshots
-    """
+    """Redshift snapshot deleting function."""
     # define connection
     redshift = boto3.client("redshift")
 
@@ -89,9 +96,7 @@ def redshift_nuke_snapshots(time_delete):
 
 
 def redshift_nuke_subnets():
-    """
-         redshift function for destroy all redshift subnets
-    """
+    """Redshift subnet deleting function."""
     # define connection
     redshift = boto3.client("redshift")
 
@@ -117,9 +122,7 @@ def redshift_nuke_subnets():
 
 
 def redshift_nuke_param_groups():
-    """
-         redshift function for destroy all redshift param groups
-    """
+    """Redshift parameter group deleting function."""
     # define connection
     redshift = boto3.client("redshift")
 
@@ -147,11 +150,18 @@ def redshift_nuke_param_groups():
 
 
 def redshift_list_clusters(time_delete):
-    """
-       Aws redshift list clusters, list name of
-       all redshift clusters and return it in list.
-    """
+    """Redshift cluster list function.
 
+    List IDs of all redshift cluster with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter redshift cluster
+    :returns:
+        List of redshift cluster IDs
+    :rtype:
+        [str]
+    """
     # define connection
     redshift = boto3.client("redshift")
 
@@ -174,11 +184,18 @@ def redshift_list_clusters(time_delete):
 
 
 def redshift_list_snapshots(time_delete):
-    """
-       Aws redshift list snapshots, list name of
-       all redshift snapshots and return it in list.
-    """
+    """Redshift snapshot list function.
 
+    List IDs of all redshift snapshots with a timestamp
+    lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter redshift snapshots
+    :returns:
+        List of redshift snapshots IDs
+    :rtype:
+        [str]
+    """
     # define connection
     redshift = boto3.client("redshift")
 
@@ -201,11 +218,7 @@ def redshift_list_snapshots(time_delete):
 
 
 def redshift_list_subnet():
-    """
-       Aws redshift list subnets, list name of
-       all redshift subnets and return it in list.
-    """
-
+    """Redshift subnet list function."""
     # define connection
     redshift = boto3.client("redshift")
 
@@ -227,11 +240,7 @@ def redshift_list_subnet():
 
 
 def redshift_list_cluster_params():
-    """
-       Aws redshift list cluster parameters, list name of
-       all redshift cluster parameters and return it in list.
-    """
-
+    """Redshift cluster parameter list function."""
     # define connection
     redshift = boto3.client("redshift")
 
