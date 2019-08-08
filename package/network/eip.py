@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all eip resources"""
+"""Module deleting all aws eip."""
 
 import logging
 
@@ -10,9 +10,7 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_eip():
-    """
-         ec2 function for destroy all elastic
-    """
+    """Eip deleting function."""
     # define connection
     ec2 = boto3.client("ec2")
 
@@ -38,11 +36,7 @@ def nuke_all_eip():
 
 
 def ec2_list_eips():
-    """
-       Aws ec2 list elastic ips, list name of
-       all network elastic ip and return it in list.
-    """
-
+    """Eip list function."""
     # define connection
     ec2 = boto3.client("ec2")
     response = ec2.describe_addresses()

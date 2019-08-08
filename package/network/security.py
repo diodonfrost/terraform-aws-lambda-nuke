@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all security_group resources"""
+"""Module deleting all security group and network acl."""
 
 import logging
 
@@ -10,10 +10,7 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_network_security():
-    """
-         ec2 function for destroy all security group and
-         network acl resources
-    """
+    """Security group and network acl deleting function."""
     # define connection
     ec2 = boto3.client("ec2")
 
@@ -62,11 +59,7 @@ def nuke_all_network_security():
 
 
 def ec2_list_security_groups():
-    """
-       Aws ec2 list security groups, list name of
-       all network security group and return it in list.
-    """
-
+    """Security groups list function."""
     # define connection
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_security_groups")
@@ -86,11 +79,7 @@ def ec2_list_security_groups():
 
 
 def ec2_list_network_acls():
-    """
-       Aws ec2 list network acl, list name of
-       all network acl and return it in list.
-    """
-
+    """Network acl list function."""
     # define connection
     ec2 = boto3.client("ec2")
     response = ec2.describe_network_acls()
