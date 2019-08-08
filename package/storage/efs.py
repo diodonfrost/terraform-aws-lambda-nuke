@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all efs resources"""
+"""Module deleting all aws efs resources."""
 
 import logging
 import time
@@ -11,8 +11,13 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_efs(older_than_seconds):
-    """
-         efs function for destroy all efs share
+    """EFS deleting function.
+
+    Deleting all efs with a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -42,11 +47,17 @@ def nuke_all_efs(older_than_seconds):
 
 
 def efs_list_file_systems(time_delete):
-    """
-       Aws efs list file system, list name of
-       all efs file systems and return it in list.
-    """
+    """EFS list function.
 
+    List IDS of all efs with a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter efs
+    :returns:
+        List of efs IDs
+    :rtype:
+        [str]
+    """
     # define connection
     efs = boto3.client("efs")
 

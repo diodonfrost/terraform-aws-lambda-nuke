@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all glacier resources"""
+"""Module deleting all aws Glacier resources."""
 
 import logging
 import time
@@ -11,8 +11,13 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_glacier(older_than_seconds):
-    """
-         glacier function for destroy all kubernetes vaults
+    """Glacier deleting function.
+
+    Deleting all Glacier with a timestamp greater than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -41,11 +46,18 @@ def nuke_all_glacier(older_than_seconds):
 
 
 def glacier_list_vaults(time_delete):
-    """
-       Aws glacier container service, list name of
-       all glacier vault and return it in list.
-    """
+    """Glacier vault list function.
 
+    List the names of all Glacier vaults with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter Glacier vaults
+    :returns:
+        List of Glacier vaults names
+    :rtype:
+        [str]
+    """
     # Define the connection
     glacier = boto3.client("glacier")
     paginator = glacier.get_paginator("list_vaults")

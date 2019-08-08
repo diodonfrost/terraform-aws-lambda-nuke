@@ -35,7 +35,6 @@ older_than = os.getenv("OLDER_THAN", "none")
 
 def lambda_handler(event, context):
     """Main function entrypoint for lambda."""
-
     # Convert older_than variable to seconds
     older_than_seconds = timeparse.timeparse(older_than)
 

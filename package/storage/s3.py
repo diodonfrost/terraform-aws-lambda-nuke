@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""This script nuke all s3 bucket"""
+"""Module deleting all aws s3 bucket resources."""
 
 import logging
 import time
@@ -11,8 +11,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 
 def nuke_all_s3(older_than_seconds):
-    """
-         s3 function for nuke all s3 buckets
+    """S3 bucket deleting function.
+
+    Deleting all s3 buckets with a timestamp greater
+    than older_than_seconds.
+
+    :param int older_than_seconds:
+        The timestamp in seconds used from which the aws
+        resource will be deleted
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
@@ -52,11 +58,18 @@ def nuke_all_s3(older_than_seconds):
 
 
 def s3_list_buckets(time_delete):
-    """
-       Aws s3 list bucket, list name of
-       all s3 buckets and return it in list.
-    """
+    """S3 bucket list function.
 
+    List the names of all S3 buckets with
+    a timestamp lower than time_delete.
+
+    :param int time_delete:
+        Timestamp in seconds used for filter S3 buckets
+    :returns:
+        List of S3 buckets names
+    :rtype:
+        [str]
+    """
     # Define the connection
     s3 = boto3.client("s3")
     response = s3.list_buckets()
