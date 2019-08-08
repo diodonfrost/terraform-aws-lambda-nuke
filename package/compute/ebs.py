@@ -22,8 +22,6 @@ def nuke_all_ebs(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # Define connection
     ec2 = boto3.client("ec2")
     dlm = boto3.client("dlm")
 
@@ -63,11 +61,10 @@ def ebs_list_volumes(time_delete):
     :rtype:
         [str]
     """
+    ebs_volumes_list = []
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_volumes")
     page_iterator = paginator.paginate()
-
-    ebs_volumes_list = []
 
     for page in page_iterator:
         for volume in page["Volumes"]:
@@ -90,10 +87,9 @@ def dlm_list_policy(time_delete):
     :rtype:
         [str]
     """
+    dlm_policy_list = []
     dlm = boto3.client("dlm")
     response = dlm.get_lifecycle_policies()
-
-    dlm_policy_list = []
 
     for policy in response["Policies"]:
         detailed = dlm.get_lifecycle_policy(PolicyId=policy["PolicyId"])

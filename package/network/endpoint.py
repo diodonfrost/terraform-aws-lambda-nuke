@@ -39,7 +39,8 @@ def nuke_all_endpoint(older_than_seconds):
             error_code = e.response["Error"]["Code"]
             if error_code == "RequestLimitExceeded":
                 logging.info(
-                    "DeleteVpcEndpoints operation max retries reached")
+                    "DeleteVpcEndpoints operation max retries reached"
+                )
             else:
                 logging.error("Unexpected error: %s", e)
 

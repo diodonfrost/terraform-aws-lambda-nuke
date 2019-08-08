@@ -165,10 +165,8 @@ def elasticache_list_snapshots(time_delete):
 
     for page in page_iterator:
         for snapshot in page["Snapshots"]:
-            if (
-                    snapshot["NodeSnapshots"][0][
-                        "SnapshotCreateTime"].timestamp() < time_delete
-            ):
+            date_snapshot = snapshot["NodeSnapshots"][0]["SnapshotCreateTime"]
+            if date_snapshot.timestamp() < time_delete:
                 elasticache_snapshot = snapshot["SnapshotName"]
                 elasticache_snapshot_list.insert(0, elasticache_snapshot)
     return elasticache_snapshot_list
