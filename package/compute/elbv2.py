@@ -22,8 +22,6 @@ def nuke_all_elbv2(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # Define connection
     elbv2 = boto3.client("elbv2")
 
     try:
@@ -32,13 +30,8 @@ def nuke_all_elbv2(older_than_seconds):
         print("elbv2 resource is not available in this aws region")
         return
 
-    # List all elbv2 load balaner arn
-    elbv2_loadbalancer_list = elbv2_list_loadbalancers(time_delete)
-
-    # Nuke all load balancers
-    for loadbalancer in elbv2_loadbalancer_list:
-
-        # Delete load balancer
+    # Deletes elastic load balancer
+    for loadbalancer in elbv2_list_loadbalancers(time_delete):
         try:
             elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
             print("Nuke Load Balancer {0}".format(loadbalancer))
@@ -49,12 +42,8 @@ def nuke_all_elbv2(older_than_seconds):
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # List all elbv2 target group arn
-    elbv2_targetgroup_list = elbv2_list_target_groups()
-
-    for targetgroup in elbv2_targetgroup_list:
-
-        # Nuke all target group
+    # Deletes elastic load balancer groups
+    for targetgroup in elbv2_list_target_groups():
         try:
             elbv2.delete_target_group(TargetGroupArn=targetgroup)
             print("Nuke Target Group {0}".format(targetgroup))
@@ -79,22 +68,16 @@ def elbv2_list_loadbalancers(time_delete):
     :rtype:
         [str]
     """
-    # Define connection with paginator
+    elbv2_loadbalancer_list = []
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_load_balancers")
     page_iterator = paginator.paginate()
 
-    # Initialize elbv2 loadbalancer list
-    elbv2_loadbalancer_list = []
-
-    # Retrieve all elbv2 loadbalancers arn
     for page in page_iterator:
         for loadbalancer in page["LoadBalancers"]:
             if loadbalancer["CreatedTime"].timestamp() < time_delete:
-
                 elbv2_loadbalancer = loadbalancer["LoadBalancerArn"]
                 elbv2_loadbalancer_list.insert(0, elbv2_loadbalancer)
-
     return elbv2_loadbalancer_list
 
 
@@ -111,19 +94,13 @@ def elbv2_list_target_groups():
     :rtype:
         [str]
     """
-    # Define connection with paginator
+    elbv2_targetgroup_list = []
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_target_groups")
     page_iterator = paginator.paginate()
 
-    # Initialize elbv2 target group list
-    elbv2_targetgroup_list = []
-
-    # Retrieve all elbv2 target groups arn
     for page in page_iterator:
         for targetgroup in page["TargetGroups"]:
-
             elbv2_targetgroup = targetgroup["TargetGroupArn"]
             elbv2_targetgroup_list.insert(0, elbv2_targetgroup)
-
     return elbv2_targetgroup_list

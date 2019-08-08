@@ -27,8 +27,6 @@ def nuke_all_elasticache(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # define connection
     elasticache = boto3.client("elasticache")
 
     # Test if elasticache resources is present in current aws region
@@ -38,7 +36,6 @@ def nuke_all_elasticache(older_than_seconds):
         print("elasticache resource is not available in this aws region")
         return
 
-    # Nuke all elasticachec clusters
     elasticache_nuke_clusters(time_delete)
     elasticache_nuke_snapshots(time_delete)
     elasticache_nuke_subnets()
@@ -47,15 +44,9 @@ def nuke_all_elasticache(older_than_seconds):
 
 def elasticache_nuke_clusters(time_delete):
     """Elasticache cluster deleting function."""
-    # define connection
     elasticache = boto3.client("elasticache")
 
-    # List all elasticache clusters
-    elasticache_cluster_list = elasticache_list_clusters(time_delete)
-
-    # Nuke all elasticache clusters
-    for cluster in elasticache_cluster_list:
-
+    for cluster in elasticache_list_clusters(time_delete):
         try:
             elasticache.delete_cache_cluster(CacheClusterId=cluster)
             print("Nuke elasticache cluster {0}".format(cluster))
@@ -71,15 +62,9 @@ def elasticache_nuke_clusters(time_delete):
 
 def elasticache_nuke_snapshots(time_delete):
     """Elasticache snapshot deleting function."""
-    # define connection
     elasticache = boto3.client("elasticache")
 
-    # List all elasticache snapshots
-    elasticache_snapshot_list = elasticache_list_snapshots(time_delete)
-
-    # Nuke all elasticache clusters
-    for snapshot in elasticache_snapshot_list:
-
+    for snapshot in elasticache_list_snapshots(time_delete):
         try:
             elasticache.delete_snapshot(SnapshotName=snapshot)
             print("Nuke elasticache snapshot {0}".format(snapshot))
@@ -95,14 +80,9 @@ def elasticache_nuke_snapshots(time_delete):
 
 def elasticache_nuke_subnets():
     """Elasticache subnet deleting function."""
-    # define connection
     elasticache = boto3.client("elasticache")
 
-    # List all elasticache subnets
-    elasticache_subnet_list = elasticache_list_subnets()
-
-    # Nuke all elasticache subnets
-    for subnet in elasticache_subnet_list:
+    for subnet in elasticache_list_subnets():
 
         try:
             elasticache.delete_cache_subnet_group(CacheSubnetGroupName=subnet)
@@ -119,15 +99,9 @@ def elasticache_nuke_subnets():
 
 def elasticache_nuke_param_groups():
     """Elasticache param group deleting function."""
-    # define connection
     elasticache = boto3.client("elasticache")
 
-    # List all elasticache cluster parameters
-    elasticache_param_group_list = elasticache_list_param_groups()
-
-    # Nuke all elasticache parameters
-    for param in elasticache_param_group_list:
-
+    for param in elasticache_list_param_groups():
         try:
             elasticache.delete_cache_parameter_group(
                 CacheParameterGroupName=param
@@ -158,24 +132,16 @@ def elasticache_list_clusters(time_delete):
     :rtype:
         [str]
     """
-    # define connection
+    elasticache_cluster_list = []
     elasticache = boto3.client("elasticache")
-
-    # Define the connection
     paginator = elasticache.get_paginator("describe_cache_clusters")
     page_iterator = paginator.paginate()
 
-    # Initialize elasticache file system list
-    elasticache_cluster_list = []
-
-    # Retrieve all elasticache file system Id
     for page in page_iterator:
         for cluster in page["CacheClusters"]:
             if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
-
                 elasticache_cluster = cluster["CacheClusterId"]
                 elasticache_cluster_list.insert(0, elasticache_cluster)
-
     return elasticache_cluster_list
 
 
@@ -192,69 +158,45 @@ def elasticache_list_snapshots(time_delete):
     :rtype:
         [str]
     """
-    # define connection
+    elasticache_snapshot_list = []
     elasticache = boto3.client("elasticache")
-
-    # Define the connection
     paginator = elasticache.get_paginator("describe_snapshots")
     page_iterator = paginator.paginate()
 
-    # Initialize elasticache snapshot list
-    elasticache_snapshot_list = []
-
-    # Retrieve all elasticache snapshot names
     for page in page_iterator:
         for snapshot in page["Snapshots"]:
             if (
                     snapshot["NodeSnapshots"][0][
                         "SnapshotCreateTime"].timestamp() < time_delete
             ):
-
                 elasticache_snapshot = snapshot["SnapshotName"]
                 elasticache_snapshot_list.insert(0, elasticache_snapshot)
-
     return elasticache_snapshot_list
 
 
 def elasticache_list_subnets():
     """Elasticache subnet list function."""
-    # define connection
+    elasticache_subnet_list = []
     elasticache = boto3.client("elasticache")
-
-    # Define the connection
     paginator = elasticache.get_paginator("describe_cache_subnet_groups")
     page_iterator = paginator.paginate()
 
-    # Initialize elasticache subnet list
-    elasticache_subnet_list = []
-
-    # Retrieve all elasticache subnet names
     for page in page_iterator:
         for subnet in page["CacheSubnetGroups"]:
-
             elasticache_subnet = subnet["CacheSubnetGroupName"]
             elasticache_subnet_list.insert(0, elasticache_subnet)
-
     return elasticache_subnet_list
 
 
 def elasticache_list_param_groups():
     """Elasticache parameters group list function."""
-    # define connection
+    elasticache_param_group_list = []
     elasticache = boto3.client("elasticache")
-
-    # Define the connection
     paginator = elasticache.get_paginator("describe_cache_parameter_groups")
     page_iterator = paginator.paginate()
 
-    # Initialize elasticache param group list
-    elasticache_param_group_list = []
-
-    # Retrieve all elasticache param group names
     for page in page_iterator:
         for param_group in page["CacheParameterGroups"]:
-
             elasticache_param_group = param_group["CacheParameterGroupName"]
             elasticache_param_group_list.insert(0, elasticache_param_group)
-
     return elasticache_param_group_list

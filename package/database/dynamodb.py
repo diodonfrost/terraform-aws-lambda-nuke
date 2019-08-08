@@ -22,8 +22,6 @@ def nuke_all_dynamodb(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # define connection
     dynamodb = boto3.client("dynamodb")
 
     # Test if dynamodb services is present in current aws region
@@ -33,26 +31,16 @@ def nuke_all_dynamodb(older_than_seconds):
         print("dynamodb resource is not available in this aws region")
         return
 
-    # List all dynamodb tables
-    dynamodb_table_list = dynamodb_list_tables(time_delete)
-
-    # Nuke all dynamodb tables
-    for table in dynamodb_table_list:
-
-        # Delete dynamodb table
+    # Delete dynamodb table
+    for table in dynamodb_list_tables(time_delete):
         try:
             dynamodb.delete_table(TableName=table)
             print("Nuke rds table{0}".format(table))
         except ClientError as e:
             logging.error("Unexpected error: %s", e)
 
-    # List all dynamodb backup
-    dynamodb_table_backup = dynamodb_list_backups(time_delete)
-
-    # Nuke all dynamodb backup
-    for backup in dynamodb_table_backup:
-
-        # Delete dynamodb backup
+    # Delete dynamodb backup
+    for backup in dynamodb_list_backups(time_delete):
         try:
             dynamodb.delete_backup(BackupArn=backup)
             print("Nuke rds backup {0}".format(backup))
@@ -73,17 +61,11 @@ def dynamodb_list_tables(time_delete):
     :rtype:
         [str]
     """
-    # define connection
+    dynamodb_table_list = []
     dynamodb = boto3.client("dynamodb")
-
-    # Define the connection
     paginator = dynamodb.get_paginator("list_tables")
     page_iterator = paginator.paginate()
 
-    # Initialize dynamodb table list
-    dynamodb_table_list = []
-
-    # Retrieve all dynamodb table name
     for page in page_iterator:
         for table in page["TableNames"]:
             table_desc = dynamodb.describe_table(TableName=table)
@@ -94,7 +76,6 @@ def dynamodb_list_tables(time_delete):
 
                 dynamodb_table = table
                 dynamodb_table_list.insert(0, dynamodb_table)
-
     return dynamodb_table_list
 
 
@@ -111,17 +92,11 @@ def dynamodb_list_backups(time_delete):
     :rtype:
         [str]
     """
-    # define connection
+    dynamodb_backup_list = []
     dynamodb = boto3.client("dynamodb")
-
-    # Define the connection
     paginator = dynamodb.get_paginator("list_backups")
     page_iterator = paginator.paginate()
 
-    # Initialize dynamodb backup list
-    dynamodb_backup_list = []
-
-    # Retrieve all dynamodb backup name
     for page in page_iterator:
         for backup in page["BackupSummaries"]:
             backup_desc = dynamodb.describe_backup(
@@ -131,8 +106,6 @@ def dynamodb_list_backups(time_delete):
                     backup_desc["BackupDescription"]["BackupDetails"][
                         "BackupCreationDateTime"].timestamp() < time_delete
             ):
-
                 dynamodb_backup = backup["BackupArn"]
                 dynamodb_backup_list.insert(0, dynamodb_backup)
-
     return dynamodb_backup_list

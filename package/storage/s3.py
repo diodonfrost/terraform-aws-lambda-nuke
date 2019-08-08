@@ -22,8 +22,6 @@ def nuke_all_s3(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # Define connection
     s3 = boto3.client("s3")
     s3_resource = boto3.resource("s3")
 
@@ -34,12 +32,7 @@ def nuke_all_s3(older_than_seconds):
         print("s3 resource is not available in this aws region")
         return
 
-    # List all s3 bucket names
-    s3_bucket_list = s3_list_buckets(time_delete)
-
-    # Nuke all s3 buckets
-    for s3_bucket in s3_bucket_list:
-
+    for s3_bucket in s3_list_buckets(time_delete):
         try:
             # Delete all objects in bucket
             bucket = s3_resource.Bucket(s3_bucket)
@@ -70,18 +63,12 @@ def s3_list_buckets(time_delete):
     :rtype:
         [str]
     """
-    # Define the connection
+    s3_bucket_list = []
     s3 = boto3.client("s3")
     response = s3.list_buckets()
 
-    # Initialize s3 bucket list
-    s3_bucket_list = []
-
-    # Retrieve all s3 bucket names
     for bucket in response["Buckets"]:
         if bucket["CreationDate"].timestamp() < time_delete:
-
             s3_bucket = bucket["Name"]
             s3_bucket_list.insert(0, s3_bucket)
-
     return s3_bucket_list

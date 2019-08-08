@@ -22,8 +22,6 @@ def nuke_all_elb(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
-
-    # Define connection
     elb = boto3.client("elb")
 
     try:
@@ -32,13 +30,8 @@ def nuke_all_elb(older_than_seconds):
         print("elb resource is not available in this aws region")
         return
 
-    # List all elb load balaner arn
-    elb_loadbalancer_list = elb_list_loadbalancers(time_delete)
-
-    # Nuke all load balancers
-    for loadbalancer in elb_loadbalancer_list:
-
-        # Delete load balancer
+    # Deletes classic loadbalancer
+    for loadbalancer in elb_list_loadbalancers(time_delete):
         try:
             elb.delete_load_balancer(LoadBalancerName=loadbalancer)
             print("Nuke Load Balancer {0}".format(loadbalancer))
@@ -63,20 +56,14 @@ def elb_list_loadbalancers(time_delete):
     :rtype:
         [str]
     """
-    # Define connection with paginator
+    elb_loadbalancer_list = []
     elb = boto3.client("elb")
     paginator = elb.get_paginator("describe_load_balancers")
     page_iterator = paginator.paginate()
 
-    # Initialize elb loadbalancer list
-    elb_loadbalancer_list = []
-
-    # Retrieve all elb loadbalancers arn
     for page in page_iterator:
         for loadbalancer in page["LoadBalancerDescriptions"]:
             if loadbalancer["CreatedTime"].timestamp() < time_delete:
-
                 elb_loadbalancer = loadbalancer["LoadBalancerName"]
                 elb_loadbalancer_list.insert(0, elb_loadbalancer)
-
     return elb_loadbalancer_list

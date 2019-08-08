@@ -27,13 +27,8 @@ def nuke_all_ebs(older_than_seconds):
     ec2 = boto3.client("ec2")
     dlm = boto3.client("dlm")
 
-    # List all ebs volumes
-    ebs_volume_list = ebs_list_volumes(time_delete)
-
-    # Nuke all volumes
-    for volume in ebs_volume_list:
-
-        # Nuke all ebs volume
+    # Deletes ebs volumes
+    for volume in ebs_list_volumes(time_delete):
         try:
             ec2.delete_volume(VolumeId=volume)
             print("Nuke EBS Volume {0}".format(volume))
@@ -46,13 +41,8 @@ def nuke_all_ebs(older_than_seconds):
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # List all dlm policies
-    dlm_policy_list = dlm_list_policy(time_delete)
-
-    # Nuke all ebs lifecycle manager
-    for policy in dlm_policy_list:
-
-        # Nuke all dlm lifecycle policy
+    # Deletes snpashot lifecyle policy
+    for policy in dlm_list_policy(time_delete):
         try:
             dlm.delete_lifecycle_policy(PolicyId=policy)
             print("Nuke EBS Lifecycle Policy {0}".format(policy))
@@ -73,23 +63,17 @@ def ebs_list_volumes(time_delete):
     :rtype:
         [str]
     """
-    # Define connection with paginator
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_volumes")
     page_iterator = paginator.paginate()
 
-    # Initialize ebs volume list
     ebs_volumes_list = []
 
-    # Retrieve all volume ID in available state
     for page in page_iterator:
         for volume in page["Volumes"]:
             if volume["CreateTime"].timestamp() < time_delete:
-
-                # Retrieve and add in list ebs volume ID
                 ebs_volume = volume["VolumeId"]
                 ebs_volumes_list.insert(0, ebs_volume)
-
     return ebs_volumes_list
 
 
@@ -106,19 +90,14 @@ def dlm_list_policy(time_delete):
     :rtype:
         [str]
     """
-    # Define connection
     dlm = boto3.client("dlm")
     response = dlm.get_lifecycle_policies()
 
-    # Initialize data lifecycle manager list
     dlm_policy_list = []
 
-    # Retrieve dlm policies
     for policy in response["Policies"]:
         detailed = dlm.get_lifecycle_policy(PolicyId=policy["PolicyId"])
         if detailed["Policy"]["DateCreated"].timestamp() < time_delete:
-
             dlm_policy = policy["PolicyId"]
             dlm_policy_list.insert(0, dlm_policy)
-
     return dlm_policy_list
