@@ -5,3 +5,4 @@
 Gemfile.lock
 terraform.tfstate.d
 .tox
+.mypy_cache
