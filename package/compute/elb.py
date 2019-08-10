@@ -59,9 +59,8 @@ def elb_list_loadbalancers(time_delete):
     elb_loadbalancer_list = []
     elb = boto3.client("elb")
     paginator = elb.get_paginator("describe_load_balancers")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for loadbalancer in page["LoadBalancerDescriptions"]:
             if loadbalancer["CreatedTime"].timestamp() < time_delete:
                 elb_loadbalancer = loadbalancer["LoadBalancerName"]

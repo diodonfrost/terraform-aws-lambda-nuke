@@ -71,9 +71,8 @@ def elbv2_list_loadbalancers(time_delete):
     elbv2_loadbalancer_list = []
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_load_balancers")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for loadbalancer in page["LoadBalancers"]:
             if loadbalancer["CreatedTime"].timestamp() < time_delete:
                 elbv2_loadbalancer = loadbalancer["LoadBalancerArn"]
@@ -97,9 +96,8 @@ def elbv2_list_target_groups():
     elbv2_targetgroup_list = []
     elbv2 = boto3.client("elbv2")
     paginator = elbv2.get_paginator("describe_target_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for targetgroup in page["TargetGroups"]:
             elbv2_targetgroup = targetgroup["TargetGroupArn"]
             elbv2_targetgroup_list.insert(0, elbv2_targetgroup)

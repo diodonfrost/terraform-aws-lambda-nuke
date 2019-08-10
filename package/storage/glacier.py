@@ -54,9 +54,8 @@ def glacier_list_vaults(time_delete):
     glacier_vault_list = []
     glacier = boto3.client("glacier")
     paginator = glacier.get_paginator("list_vaults")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for vault in page["VaultList"]:
             if vault["CreationDate"].timestamp() < time_delete:
                 glacier_vault = vault["VaultName"]

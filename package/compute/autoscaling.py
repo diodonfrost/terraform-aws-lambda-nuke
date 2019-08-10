@@ -68,9 +68,8 @@ def autoscaling_list_groups(time_delete):
     autoscaling_group_list = []
     autoscaling = boto3.client("autoscaling")
     paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for group in page["AutoScalingGroups"]:
             if group["CreatedTime"].timestamp() < time_delete:
                 autoscaling_group = group["AutoScalingGroupName"]
@@ -94,9 +93,8 @@ def autoscaling_list_launch_confs(time_delete):
     autoscaling_launch_conf_list = []
     autoscaling = boto3.client("autoscaling")
     paginator = autoscaling.get_paginator("describe_launch_configurations")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for launchconf in page["LaunchConfigurations"]:
             if launchconf["CreatedTime"].timestamp() < time_delete:
                 launch_configuration = launchconf["LaunchConfigurationName"]

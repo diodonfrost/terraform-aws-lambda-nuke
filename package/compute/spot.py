@@ -76,18 +76,19 @@ def spot_list_fleet(time_delete):
     lower than time_delete.
 
     :param int time_delete:
-        Timestamp in seconds used for filter  Spot Fleet
+        Timestamp in seconds used for filter Spot Fleet
     :returns:
-        List of  Spot Fleet IDs
+        List of Spot Fleet IDs
     :rtype:
         [str]
     """
     spot_fleet_list = []
     ec2 = boto3.client("ec2")
-    response = ec2.describe_spot_fleet_requests()
+    paginator = ec2.get_paginator("describe_spot_fleet_requests")
 
-    for fleet in response["SpotFleetRequestConfigs"]:
-        if fleet["CreateTime"].timestamp() < time_delete:
-            spot_fleet_list = fleet["SpotFleetRequestId"]
-            spot_fleet_list.insert(0, spot_fleet_list)
+    for page in paginator.paginate():
+        for fleet in page["SpotFleetRequestConfigs"]:
+            if fleet["CreateTime"].timestamp() < time_delete:
+                spot_fleet_list = fleet["SpotFleetRequestId"]
+                spot_fleet_list.insert(0, spot_fleet_list)
     return spot_fleet_list

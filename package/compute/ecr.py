@@ -55,9 +55,8 @@ def ecr_list_registry(time_delete):
     ecr_registry_list = []
     ecr = boto3.client("ecr")
     paginator = ecr.get_paginator("describe_repositories")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for registry in page["repositories"]:
             if registry["createdAt"].timestamp() < time_delete:
                 ecr_registry = registry["repositoryName"]

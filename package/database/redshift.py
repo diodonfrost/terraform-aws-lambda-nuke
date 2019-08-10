@@ -138,9 +138,8 @@ def redshift_list_clusters(time_delete):
     redshift_cluster_list = []
     redshift = boto3.client("redshift")
     paginator = redshift.get_paginator("describe_clusters")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for cluster in page["Clusters"]:
             if cluster["ClusterCreateTime"].timestamp() < time_delete:
                 redshift_cluster = cluster["ClusterIdentifier"]
@@ -164,9 +163,8 @@ def redshift_list_snapshots(time_delete):
     redshift_snapshot_list = []
     redshift = boto3.client("redshift")
     paginator = redshift.get_paginator("describe_cluster_snapshots")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for snapshot in page["Snapshots"]:
             if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
                 redshift_snapshot = snapshot["SnapshotIdentifier"]
@@ -179,9 +177,8 @@ def redshift_list_subnet():
     redshift_subnet_list = []
     redshift = boto3.client("redshift")
     paginator = redshift.get_paginator("describe_cluster_subnet_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for subnet in page["ClusterSubnetGroups"]:
             redshift_subnet = subnet["ClusterSubnetGroupName"]
             redshift_subnet_list.insert(0, redshift_subnet)
@@ -193,9 +190,8 @@ def redshift_list_cluster_params():
     redshift_cluster_param_list = []
     redshift = boto3.client("redshift")
     paginator = redshift.get_paginator("describe_cluster_parameter_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for param in page["ParameterGroups"]:
             redshift_cluster_param = param["ParameterGroupName"]
             redshift_cluster_param_list.insert(0, redshift_cluster_param)

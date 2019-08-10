@@ -64,9 +64,8 @@ def ebs_list_volumes(time_delete):
     ebs_volumes_list = []
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_volumes")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for volume in page["Volumes"]:
             if volume["CreateTime"].timestamp() < time_delete:
                 ebs_volume = volume["VolumeId"]

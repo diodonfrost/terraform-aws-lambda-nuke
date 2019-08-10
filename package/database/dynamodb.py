@@ -64,9 +64,8 @@ def dynamodb_list_tables(time_delete):
     dynamodb_table_list = []
     dynamodb = boto3.client("dynamodb")
     paginator = dynamodb.get_paginator("list_tables")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for table in page["TableNames"]:
             table_desc = dynamodb.describe_table(TableName=table)
             date_table = table_desc["Table"]["CreationDateTime"]
@@ -92,9 +91,8 @@ def dynamodb_list_backups(time_delete):
     dynamodb_backup_list = []
     dynamodb = boto3.client("dynamodb")
     paginator = dynamodb.get_paginator("list_backups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for backup in page["BackupSummaries"]:
             backup_desc = dynamodb.describe_backup(
                 BackupArn=backup["BackupArn"]["BackupDescription"]

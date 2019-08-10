@@ -78,9 +78,8 @@ def rds_list_instances(time_delete):
     rds_instance_list = []
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_instances")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for instance in page["DBInstances"]:
             if instance["InstanceCreateTime"].timestamp() < time_delete:
                 rds_instance = instance["DBInstanceIdentifier"]
@@ -104,9 +103,8 @@ def rds_list_clusters(time_delete):
     rds_cluster_list = []
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_clusters")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for cluster in page["DBClusters"]:
             if cluster["ClusterCreateTime"].timestamp() < time_delete:
                 rds_cluster = cluster["DBClusterIdentifier"]

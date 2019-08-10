@@ -54,9 +54,8 @@ def ec2_list_security_groups():
     ec2_security_group_list = []
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_security_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for security_group in page["SecurityGroups"]:
             ec2_security_group = security_group["GroupId"]
             ec2_security_group_list.insert(0, ec2_security_group)

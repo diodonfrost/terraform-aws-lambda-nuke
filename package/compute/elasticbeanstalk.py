@@ -66,9 +66,8 @@ def elasticbeanstalk_list_apps():
     elasticbeanstalk_app_list = []
     elasticbeanstalk = boto3.client("elasticbeanstalk")
     paginator = elasticbeanstalk.get_paginator("describe_applications")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for app in page["Applications"]:
             elasticbeanstalk_app = app["ApplicationName"]
             elasticbeanstalk_app_list.insert(0, elasticbeanstalk_app)
@@ -88,9 +87,8 @@ def elasticbeanstalk_list_envs():
     elasticbeanstalk_env_list = []
     elasticbeanstalk = boto3.client("elasticbeanstalk")
     paginator = elasticbeanstalk.get_paginator("describe_environments")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for env in page["Environments"]:
             elasticbeanstalk_env = env["EnvironmentId"]
             elasticbeanstalk_env_list.insert(0, elasticbeanstalk_env)

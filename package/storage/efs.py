@@ -54,9 +54,8 @@ def efs_list_file_systems(time_delete):
     efs_filesystem_list = []
     efs = boto3.client("efs")
     paginator = efs.get_paginator("describe_file_systems")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for filesystem in page["FileSystems"]:
             if efs["CreationTime"].timestamp() < time_delete:
                 efs_filesystem = filesystem["FileSystemId"]

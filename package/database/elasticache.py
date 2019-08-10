@@ -135,9 +135,8 @@ def elasticache_list_clusters(time_delete):
     elasticache_cluster_list = []
     elasticache = boto3.client("elasticache")
     paginator = elasticache.get_paginator("describe_cache_clusters")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for cluster in page["CacheClusters"]:
             if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
                 elasticache_cluster = cluster["CacheClusterId"]
@@ -161,9 +160,8 @@ def elasticache_list_snapshots(time_delete):
     elasticache_snapshot_list = []
     elasticache = boto3.client("elasticache")
     paginator = elasticache.get_paginator("describe_snapshots")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for snapshot in page["Snapshots"]:
             date_snapshot = snapshot["NodeSnapshots"][0]["SnapshotCreateTime"]
             if date_snapshot.timestamp() < time_delete:
@@ -177,9 +175,8 @@ def elasticache_list_subnets():
     elasticache_subnet_list = []
     elasticache = boto3.client("elasticache")
     paginator = elasticache.get_paginator("describe_cache_subnet_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for subnet in page["CacheSubnetGroups"]:
             elasticache_subnet = subnet["CacheSubnetGroupName"]
             elasticache_subnet_list.insert(0, elasticache_subnet)
@@ -191,9 +188,8 @@ def elasticache_list_param_groups():
     elasticache_param_group_list = []
     elasticache = boto3.client("elasticache")
     paginator = elasticache.get_paginator("describe_cache_parameter_groups")
-    page_iterator = paginator.paginate()
 
-    for page in page_iterator:
+    for page in paginator.paginate():
         for param_group in page["CacheParameterGroups"]:
             elasticache_param_group = param_group["CacheParameterGroupName"]
             elasticache_param_group_list.insert(0, elasticache_param_group)

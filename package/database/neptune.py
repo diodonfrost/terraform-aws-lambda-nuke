@@ -239,11 +239,12 @@ def neptune_list_subnet():
     """Neptune subnet list function."""
     neptune_subnet_list = []
     neptune = boto3.client("neptune")
-    response = neptune.describe_db_subnet_groups()
+    paginator = neptune.get_paginator("describe_db_subnet_groups")
 
-    for subnet in response["DBSubnetGroups"]:
-        neptune_subnet = subnet["DBSubnetGroupName"]
-        neptune_subnet_list.insert(0, neptune_subnet)
+    for page in paginator.paginate():
+        for subnet in page["DBSubnetGroups"]:
+            neptune_subnet = subnet["DBSubnetGroupName"]
+            neptune_subnet_list.insert(0, neptune_subnet)
     return neptune_subnet_list
 
 
@@ -263,9 +264,10 @@ def neptune_list_params():
     """Neptune parameter group list function."""
     neptune_param_list = []
     neptune = boto3.client("neptune")
-    response = neptune.describe_db_parameter_groups()
+    paginator = neptune.get_paginator("describe_db_parameter_groups")
 
-    for param in response["DBParameterGroups"]:
-        neptune_param = param["DBParameterGroupName"]
-        neptune_param_list.insert(0, neptune_param)
+    for page in paginator.paginate():
+        for param in page["DBParameterGroups"]:
+            neptune_param = param["DBParameterGroupName"]
+            neptune_param_list.insert(0, neptune_param)
     return neptune_param_list
