@@ -139,8 +139,7 @@ def elasticache_list_clusters(time_delete):
     for page in paginator.paginate():
         for cluster in page["CacheClusters"]:
             if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
-                elasticache_cluster = cluster["CacheClusterId"]
-                elasticache_cluster_list.insert(0, elasticache_cluster)
+                elasticache_cluster_list.append(cluster["CacheClusterId"])
     return elasticache_cluster_list
 
 
@@ -165,8 +164,7 @@ def elasticache_list_snapshots(time_delete):
         for snapshot in page["Snapshots"]:
             date_snapshot = snapshot["NodeSnapshots"][0]["SnapshotCreateTime"]
             if date_snapshot.timestamp() < time_delete:
-                elasticache_snapshot = snapshot["SnapshotName"]
-                elasticache_snapshot_list.insert(0, elasticache_snapshot)
+                elasticache_snapshot_list.append(snapshot["SnapshotName"])
     return elasticache_snapshot_list
 
 
@@ -178,8 +176,7 @@ def elasticache_list_subnets():
 
     for page in paginator.paginate():
         for subnet in page["CacheSubnetGroups"]:
-            elasticache_subnet = subnet["CacheSubnetGroupName"]
-            elasticache_subnet_list.insert(0, elasticache_subnet)
+            elasticache_subnet_list.append(subnet["CacheSubnetGroupName"])
     return elasticache_subnet_list
 
 
@@ -191,6 +188,7 @@ def elasticache_list_param_groups():
 
     for page in paginator.paginate():
         for param_group in page["CacheParameterGroups"]:
-            elasticache_param_group = param_group["CacheParameterGroupName"]
-            elasticache_param_group_list.insert(0, elasticache_param_group)
+            elasticache_param_group_list.append(
+                param_group["CacheParameterGroupName"]
+            )
     return elasticache_param_group_list

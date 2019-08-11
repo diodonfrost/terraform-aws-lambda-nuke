@@ -93,8 +93,7 @@ def rds_list_instances(time_delete):
     for page in paginator.paginate():
         for instance in page["DBInstances"]:
             if instance["InstanceCreateTime"].timestamp() < time_delete:
-                rds_instance = instance["DBInstanceIdentifier"]
-                rds_instance_list.insert(0, rds_instance)
+                rds_instance_list.append(instance["DBInstanceIdentifier"])
     return rds_instance_list
 
 
@@ -118,6 +117,5 @@ def rds_list_clusters(time_delete):
     for page in paginator.paginate():
         for cluster in page["DBClusters"]:
             if cluster["ClusterCreateTime"].timestamp() < time_delete:
-                rds_cluster = cluster["DBClusterIdentifier"]
-                rds_cluster_list.insert(0, rds_cluster)
+                rds_cluster_list.append(cluster["DBClusterIdentifier"])
     return rds_cluster_list

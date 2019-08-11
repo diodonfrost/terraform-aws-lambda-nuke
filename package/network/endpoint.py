@@ -64,6 +64,5 @@ def ec2_list_endpoints(time_delete):
 
     for endpoint in response["VpcEndpoints"]:
         if endpoint["CreationTimestamp"].timestamp() < time_delete:
-            ec2_endpoint = endpoint["VpcEndpointId"]
-            ec2_endpoint_list.insert(0, ec2_endpoint)
+            ec2_endpoint_list.append(endpoint["VpcEndpointId"])
     return ec2_endpoint_list

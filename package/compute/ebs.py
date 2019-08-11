@@ -68,8 +68,7 @@ def ebs_list_volumes(time_delete):
     for page in paginator.paginate():
         for volume in page["Volumes"]:
             if volume["CreateTime"].timestamp() < time_delete:
-                ebs_volume = volume["VolumeId"]
-                ebs_volumes_list.insert(0, ebs_volume)
+                ebs_volumes_list.append(volume["VolumeId"])
     return ebs_volumes_list
 
 
@@ -93,6 +92,5 @@ def dlm_list_policy(time_delete):
     for policy in response["Policies"]:
         detailed = dlm.get_lifecycle_policy(PolicyId=policy["PolicyId"])
         if detailed["Policy"]["DateCreated"].timestamp() < time_delete:
-            dlm_policy = policy["PolicyId"]
-            dlm_policy_list.insert(0, dlm_policy)
+            dlm_policy_list.append(policy["PolicyId"])
     return dlm_policy_list

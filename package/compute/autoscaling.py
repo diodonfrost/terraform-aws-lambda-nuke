@@ -72,8 +72,7 @@ def autoscaling_list_groups(time_delete):
     for page in paginator.paginate():
         for group in page["AutoScalingGroups"]:
             if group["CreatedTime"].timestamp() < time_delete:
-                autoscaling_group = group["AutoScalingGroupName"]
-                autoscaling_group_list.insert(0, autoscaling_group)
+                autoscaling_group_list.append(group["AutoScalingGroupName"])
     return autoscaling_group_list
 
 
@@ -97,6 +96,7 @@ def autoscaling_list_launch_confs(time_delete):
     for page in paginator.paginate():
         for launchconf in page["LaunchConfigurations"]:
             if launchconf["CreatedTime"].timestamp() < time_delete:
-                launch_configuration = launchconf["LaunchConfigurationName"]
-                autoscaling_launch_conf_list.insert(0, launch_configuration)
+                autoscaling_launch_conf_list.append(
+                    launchconf["LaunchConfigurationName"]
+                )
     return autoscaling_launch_conf_list

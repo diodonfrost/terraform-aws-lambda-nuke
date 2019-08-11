@@ -68,8 +68,7 @@ def ec2_list_security_groups():
 
     for page in paginator.paginate():
         for security_group in page["SecurityGroups"]:
-            ec2_security_group = security_group["GroupId"]
-            ec2_security_group_list.insert(0, ec2_security_group)
+            ec2_security_group_list.append(security_group["GroupId"])
     return ec2_security_group_list
 
 
@@ -80,6 +79,5 @@ def ec2_list_network_acls():
     response = ec2.describe_network_acls()
 
     for network_acl in response["NetworkAcls"]:
-        ec2_network_acl = network_acl["NetworkAclId"]
-        ec2_network_acl_list.insert(0, ec2_network_acl)
+        ec2_network_acl_list.append(network_acl["NetworkAclId"])
     return ec2_network_acl_list

@@ -31,6 +31,5 @@ def ec2_list_keypair():
     response = ec2.describe_key_pairs()
 
     for keypair in response["KeyPairs"]:
-        ec2_keypair = keypair["KeyName"]
-        ec2_keypair_list.insert(0, ec2_keypair)
+        ec2_keypair_list.append(keypair["KeyName"])
     return ec2_keypair_list

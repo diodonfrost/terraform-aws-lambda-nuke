@@ -230,8 +230,9 @@ def neptune_list_snapshots(time_delete):
 
     for snapshot in response["DBClusterSnapshots"]:
         if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
-            neptune_snapshot = snapshot["DBClusterSnapshotIdentifier"]
-            neptune_snapshot_list.insert(0, neptune_snapshot)
+            neptune_snapshot_list.append(
+                snapshot["DBClusterSnapshotIdentifier"]
+            )
     return neptune_snapshot_list
 
 
@@ -243,8 +244,7 @@ def neptune_list_subnet():
 
     for page in paginator.paginate():
         for subnet in page["DBSubnetGroups"]:
-            neptune_subnet = subnet["DBSubnetGroupName"]
-            neptune_subnet_list.insert(0, neptune_subnet)
+            neptune_subnet_list.append(subnet["DBSubnetGroupName"])
     return neptune_subnet_list
 
 
@@ -255,8 +255,9 @@ def neptune_list_cluster_params():
     response = neptune.describe_db_cluster_parameter_groups()
 
     for param in response["DBClusterParameterGroups"]:
-        neptune_cluster_param = param["DBClusterParameterGroupName"]
-        neptune_cluster_param_list.insert(0, neptune_cluster_param)
+        neptune_cluster_param_list.append(
+            param["DBClusterParameterGroupName"]
+        )
     return neptune_cluster_param_list
 
 
@@ -268,6 +269,5 @@ def neptune_list_params():
 
     for page in paginator.paginate():
         for param in page["DBParameterGroups"]:
-            neptune_param = param["DBParameterGroupName"]
-            neptune_param_list.insert(0, neptune_param)
+            neptune_param_list.append(param["DBParameterGroupName"])
     return neptune_param_list

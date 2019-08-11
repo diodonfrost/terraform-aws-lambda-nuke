@@ -64,8 +64,7 @@ def spot_list_requests(time_delete):
 
     for spot_request in response["SpotInstanceRequests"]:
         if spot_request["CreateTime"].timestamp() < time_delete:
-            spot_request_id = spot_request["SpotInstanceRequestId"]
-            spot_request_list.insert(0, spot_request_id)
+            spot_request_list.append(spot_request["SpotInstanceRequestId"])
     return spot_request_list
 
 
@@ -89,6 +88,5 @@ def spot_list_fleet(time_delete):
     for page in paginator.paginate():
         for fleet in page["SpotFleetRequestConfigs"]:
             if fleet["CreateTime"].timestamp() < time_delete:
-                spot_fleet_list = fleet["SpotFleetRequestId"]
-                spot_fleet_list.insert(0, spot_fleet_list)
+                spot_fleet_list.append(fleet["SpotFleetRequestId"])
     return spot_fleet_list

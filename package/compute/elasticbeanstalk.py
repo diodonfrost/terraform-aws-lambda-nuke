@@ -42,8 +42,7 @@ def elasticbeanstalk_nuke_app(time_delete):
         if app["DateCreated"].timestamp() < time_delete:
             try:
                 elasticbeanstalk.delete_application(
-                    ApplicationName=app,
-                    TerminateEnvByForce=True
+                    ApplicationName=app, TerminateEnvByForce=True
                 )
                 print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
@@ -58,8 +57,7 @@ def elasticbeanstalk_nuke_env(time_delete):
         if env["DateCreated"].timestamp() < time_delete:
             try:
                 elasticbeanstalk.terminate_environment(
-                    EnvironmentId=env,
-                    ForceTerminate=True
+                    EnvironmentId=env, ForceTerminate=True
                 )
                 print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
@@ -82,9 +80,8 @@ def elasticbeanstalk_list_apps(time_delete):
 
     for page in paginator.paginate():
         for app in page["Applications"]:
-            if app['DateCreated'].timestamp() < time_delete:
-                elasticbeanstalk_app = app["ApplicationName"]
-                elasticbeanstalk_app_list.insert(0, elasticbeanstalk_app)
+            if app["DateCreated"].timestamp() < time_delete:
+                elasticbeanstalk_app_list.append(app["ApplicationName"])
     return elasticbeanstalk_app_list
 
 
@@ -104,7 +101,6 @@ def elasticbeanstalk_list_envs(time_delete):
 
     for page in paginator.paginate():
         for env in page["Environments"]:
-            if env['DateCreated'].timestamp() < time_delete:
-                elasticbeanstalk_env = env["EnvironmentId"]
-                elasticbeanstalk_env_list.insert(0, elasticbeanstalk_env)
+            if env["DateCreated"].timestamp() < time_delete:
+                elasticbeanstalk_env_list.append(env["EnvironmentId"])
     return elasticbeanstalk_env_list

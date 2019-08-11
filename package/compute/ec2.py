@@ -22,9 +22,16 @@ def nuke_all_ec2(older_than_seconds):
     """
     # Convert date in seconds
     time_delete = time.time() - older_than_seconds
+
+    ec2_nuke_instances(time_delete)
+    ec2_nuke_launch_templates(time_delete)
+    ec2_nuke_placement_groups()
+
+
+def ec2_nuke_instances(time_delete):
+    """Ec2 instance delete function."""
     ec2 = boto3.client("ec2")
 
-    # Delete instances
     for ec2_instance in ec2_list_instances(time_delete):
         try:
             ec2.terminate_instances(InstanceIds=[ec2_instance])
@@ -36,7 +43,11 @@ def nuke_all_ec2(older_than_seconds):
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # Delete launch template
+
+def ec2_nuke_launch_templates(time_delete):
+    """Ec2 launche template delete function."""
+    ec2 = boto3.client("ec2")
+
     for template in ec2_list_templates(time_delete):
         try:
             ec2.delete_launch_template(LaunchTemplateId=template)
@@ -44,7 +55,11 @@ def nuke_all_ec2(older_than_seconds):
         except ClientError as e:
             logging.error("Unexpected error: %s", e)
 
-    # Delete placement group
+
+def ec2_nuke_placement_groups():
+    """Ec2 placement group delete function."""
+    ec2 = boto3.client("ec2")
+
     for placementgroup in ec2_list_placement_group():
         try:
             ec2.delete_placement_group(GroupName=placementgroup)
@@ -82,8 +97,7 @@ def ec2_list_instances(time_delete):
         for reservation in page["Reservations"]:
             for instance in reservation["Instances"]:
                 if instance["LaunchTime"].timestamp() < time_delete:
-                    ec2_instance_id = instance["InstanceId"]
-                    ec2_instance_list.insert(0, ec2_instance_id)
+                    ec2_instance_list.append(instance["InstanceId"])
     return ec2_instance_list
 
 
@@ -106,8 +120,7 @@ def ec2_list_templates(time_delete):
 
     for template in response["LaunchTemplates"]:
         if template["CreateTime"].timestamp() < time_delete:
-            ec2_template = template["LaunchTemplateId"]
-            ec2_template_list.insert(0, ec2_template)
+            ec2_template_list.append(template["LaunchTemplateId"])
     return ec2_template_list
 
 
@@ -126,6 +139,5 @@ def ec2_list_placement_group():
     response = ec2.describe_placement_groups()
 
     for placementgroup in response["PlacementGroups"]:
-        ec2_placement_group = placementgroup["GroupName"]
-        ec2_placement_group_list.insert(0, ec2_placement_group)
+        ec2_placement_group_list.append(placementgroup["GroupName"])
     return ec2_placement_group_list

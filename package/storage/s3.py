@@ -69,6 +69,5 @@ def s3_list_buckets(time_delete):
 
     for bucket in response["Buckets"]:
         if bucket["CreationDate"].timestamp() < time_delete:
-            s3_bucket = bucket["Name"]
-            s3_bucket_list.insert(0, s3_bucket)
+            s3_bucket_list.append(bucket["Name"])
     return s3_bucket_list

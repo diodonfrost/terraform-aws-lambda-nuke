@@ -59,6 +59,5 @@ def eks_list_clusters(time_delete):
     for kube in response["clusters"]:
         k8s = eks.describe_cluster(name=kube)
         if k8s["cluster"]["createdAt"].timestamp() < time_delete:
-            eks_cluster = kube
-            eks_cluster_list.insert(0, eks_cluster)
+            eks_cluster_list.append(kube)
     return eks_cluster_list

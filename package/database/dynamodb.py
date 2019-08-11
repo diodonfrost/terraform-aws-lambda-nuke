@@ -70,8 +70,7 @@ def dynamodb_list_tables(time_delete):
             table_desc = dynamodb.describe_table(TableName=table)
             date_table = table_desc["Table"]["CreationDateTime"]
             if date_table.timestamp() < time_delete:
-                dynamodb_table = table
-                dynamodb_table_list.insert(0, dynamodb_table)
+                dynamodb_table_list.append(table)
     return dynamodb_table_list
 
 
@@ -99,6 +98,5 @@ def dynamodb_list_backups(time_delete):
             )
             backup_sum = backup_desc["BackupDetails"]
             if backup_sum["BackupCreationDateTime"].timestamp() < time_delete:
-                dynamodb_backup = backup["BackupArn"]
-                dynamodb_backup_list.insert(0, dynamodb_backup)
+                dynamodb_backup_list.append(backup["BackupArn"])
     return dynamodb_backup_list

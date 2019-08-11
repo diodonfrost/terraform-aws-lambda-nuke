@@ -59,6 +59,5 @@ def ecr_list_registry(time_delete):
     for page in paginator.paginate():
         for registry in page["repositories"]:
             if registry["createdAt"].timestamp() < time_delete:
-                ecr_registry = registry["repositoryName"]
-                ecr_registry_list.insert(0, ecr_registry)
+                ecr_registry_list.append(registry["repositoryName"])
     return ecr_registry_list

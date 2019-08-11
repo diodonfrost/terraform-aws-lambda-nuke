@@ -35,6 +35,5 @@ def ec2_list_eips():
     response = ec2.describe_addresses()
 
     for eip in response["Addresses"]:
-        ec2_eip = eip["AllocationId"]
-        ec2_eip_list.insert(0, ec2_eip)
+        ec2_eip_list.append(eip["AllocationId"])
     return ec2_eip_list

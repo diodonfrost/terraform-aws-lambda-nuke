@@ -63,6 +63,5 @@ def elb_list_loadbalancers(time_delete):
     for page in paginator.paginate():
         for loadbalancer in page["LoadBalancerDescriptions"]:
             if loadbalancer["CreatedTime"].timestamp() < time_delete:
-                elb_loadbalancer = loadbalancer["LoadBalancerName"]
-                elb_loadbalancer_list.insert(0, elb_loadbalancer)
+                elb_loadbalancer_list.append(loadbalancer["LoadBalancerName"])
     return elb_loadbalancer_list

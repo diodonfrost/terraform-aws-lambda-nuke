@@ -31,10 +31,10 @@ def nuke_all_efs(older_than_seconds):
         return
 
     # Delete efs
-    for efs in efs_list_file_systems(time_delete):
+    for efs_file_system in efs_list_file_systems(time_delete):
         try:
-            efs.delete_file_system(FileSystemId=efs)
-            print("Nuke EFS share {0}".format(efs))
+            efs.delete_file_system(FileSystemId=efs_file_system)
+            print("Nuke EFS share {0}".format(efs_file_system))
         except ClientError as e:
             logging.error("Unexpected error: %s", e)
 
@@ -57,7 +57,6 @@ def efs_list_file_systems(time_delete):
 
     for page in paginator.paginate():
         for filesystem in page["FileSystems"]:
-            if efs["CreationTime"].timestamp() < time_delete:
-                efs_filesystem = filesystem["FileSystemId"]
-                efs_filesystem_list.insert(0, efs_filesystem)
+            if filesystem["CreationTime"].timestamp() < time_delete:
+                efs_filesystem_list.append(filesystem["FileSystemId"])
     return efs_filesystem_list

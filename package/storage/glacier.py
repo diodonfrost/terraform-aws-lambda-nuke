@@ -58,6 +58,5 @@ def glacier_list_vaults(time_delete):
     for page in paginator.paginate():
         for vault in page["VaultList"]:
             if vault["CreationDate"].timestamp() < time_delete:
-                glacier_vault = vault["VaultName"]
-                glacier_vault_list.insert(0, glacier_vault)
+                glacier_vault_list.append(vault["VaultName"])
     return glacier_vault_list
