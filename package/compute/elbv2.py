@@ -30,7 +30,14 @@ def nuke_all_elbv2(older_than_seconds):
         print("elbv2 resource is not available in this aws region")
         return
 
-    # Deletes elastic load balancer
+    elbv2_nuke_loadbalancers(time_delete)
+    elbv2_nuke_target_groups()
+
+
+def elbv2_nuke_loadbalancers(time_delete):
+    """Elbv2 loadbalancer delete function."""
+    elbv2 = boto3.client("elbv2")
+
     for loadbalancer in elbv2_list_loadbalancers(time_delete):
         try:
             elbv2.delete_load_balancer(LoadBalancerArn=loadbalancer)
@@ -42,7 +49,11 @@ def nuke_all_elbv2(older_than_seconds):
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # Deletes elastic load balancer groups
+
+def elbv2_nuke_target_groups():
+    """Elbv2 Target group delete function."""
+    elbv2 = boto3.client("elbv2")
+
     for targetgroup in elbv2_list_target_groups():
         try:
             elbv2.delete_target_group(TargetGroupArn=targetgroup)

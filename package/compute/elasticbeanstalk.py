@@ -30,30 +30,43 @@ def nuke_all_elasticbeanstalk(older_than_seconds):
         print("elasticbeanstalk resource is not available in this aws region")
         return
 
-    # Delete elasticbeanstalk apps
-    for app in elasticbeanstalk_list_apps():
+    elasticbeanstalk_nuke_app(time_delete)
+    elasticbeanstalk_nuke_env(time_delete)
+
+
+def elasticbeanstalk_nuke_app(time_delete):
+    """Elastic Beanstalk Application nuke function."""
+    elasticbeanstalk = boto3.client("elasticbeanstalk")
+
+    for app in elasticbeanstalk_list_apps(time_delete):
         if app["DateCreated"].timestamp() < time_delete:
             try:
                 elasticbeanstalk.delete_application(
-                    ApplicationName=app, TerminateEnvByForce=True
+                    ApplicationName=app,
+                    TerminateEnvByForce=True
                 )
                 print("Nuke elasticbeanstalk application{0}".format(app))
             except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
-    # Delete elasticbeanstalk envs
-    for env in elasticbeanstalk_list_envs():
+
+def elasticbeanstalk_nuke_env(time_delete):
+    """Elastic Beanstalk Env nuke function."""
+    elasticbeanstalk = boto3.client("elasticbeanstalk")
+
+    for env in elasticbeanstalk_list_envs(time_delete):
         if env["DateCreated"].timestamp() < time_delete:
             try:
                 elasticbeanstalk.terminate_environment(
-                    EnvironmentId=env, ForceTerminate=True
+                    EnvironmentId=env,
+                    ForceTerminate=True
                 )
                 print("Nuke elasticbeanstalk environment {0}".format(env))
             except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
 
-def elasticbeanstalk_list_apps():
+def elasticbeanstalk_list_apps(time_delete):
     """Elastic Beanstalk Application list function.
 
     List the names of all Elastic Beanstalk Applications.
@@ -69,12 +82,13 @@ def elasticbeanstalk_list_apps():
 
     for page in paginator.paginate():
         for app in page["Applications"]:
-            elasticbeanstalk_app = app["ApplicationName"]
-            elasticbeanstalk_app_list.insert(0, elasticbeanstalk_app)
+            if app['DateCreated'].timestamp() < time_delete:
+                elasticbeanstalk_app = app["ApplicationName"]
+                elasticbeanstalk_app_list.insert(0, elasticbeanstalk_app)
     return elasticbeanstalk_app_list
 
 
-def elasticbeanstalk_list_envs():
+def elasticbeanstalk_list_envs(time_delete):
     """Elastic Beanstalk Environment list function.
 
     List the IDs of all Elastic Beanstalk Environments.
@@ -90,6 +104,7 @@ def elasticbeanstalk_list_envs():
 
     for page in paginator.paginate():
         for env in page["Environments"]:
-            elasticbeanstalk_env = env["EnvironmentId"]
-            elasticbeanstalk_env_list.insert(0, elasticbeanstalk_env)
+            if env['DateCreated'].timestamp() < time_delete:
+                elasticbeanstalk_env = env["EnvironmentId"]
+                elasticbeanstalk_env_list.insert(0, elasticbeanstalk_env)
     return elasticbeanstalk_env_list

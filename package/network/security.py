@@ -20,7 +20,14 @@ def nuke_all_network_security():
         print("ec2 resource is not available in this aws region")
         return
 
-    # Delete security groups
+    security_groups_nuke()
+    network_acl_nuke()
+
+
+def security_groups_nuke():
+    """Security groups delete function."""
+    ec2 = boto3.client("ec2")
+
     for sec_grp in ec2_list_security_groups():
         try:
             ec2.delete_security_group(GroupId=sec_grp)
@@ -36,7 +43,11 @@ def nuke_all_network_security():
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # Delete network acl
+
+def network_acl_nuke():
+    """Network acl delete function."""
+    ec2 = boto3.client("ec2")
+
     for net_acl in ec2_list_network_acls():
         try:
             ec2.delete_network_acl(NetworkAclId=net_acl)

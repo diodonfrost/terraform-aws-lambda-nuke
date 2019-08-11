@@ -37,7 +37,14 @@ def nuke_all_rds(older_than_seconds):
         print("rds resource is not available in this aws region")
         return
 
-    # Delete rds instances
+    rds_nuke_instances(time_delete)
+    rds_nuke_clusters(time_delete)
+
+
+def rds_nuke_instances(time_delete):
+    """Rds instance nuke function."""
+    rds = boto3.client("rds")
+
     for instance in rds_list_instances(time_delete):
         try:
             rds.delete_db_instance(DBInstanceIdentifier=instance)
@@ -49,7 +56,11 @@ def nuke_all_rds(older_than_seconds):
             else:
                 logging.error("Unexpected error: %s", e)
 
-    # Delete Aurora clusters
+
+def rds_nuke_clusters(time_delete):
+    """Rds cluster nuke function."""
+    rds = boto3.client("rds")
+
     for cluster in rds_list_clusters(time_delete):
         try:
             rds.delete_db_cluster(DBClusterIdentifier=cluster)
