@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2019-08-11
+### Added
+-   Tox ci
+-   Pylint convention
+-   Flake8 convention
+-   Black formating
+-   Force UTF-8
+
+### Changed
+-   Reduce complexity of Python code
+-   Refactoring whole Python code
+-   Fix EFS nuke function
+
 ## [0.9.1] - 2019-07-05
 ### Added
 -   Spot deletion support
