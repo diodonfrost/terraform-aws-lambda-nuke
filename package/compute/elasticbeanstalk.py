@@ -76,12 +76,11 @@ def elasticbeanstalk_list_apps(time_delete):
     """
     elasticbeanstalk_app_list = []
     elasticbeanstalk = boto3.client("elasticbeanstalk")
-    paginator = elasticbeanstalk.get_paginator("describe_applications")
+    response = elasticbeanstalk.describe_applications()
 
-    for page in paginator.paginate():
-        for app in page["Applications"]:
-            if app["DateCreated"].timestamp() < time_delete:
-                elasticbeanstalk_app_list.append(app["ApplicationName"])
+    for app in response["Applications"]:
+        if app["DateCreated"].timestamp() < time_delete:
+            elasticbeanstalk_app_list.append(app["ApplicationName"])
     return elasticbeanstalk_app_list
 
 
@@ -97,10 +96,9 @@ def elasticbeanstalk_list_envs(time_delete):
     """
     elasticbeanstalk_env_list = []
     elasticbeanstalk = boto3.client("elasticbeanstalk")
-    paginator = elasticbeanstalk.get_paginator("describe_environments")
+    response = elasticbeanstalk.describe_environments()
 
-    for page in paginator.paginate():
-        for env in page["Environments"]:
-            if env["DateCreated"].timestamp() < time_delete:
-                elasticbeanstalk_env_list.append(env["EnvironmentId"])
+    for env in response["Environments"]:
+        if env["DateCreated"].timestamp() < time_delete:
+            elasticbeanstalk_env_list.append(env["EnvironmentId"])
     return elasticbeanstalk_env_list
