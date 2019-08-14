@@ -213,6 +213,31 @@ resource "aws_iam_role_policy" "nuke_network" {
 EOF
 }
 
+# Create custom policy for allow destroying all monitoring resources
+resource "aws_iam_role_policy" "nuke_monitoring" {
+  name = "${var.name}-nuke-monitoring"
+  role = "${aws_iam_role.nuke_lambda.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudwatch:ListDashboards",
+                "cloudwatch:DeleteDashboards",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:DeleteAlarms"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
 # Allow lambda cloudwatch logs
 resource "aws_iam_role_policy" "lambda_logging" {
   name = "${var.name}-lambda-logging"

@@ -46,6 +46,9 @@ This role was developed using python lib boto3 1.9.46 Backwards compatibility is
     -   network acl
     -   vpc endpoint
     -   eip
+    Governance resources nuke:
+    -   cloudwatch dashboard
+    -   cloudwatch alarm
 
 ## Caveats
 This following resources are not supported because creation timestamp are not present:

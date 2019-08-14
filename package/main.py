@@ -19,6 +19,8 @@ from database.neptune import nuke_all_neptune
 from database.rds import nuke_all_rds
 from database.redshift import nuke_all_redshift
 
+from governance.cloudwatch import nuke_all_cloudwatch
+
 from network.eip import nuke_all_eip
 from network.endpoint import nuke_all_endpoint
 from network.security import nuke_all_network_security
@@ -56,6 +58,7 @@ def lambda_handler(event, context):
         "neptune",
         "redshift",
         "ebs",
+        "cloudwatch",
     ]
 
     aws_service_with_no_date = ["key_pair", "network_security", "eip"]
