@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+-   AWS cloudwatch dashboard and alarm deletion
+
 ### Changed
 -   Reduce complexicy of main function
 
