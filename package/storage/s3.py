@@ -34,6 +34,9 @@ def nuke_all_s3(older_than_seconds):
 
     for s3_bucket in s3_list_buckets(time_delete):
         try:
+            # Delete bucket policy
+            s3.BucketPolicy(s3_bucket).delete()
+
             # Delete all objects in bucket
             bucket = s3_resource.Bucket(s3_bucket)
             for key in bucket.objects.all():
