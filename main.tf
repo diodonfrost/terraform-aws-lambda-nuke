@@ -1,18 +1,10 @@
-# Freeze aws provider version
-terraform {
-  required_providers {
-    aws = ">= 2.9.0"
-  }
-}
-
 ################################################
 #
 #            IAM CONFIGURATION
 #
 ################################################
 
-# Create role for nuke all aws resouces
-resource "aws_iam_role" "nuke_lambda" {
+resource "aws_iam_role" "this" {
   name        = "${var.name}-lambda-nuke"
   description = "Allows Lambda functions to destroy all aws resources"
 
@@ -33,10 +25,9 @@ resource "aws_iam_role" "nuke_lambda" {
 EOF
 }
 
-# Create custom policy for allow destroying all compute resources
 resource "aws_iam_role_policy" "nuke_compute" {
   name = "${var.name}-nuke-compute"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -89,10 +80,9 @@ resource "aws_iam_role_policy" "nuke_compute" {
 EOF
 }
 
-# Create custom policy for allow destroying all storage resources
 resource "aws_iam_role_policy" "nuke_storage" {
   name = "${var.name}-nuke-storage"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -120,10 +110,9 @@ resource "aws_iam_role_policy" "nuke_storage" {
 EOF
 }
 
-# Create custom policy for allow destroying all rds resources
 resource "aws_iam_role_policy" "nuke_database" {
   name = "${var.name}-nuke-database"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -174,10 +163,9 @@ resource "aws_iam_role_policy" "nuke_database" {
 EOF
 }
 
-# Create custom policy for allow destroying all network resources
 resource "aws_iam_role_policy" "nuke_network" {
   name = "${var.name}-nuke-network"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -211,12 +199,12 @@ resource "aws_iam_role_policy" "nuke_network" {
     ]
 }
 EOF
+
 }
 
-# Create custom policy for allow destroying all monitoring resources
 resource "aws_iam_role_policy" "nuke_monitoring" {
   name = "${var.name}-nuke-monitoring"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -237,11 +225,10 @@ resource "aws_iam_role_policy" "nuke_monitoring" {
 EOF
 }
 
-
-# Allow lambda cloudwatch logs
+# Allow lambda to send logs to cloudwatch
 resource "aws_iam_role_policy" "lambda_logging" {
   name = "${var.name}-lambda-logging"
-  role = "${aws_iam_role.nuke_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -258,6 +245,7 @@ resource "aws_iam_role_policy" "lambda_logging" {
     ]
 }
 EOF
+
 }
 
 ################################################
@@ -266,27 +254,25 @@ EOF
 #
 ################################################
 
-# Convert *.py to .zip because AWS Lambda need .zip
-data "archive_file" "convert_py_to_zip" {
+data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
   output_path = "${path.module}/nuke-everything.zip"
 }
 
-# Create Lambda function for destroy all aws resources
-resource "aws_lambda_function" "nuke" {
-  filename         = "${data.archive_file.convert_py_to_zip.output_path}"
-  function_name    = "${var.name}"
-  role             = "${aws_iam_role.nuke_lambda.arn}"
+resource "aws_lambda_function" "this" {
+  filename         = data.archive_file.this.output_path
+  function_name    = var.name
+  role             = aws_iam_role.this.arn
   handler          = "main.lambda_handler"
-  source_code_hash = "${data.archive_file.convert_py_to_zip.output_base64sha256}"
+  source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
   timeout          = "600"
 
   environment {
     variables = {
-      EXCLUDE_RESOURCES = "${var.exclude_resources}"
-      OLDER_THAN        = "${var.older_than}"
+      EXCLUDE_RESOURCES = var.exclude_resources
+      OLDER_THAN        = var.older_than
     }
   }
 }
@@ -297,30 +283,27 @@ resource "aws_lambda_function" "nuke" {
 #
 ################################################
 
-# Create event cloud watch for trigger lambda function
-resource "aws_cloudwatch_event_rule" "lambda_event" {
+resource "aws_cloudwatch_event_rule" "this" {
   name                = "trigger-lambda-nuke-${var.name}"
   description         = "Trigger lambda nuke"
-  schedule_expression = "${var.cloudwatch_schedule_expression}"
+  schedule_expression = var.cloudwatch_schedule_expression
 }
 
-# Set lambda function nuke as target
-resource "aws_cloudwatch_event_target" "lambda_event_target" {
-  arn  = "${aws_lambda_function.nuke.arn}"
-  rule = "${aws_cloudwatch_event_rule.lambda_event.name}"
+resource "aws_cloudwatch_event_target" "this" {
+  arn  = aws_lambda_function.this.arn
+  rule = aws_cloudwatch_event_rule.this.name
 }
 
-# Allow cloudwatch to invoke lambda function nuke
-resource "aws_lambda_permission" "allow_cloudwatch_nuke" {
+resource "aws_lambda_permission" "this" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   principal     = "events.amazonaws.com"
-  function_name = "${aws_lambda_function.nuke.function_name}"
-  source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
+  function_name = aws_lambda_function.this.function_name
+  source_arn    = aws_cloudwatch_event_rule.this.arn
 }
 
-# Enable lambda cloudwatch logs
-resource "aws_cloudwatch_log_group" "lambda_Logging" {
+resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
 }
+

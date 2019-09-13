@@ -1,34 +1,34 @@
 output "lambda_iam_role_arn" {
   description = "The ARN of the IAM role used by Lambda function"
-  value       = "${aws_iam_role.nuke_lambda.arn}"
+  value       = aws_iam_role.this.arn
 }
 
 output "lambda_iam_role_name" {
   description = "The name of the IAM role used by Lambda function"
-  value       = "${aws_iam_role.nuke_lambda.name}"
+  value       = aws_iam_role.this.name
 }
 
 output "nuke_lambda_arn" {
   description = "The ARN of the Lambda function"
-  value       = "${aws_lambda_function.nuke.arn}"
+  value       = aws_lambda_function.this.arn
 }
 
 output "nuke_function_name" {
   description = "The name of the Lambda function"
-  value       = "${aws_lambda_function.nuke.function_name}"
+  value       = aws_lambda_function.this.function_name
 }
 
 output "nuke_lambda_invoke_arn" {
   description = "The ARN to be used for invoking Lambda function from API Gateway"
-  value       = "${aws_lambda_function.nuke.invoke_arn}"
+  value       = aws_lambda_function.this.invoke_arn
 }
 
 output "nuke_lambda_function_last_modified" {
   description = "The date Lambda function was last modified"
-  value       = "${aws_lambda_function.nuke.last_modified}"
+  value       = aws_lambda_function.this.last_modified
 }
 
 output "nuke_lambda_function_version" {
   description = "Latest published version of your Lambda function"
-  value       = "${aws_lambda_function.nuke.version}"
+  value       = aws_lambda_function.this.version
 }
