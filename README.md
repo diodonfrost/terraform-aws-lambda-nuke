@@ -9,6 +9,12 @@ Terraform module which create lambda which nuke all resources on aws account
 
 This role was developed using python lib boto3 1.9.46 Backwards compatibility is not guaranteed.
 
+## Terraform versions
+
+For Terraform 0.12 use version v2.* of this module.
+
+If you are using Terraform 0.11 you can use versions v1.*.
+
 ## Features
 
 *   Aws lambda runtine Python 3.6
