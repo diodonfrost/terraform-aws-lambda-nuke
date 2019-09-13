@@ -14,7 +14,7 @@ variable "name" {
 }
 
 variable "exclude_resources" {
-  type        = "string"
+  type        = string
   description = "Define the resources that will not be destroyed"
   default     = "key_pair"
 }
@@ -23,3 +23,4 @@ variable "older_than" {
   description = "Only destroy resources that were created before a certain period"
   default     = "0d"
 }
+

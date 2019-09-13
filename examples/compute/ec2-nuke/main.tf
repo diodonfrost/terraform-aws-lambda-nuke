@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "instance_nuke" {
   count         = "5"
-  ami           = "${data.aws_ami.ubuntu.id}"
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 }
 
@@ -29,3 +29,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

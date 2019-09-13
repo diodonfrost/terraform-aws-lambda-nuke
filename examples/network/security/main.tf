@@ -18,7 +18,7 @@ resource "aws_security_group" "nuke_security_group" {
 
 # Create network acl
 resource "aws_network_acl" "main" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     protocol   = "tcp"
@@ -48,3 +48,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

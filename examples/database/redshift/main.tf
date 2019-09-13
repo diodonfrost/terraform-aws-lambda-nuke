@@ -1,26 +1,27 @@
 # Get aws availability zones
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+}
 
 resource "aws_vpc" "main" {
   cidr_block = "10.103.0.0/16"
 }
 
 resource "aws_subnet" "primary" {
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
-  vpc_id            = "${aws_vpc.main.id}"
+  availability_zone = data.aws_availability_zones.available.names[0]
+  vpc_id            = aws_vpc.main.id
   cidr_block        = "10.103.98.0/24"
 }
 
 resource "aws_subnet" "secondary" {
-  availability_zone = "${data.aws_availability_zones.available.names[1]}"
-  vpc_id            = "${aws_vpc.main.id}"
+  availability_zone = data.aws_availability_zones.available.names[1]
+  vpc_id            = aws_vpc.main.id
   cidr_block        = "10.103.99.0/24"
 }
 
 # Create redshift subnet
 resource "aws_redshift_subnet_group" "subnet_nuke" {
   name       = "redshift-subnet-nuke"
-  subnet_ids = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
+  subnet_ids = [aws_subnet.primary.id, aws_subnet.secondary.id]
 }
 
 # Create redshift param group
@@ -63,3 +64,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

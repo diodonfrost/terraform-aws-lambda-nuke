@@ -1,5 +1,6 @@
 # Get all availability zones
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+}
 
 # Create vpc for elb
 resource "aws_vpc" "main" {
@@ -8,15 +9,15 @@ resource "aws_vpc" "main" {
 
 # Create subnets for elb
 resource "aws_subnet" "primary" {
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
-  vpc_id            = "${aws_vpc.main.id}"
+  availability_zone = data.aws_availability_zones.available.names[0]
+  vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.10.0/24"
 }
 
 # Create subnets for elb
 resource "aws_subnet" "secondary" {
-  availability_zone = "${data.aws_availability_zones.available.names[1]}"
-  vpc_id            = "${aws_vpc.main.id}"
+  availability_zone = data.aws_availability_zones.available.names[1]
+  vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.20.0/24"
 }
 
@@ -25,7 +26,7 @@ resource "aws_lb" "app_nuke" {
   name               = "lb-app-nuke"
   internal           = true
   load_balancer_type = "application"
-  subnets            = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
+  subnets            = [aws_subnet.primary.id, aws_subnet.secondary.id]
 }
 
 # Create network load balancer
@@ -33,7 +34,7 @@ resource "aws_lb" "network_nuke" {
   name               = "lb-network-nuke"
   internal           = true
   load_balancer_type = "network"
-  subnets            = ["${aws_subnet.primary.id}", "${aws_subnet.secondary.id}"]
+  subnets            = [aws_subnet.primary.id, aws_subnet.secondary.id]
 }
 
 ### Terraform modules ###
@@ -45,3 +46,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

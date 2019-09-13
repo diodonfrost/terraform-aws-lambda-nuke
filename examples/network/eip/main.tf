@@ -4,13 +4,13 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "primary" {
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = aws_vpc.main.id
   cidr_block = "10.122.98.0/24"
 }
 
 # Create internet gateway
 resource "aws_internet_gateway" "nuke_nat" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 }
 
 # Create elastic ip
@@ -37,3 +37,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

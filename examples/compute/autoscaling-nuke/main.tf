@@ -21,13 +21,13 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
 }
 
 resource "aws_launch_configuration" "as_conf" {
   name          = "web_config"
-  image_id      = "${data.aws_ami.ubuntu.id}"
+  image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 }
 
@@ -41,8 +41,8 @@ resource "aws_autoscaling_group" "autoscaling_nuke" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+  launch_configuration      = aws_launch_configuration.as_conf.name
+  vpc_zone_identifier       = [aws_subnet.main.id]
 }
 
 ### Terraform modules ###
@@ -54,3 +54,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

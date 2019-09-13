@@ -21,6 +21,7 @@ resource "aws_cloudwatch_dashboard" "nuke" {
    ]
 }
 EOF
+
 }
 
 # Create cloudwatch metric alarm
@@ -37,7 +38,6 @@ resource "aws_cloudwatch_metric_alarm" "nuke" {
   insufficient_data_actions = []
 }
 
-
 ### Terraform modules ###
 
 module "nuke-everything" {
@@ -47,3 +47,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+

@@ -20,7 +20,7 @@ data "aws_ami" "ubuntu" {
 # Request a spot instance at $0.03
 resource "aws_spot_instance_request" "nuke" {
   count         = "2"
-  ami           = "${data.aws_ami.ubuntu.id}"
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
   tags = {
@@ -37,3 +37,4 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
+
