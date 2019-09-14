@@ -5,6 +5,7 @@
 ################################################
 
 resource "aws_iam_role" "this" {
+  count       = var.custom_iam_role_arn == null ? 1 : 0
   name        = "${var.name}-lambda-nuke"
   description = "Allows Lambda functions to destroy all aws resources"
 
@@ -26,8 +27,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "nuke_compute" {
-  name = "${var.name}-nuke-compute"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-compute"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -81,8 +83,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "nuke_storage" {
-  name = "${var.name}-nuke-storage"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-storage"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -111,8 +114,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "nuke_database" {
-  name = "${var.name}-nuke-database"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-database"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -164,8 +168,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "nuke_network" {
-  name = "${var.name}-nuke-network"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-network"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -203,8 +208,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "nuke_monitoring" {
-  name = "${var.name}-nuke-monitoring"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-monitoring"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -227,8 +233,9 @@ EOF
 
 # Allow lambda to send logs to cloudwatch
 resource "aws_iam_role_policy" "lambda_logging" {
-  name = "${var.name}-lambda-logging"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-lambda-logging"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -263,7 +270,7 @@ data "archive_file" "this" {
 resource "aws_lambda_function" "this" {
   filename         = data.archive_file.this.output_path
   function_name    = var.name
-  role             = aws_iam_role.this.arn
+  role             = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
