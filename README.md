@@ -90,6 +90,7 @@ module "nuke_everything_older_than_7d" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|----------|
 | name | Define name to use for lambda function, cloudwatch event and iam role | string | n/a | yes |
+| custom_iam_role_arn | Custom IAM role arn for the scheduling lambda | string | null | no |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | exclude_resources | Define the resources that will be not destroyed | string |  | no |
 | older_than | Only destroy resources that were created before a certain period | string | 0d | no |
