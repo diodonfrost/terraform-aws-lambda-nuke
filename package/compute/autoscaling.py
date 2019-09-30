@@ -3,100 +3,93 @@
 """Module deleting all aws autoscaling resources."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
 
-def nuke_all_autoscaling(older_than_seconds):
-    """Autoscaling deleting function.
+class NukeAutoscaling:
+    """Abstract autoscaling nuke in a class."""
 
-    Deleting all Autoscaling Groups and Launch
-    Configurations resources with a timestamp greater
-    than older_than_seconds.
+    def __init__(self):
+        """Initialize autoscaling nuke."""
+        self.asg = boto3.client("autoscaling")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
-    autoscaling = boto3.client("autoscaling")
-
-    try:
-        autoscaling.describe_auto_scaling_groups()
-    except EndpointConnectionError:
-        print("autoscaling resource is not available in this aws region")
-        return
-
-    # Deletes autoscaling groups
-    for scaling in autoscaling_list_groups(time_delete):
         try:
-            autoscaling.delete_auto_scaling_group(
-                AutoScalingGroupName=scaling, ForceDelete=True
-            )
-            print("Nuke Autoscaling Group {0}".format(scaling))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+            self.asg.describe_auto_scaling_groups()
+        except EndpointConnectionError:
+            print("Autoscaling resource is not available in this aws region")
+            return
 
-    # Deletes autoscaling launch config
-    for launchconfiguration in autoscaling_list_launch_confs(time_delete):
-        try:
-            autoscaling.delete_launch_configuration(
-                LaunchConfigurationName=launchconfiguration
-            )
-            print("Nuke Launch Configuration {0}".format(launchconfiguration))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+    def nuke(self, older_than_seconds):
+        """Autoscaling deleting function.
 
+        Deleting all Autoscaling Groups and Launch Configurations
+        resources with a timestamp greater than older_than_seconds.
 
-def autoscaling_list_groups(time_delete):
-    """Autoscaling Group list function.
-
-    List the names of all Autoscaling Groups with
-    a timestamp lower than time_delete.
-
-    :param int time_delete:
-        Timestamp in seconds used for filter Autoscaling Groups
-    :returns:
-        List of Autoscaling Groups names
-    :rtype:
-        [str]
-    """
-    autoscaling_group_list = []
-    autoscaling = boto3.client("autoscaling")
-    paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
-
-    for page in paginator.paginate():
-        for group in page["AutoScalingGroups"]:
-            if group["CreatedTime"].timestamp() < time_delete:
-                autoscaling_group_list.append(group["AutoScalingGroupName"])
-    return autoscaling_group_list
-
-
-def autoscaling_list_launch_confs(time_delete):
-    """Launch configuration list function.
-
-    Returns the names of all Launch Configuration Groups with
-    a timestamp lower than time_delete.
-
-    :param int time_delete:
-        Timestamp in seconds used for filter Launch Configuration Groups
-    :returns:
-        List of Launch Configurations names
-    :rtype:
-        [str]
-    """
-    autoscaling_launch_conf_list = []
-    autoscaling = boto3.client("autoscaling")
-    paginator = autoscaling.get_paginator("describe_launch_configurations")
-
-    for page in paginator.paginate():
-        for launchconf in page["LaunchConfigurations"]:
-            if launchconf["CreatedTime"].timestamp() < time_delete:
-                autoscaling_launch_conf_list.append(
-                    launchconf["LaunchConfigurationName"]
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for scaling in self.list_asg(older_than_seconds):
+            try:
+                self.asg.delete_auto_scaling_group(
+                    AutoScalingGroupName=scaling, ForceDelete=True
                 )
-    return autoscaling_launch_conf_list
+                print("Nuke Autoscaling Group {0}".format(scaling))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
+
+        for launch_conf in self.list_launch_confs(older_than_seconds):
+            try:
+                self.asg.delete_launch_configuration(
+                    LaunchConfigurationName=launch_conf
+                )
+                print("Nuke Launch Configuration {0}".format(launch_conf))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
+
+    def list_asg(self, time_delete):
+        """Autoscaling Group list function.
+
+        List the names of all Autoscaling Groups with a timestamp lower
+        than time_delete.
+
+        :param int time_delete:
+            Timestamp in seconds used for filter Autoscaling Groups
+
+        :return list asg_list:
+            List of Autoscaling Groups names
+        """
+        asg_list = []
+        paginator = self.asg.get_paginator("describe_auto_scaling_groups")
+
+        for page in paginator.paginate():
+            for asg in page["AutoScalingGroups"]:
+                if asg["CreatedTime"].timestamp() < time_delete:
+                    asg_list.append(asg["AutoScalingGroupName"])
+        return asg_list
+
+    def list_launch_confs(self, time_delete):
+        """Launch configuration list function.
+
+        Returns the names of all Launch Configuration Groups with
+        a timestamp lower than time_delete.
+
+        :param int time_delete:
+            Timestamp in seconds used for filter Launch Configuration Groups
+
+        :return list launch_conf_list:
+            List of Launch Configurations names
+        """
+        launch_conf_list = []
+        paginator = self.asg.get_paginator("describe_launch_configurations")
+
+        for page in paginator.paginate():
+            for launch_conf in page["LaunchConfigurations"]:
+                if launch_conf["CreatedTime"].timestamp() < time_delete:
+                    launch_conf_list.append(
+                        launch_conf["LaunchConfigurationName"]
+                    )
+        return launch_conf_list

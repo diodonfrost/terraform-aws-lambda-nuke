@@ -3,7 +3,7 @@
 """Main entrypoint function for destroy all aws resources."""
 import os
 
-from compute.autoscaling import nuke_all_autoscaling
+from compute.autoscaling import NukeAutoscaling
 from compute.ebs import nuke_all_ebs
 from compute.ec2 import nuke_all_ec2
 from compute.ecr import nuke_all_ecr
@@ -30,21 +30,28 @@ from storage.glacier import nuke_all_glacier
 from storage.s3 import nuke_all_s3
 
 import timeparse
-
-exclude_resources = os.getenv("EXCLUDE_RESOURCES", "none")
-older_than = os.getenv("OLDER_THAN", "none")
+import time
 
 
 def lambda_handler(event, context):
     """Main function entrypoint for lambda."""
-    # Convert older_than variable to seconds
-    older_than_seconds = timeparse.timeparse(older_than)
+    exclude_resources = os.getenv("EXCLUDE_RESOURCES")
+    # Older than date
+    older_than = os.getenv("OLDER_THAN")
+    # Convert older_than date to seconds
+    older_than_seconds = time.time() - timeparse.timeparse(older_than)
+
+    _strategy = {"autoscaling": NukeAutoscaling}
+
+    for key, value in _strategy.items():
+        if key not in exclude_resources:
+            strategy = value()
+            strategy.nuke(older_than_seconds)
 
     aws_services = [
         "endpoint",
         "ec2",
         "spot",
-        "autoscaling",
         "elb",
         "ecr",
         "eks",
@@ -65,7 +72,7 @@ def lambda_handler(event, context):
 
     for service in aws_services:
         if service not in exclude_resources:
-            globals()["nuke_all_" + service](older_than_seconds)
+            globals()["nuke_all_" + service](timeparse.timeparse(older_than))
 
     for service in aws_service_with_no_date:
         if service not in exclude_resources:
