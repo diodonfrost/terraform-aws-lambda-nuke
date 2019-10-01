@@ -3,102 +3,85 @@
 """Module deleting all aws Elastic Beanstalk resources."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
 
-def nuke_all_elasticbeanstalk(older_than_seconds):
-    """Elastic Beanstalk deleting function.
+class NukeElasticbeanstalk:
+    """Initialize elasticbeanstalk nuke."""
 
-    Deleting all Elastic Beanstalk with a timestamp
-    greater than older_than_seconds.
+    def __init__(self):
+        """Initialize elasticbeanstalk nuke."""
+        self.elasticbeanstalk = boto3.client("elasticbeanstalk")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
-    elasticbeanstalk = boto3.client("elasticbeanstalk")
+        try:
+            self.elasticbeanstalk.describe_applications()
+        except EndpointConnectionError:
+            print(
+                "elasticbeanstalk resource is not available in this aws region"
+            )
+            return
 
-    try:
-        elasticbeanstalk.describe_applications()
-    except EndpointConnectionError:
-        print("elasticbeanstalk resource is not available in this aws region")
-        return
+    def nuke(self, older_than_seconds):
+        """Elastic Beanstalk deleting function.
 
-    elasticbeanstalk_nuke_app(time_delete)
-    elasticbeanstalk_nuke_env(time_delete)
+        Deleting all Elastic Beanstalk with a timestamp greater than
+        older_than_seconds.
 
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for app in self.list_apps(older_than_seconds):
+            if app["DateCreated"].timestamp() < older_than_seconds:
+                try:
+                    self.elasticbeanstalk.delete_application(
+                        ApplicationName=app, TerminateEnvByForce=True
+                    )
+                    print("Nuke elasticbeanstalk application{0}".format(app))
+                except ClientError as e:
+                    logging.error("Unexpected error: %s", e)
 
-def elasticbeanstalk_nuke_app(time_delete):
-    """Elastic Beanstalk Application nuke function."""
-    elasticbeanstalk = boto3.client("elasticbeanstalk")
+        for env in self.list_envs(older_than_seconds):
+            if env["DateCreated"].timestamp() < older_than_seconds:
+                try:
+                    self.elasticbeanstalk.terminate_environment(
+                        EnvironmentId=env, ForceTerminate=True
+                    )
+                    print("Nuke elasticbeanstalk environment {0}".format(env))
+                except ClientError as e:
+                    logging.error("Unexpected error: %s", e)
 
-    for app in elasticbeanstalk_list_apps(time_delete):
-        if app["DateCreated"].timestamp() < time_delete:
-            try:
-                elasticbeanstalk.delete_application(
-                    ApplicationName=app, TerminateEnvByForce=True
-                )
-                print("Nuke elasticbeanstalk application{0}".format(app))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+    def list_apps(self, time_delete):
+        """Elastic Beanstalk Application list function.
 
+        List the names of all Elastic Beanstalk Applications.
 
-def elasticbeanstalk_nuke_env(time_delete):
-    """Elastic Beanstalk Env nuke function."""
-    elasticbeanstalk = boto3.client("elasticbeanstalk")
+        :return list app_list:
+            List of Elastic Beanstalk Application names
+        """
+        app_list = []
+        response = self.elasticbeanstalk.describe_applications()
 
-    for env in elasticbeanstalk_list_envs(time_delete):
-        if env["DateCreated"].timestamp() < time_delete:
-            try:
-                elasticbeanstalk.terminate_environment(
-                    EnvironmentId=env, ForceTerminate=True
-                )
-                print("Nuke elasticbeanstalk environment {0}".format(env))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+        for app in response["Applications"]:
+            if app["DateCreated"].timestamp() < time_delete:
+                app_list.append(app["ApplicationName"])
+        return app_list
 
+    def list_envs(self, time_delete):
+        """Elastic Beanstalk Environment list function.
 
-def elasticbeanstalk_list_apps(time_delete):
-    """Elastic Beanstalk Application list function.
+        List the IDs of all Elastic Beanstalk Environments.
 
-    List the names of all Elastic Beanstalk Applications.
+        :returns:
+            List of Elastic Beanstalk Environment IDs
+        """
+        env_list = []
+        response = self.elasticbeanstalk.describe_environments()
 
-    :returns:
-        List of Elastic Beanstalk Application names
-    :rtype:
-        [str]
-    """
-    elasticbeanstalk_app_list = []
-    elasticbeanstalk = boto3.client("elasticbeanstalk")
-    response = elasticbeanstalk.describe_applications()
-
-    for app in response["Applications"]:
-        if app["DateCreated"].timestamp() < time_delete:
-            elasticbeanstalk_app_list.append(app["ApplicationName"])
-    return elasticbeanstalk_app_list
-
-
-def elasticbeanstalk_list_envs(time_delete):
-    """Elastic Beanstalk Environment list function.
-
-    List the IDs of all Elastic Beanstalk Environments.
-
-    :returns:
-        List of Elastic Beanstalk Environment IDs
-    :rtype:
-        [str]
-    """
-    elasticbeanstalk_env_list = []
-    elasticbeanstalk = boto3.client("elasticbeanstalk")
-    response = elasticbeanstalk.describe_environments()
-
-    for env in response["Environments"]:
-        if env["DateCreated"].timestamp() < time_delete:
-            elasticbeanstalk_env_list.append(env["EnvironmentId"])
-    return elasticbeanstalk_env_list
+        for env in response["Environments"]:
+            if env["DateCreated"].timestamp() < time_delete:
+                env_list.append(env["EnvironmentId"])
+        return env_list
