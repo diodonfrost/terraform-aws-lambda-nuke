@@ -13,7 +13,7 @@ from compute.elb import NukeElb
 from compute.key_pair import nuke_all_key_pair
 from compute.spot import NukeSpot
 
-from database.dynamodb import nuke_all_dynamodb
+from database.dynamodb import NukeDynamodb
 from database.elasticache import nuke_all_elasticache
 from database.neptune import nuke_all_neptune
 from database.rds import nuke_all_rds
@@ -50,6 +50,7 @@ def lambda_handler(event, context):
         "elasticbeanstalk": NukeElasticbeanstalk,
         "elb": NukeElb,
         "spot": NukeSpot,
+        "dynamodb": NukeDynamodb,
     }
 
     for key, value in _strategy.items():
@@ -63,7 +64,6 @@ def lambda_handler(event, context):
         "efs",
         "glacier",
         "rds",
-        "dynamodb",
         "elasticache",
         "neptune",
         "redshift",

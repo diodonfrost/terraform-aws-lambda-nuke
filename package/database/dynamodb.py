@@ -3,100 +3,93 @@
 """Module deleting all dynamodb tables and backups."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
 
-def nuke_all_dynamodb(older_than_seconds):
-    """Dynamodb table and backup deleting function.
+class NukeDynamodb:
+    """Abstract dynamodb nuke in a class."""
 
-    Deleting all dynamodb table and backup with
-    a timestamp greater than older_than_seconds.
+    def __init__(self):
+        """Initialize dynamodb nuke."""
+        self.dynamodb = boto3.client("dynamodb")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
-    dynamodb = boto3.client("dynamodb")
-
-    # Test if dynamodb services is present in current aws region
-    try:
-        dynamodb.list_tables()
-    except EndpointConnectionError:
-        print("dynamodb resource is not available in this aws region")
-        return
-
-    # Delete dynamodb table
-    for table in dynamodb_list_tables(time_delete):
         try:
-            dynamodb.delete_table(TableName=table)
-            print("Nuke rds table{0}".format(table))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+            self.dynamodb.list_tables()
+        except EndpointConnectionError:
+            print("Dynamodb resource is not available in this aws region")
+            return
 
-    # Delete dynamodb backup
-    for backup in dynamodb_list_backups(time_delete):
-        try:
-            dynamodb.delete_backup(BackupArn=backup)
-            print("Nuke rds backup {0}".format(backup))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+    def nuke(self, older_than_seconds):
+        """Dynamodb table and backup deleting function.
 
+        Deleting all dynamodb table and backup with a timestamp greater
+        than older_than_seconds.
 
-def dynamodb_list_tables(time_delete):
-    """Dynamodb table list function.
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws
+            resource will be deleted
+        """
+        for table in self.list_tables(older_than_seconds):
+            try:
+                self.dynamodb.delete_table(TableName=table)
+                print("Nuke dynamodb table{0}".format(table))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
 
-    List names of all dynamodb tables with a timestamp
-    lower than time_delete.
+        for backup in self.list_backups(older_than_seconds):
+            try:
+                self.dynamodb.delete_backup(BackupArn=backup)
+                print("Nuke dynamodb backup {0}".format(backup))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
 
-    :param int time_delete:
-        Timestamp in seconds used for filter dynamodb tables
-    :returns:
-        List of dynamodb tables names
-    :rtype:
-        [str]
-    """
-    dynamodb_table_list = []
-    dynamodb = boto3.client("dynamodb")
-    paginator = dynamodb.get_paginator("list_tables")
+    def list_tables(self, time_delete):
+        """Dynamodb table list function.
 
-    for page in paginator.paginate():
-        for table in page["TableNames"]:
-            table_desc = dynamodb.describe_table(TableName=table)
-            date_table = table_desc["Table"]["CreationDateTime"]
-            if date_table.timestamp() < time_delete:
-                dynamodb_table_list.append(table)
-    return dynamodb_table_list
+        List names of all dynamodb tables with a timestamp lower than
+        time_delete.
 
+        :param int time_delete:
+            Timestamp in seconds used for filter dynamodb tables
 
-def dynamodb_list_backups(time_delete):
-    """Dynamodb backup list function.
+        :return list table_list:
+            List of dynamodb tables names
+        """
+        table_list = []
+        paginator = self.dynamodb.get_paginator("list_tables")
 
-    List arn of all dynamodb backup with a timestamp
-    lower than time_delete.
+        for page in paginator.paginate():
+            for table in page["TableNames"]:
+                table_desc = self.dynamodb.describe_table(TableName=table)
+                date_table = table_desc["Table"]["CreationDateTime"]
+                if date_table.timestamp() < time_delete:
+                    table_list.append(table)
+        return table_list
 
-    :param int time_delete:
-        Timestamp in seconds used for filter dynamodb backup
-    :returns:
-        List of dynamodb backup arn
-    :rtype:
-        [str]
-    """
-    dynamodb_backup_list = []
-    dynamodb = boto3.client("dynamodb")
-    paginator = dynamodb.get_paginator("list_backups")
+    def list_backups(self, time_delete):
+        """Dynamodb backup list function.
 
-    for page in paginator.paginate():
-        for backup in page["BackupSummaries"]:
-            backup_desc = dynamodb.describe_backup(
-                BackupArn=backup["BackupArn"]["BackupDescription"]
-            )
-            backup_sum = backup_desc["BackupDetails"]
-            if backup_sum["BackupCreationDateTime"].timestamp() < time_delete:
-                dynamodb_backup_list.append(backup["BackupArn"])
-    return dynamodb_backup_list
+        List arn of all dynamodb backup with a timestamp lower than
+        time_delete.
+
+        :param int time_delete:
+            Timestamp in seconds used for filter dynamodb backup
+
+        :return list backup_list:
+            List of dynamodb backup arn
+        """
+        backup_list = []
+        paginator = self.dynamodb.get_paginator("list_backups")
+
+        for page in paginator.paginate():
+            for backup in page["BackupSummaries"]:
+                backup_desc = self.dynamodb.describe_backup(
+                    BackupArn=backup["BackupArn"]["BackupDescription"]
+                )
+                desc = backup_desc["BackupDetails"]
+                if desc["BackupCreationDateTime"].timestamp() < time_delete:
+                    backup_list.append(backup["BackupArn"])
+        return backup_list
