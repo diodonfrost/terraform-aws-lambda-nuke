@@ -86,9 +86,7 @@ def redshift_nuke_subnets():
 
     for subnet in redshift_list_subnet():
         try:
-            redshift.delete_cluster_subnet_group(
-                ClusterSubnetGroupName=subnet
-            )
+            redshift.delete_cluster_subnet_group(ClusterSubnetGroupName=subnet)
             print("Nuke redshift subnet {0}".format(subnet))
         except ClientError as e:
             error_code = e.response["Error"]["Code"]

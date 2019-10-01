@@ -255,9 +255,7 @@ def neptune_list_cluster_params():
     response = neptune.describe_db_cluster_parameter_groups()
 
     for param in response["DBClusterParameterGroups"]:
-        neptune_cluster_param_list.append(
-            param["DBClusterParameterGroupName"]
-        )
+        neptune_cluster_param_list.append(param["DBClusterParameterGroupName"])
     return neptune_cluster_param_list
 
 

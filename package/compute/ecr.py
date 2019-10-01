@@ -34,9 +34,7 @@ class NukeEcr:
         """
         for registry in self.list_registry(older_than_seconds):
             try:
-                self.ecr.delete_repository(
-                    repositoryName=registry, force=True
-                )
+                self.ecr.delete_repository(repositoryName=registry, force=True)
                 print("Nuke ECR Registry{0}".format(registry))
             except ClientError as e:
                 logging.error("Unexpected error: %s", e)

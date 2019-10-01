@@ -37,9 +37,7 @@ def security_groups_nuke():
             if error_code == "CannotDelete":
                 logging.info("security grp %s cannot be deleted", sec_grp)
             elif error_code == "DependencyViolation":
-                logging.info(
-                    "security grp %s has a dependent object", sec_grp
-                )
+                logging.info("security grp %s has a dependent object", sec_grp)
             else:
                 logging.error("Unexpected error: %s", e)
 
