@@ -11,7 +11,7 @@ from compute.eks import NukeEks
 from compute.elasticbeanstalk import NukeElasticbeanstalk
 from compute.elb import NukeElb
 from compute.key_pair import nuke_all_key_pair
-from compute.spot import nuke_all_spot
+from compute.spot import NukeSpot
 
 from database.dynamodb import nuke_all_dynamodb
 from database.elasticache import nuke_all_elasticache
@@ -49,6 +49,7 @@ def lambda_handler(event, context):
         "eks": NukeEks,
         "elasticbeanstalk": NukeElasticbeanstalk,
         "elb": NukeElb,
+        "spot": NukeSpot,
     }
 
     for key, value in _strategy.items():
@@ -58,7 +59,6 @@ def lambda_handler(event, context):
 
     aws_services = [
         "endpoint",
-        "spot",
         "s3",
         "efs",
         "glacier",
