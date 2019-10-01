@@ -5,7 +5,7 @@ import os
 
 from compute.autoscaling import NukeAutoscaling
 from compute.ebs import NukeEbs
-from compute.ec2 import nuke_all_ec2
+from compute.ec2 import NukeEc2
 from compute.ecr import nuke_all_ecr
 from compute.eks import nuke_all_eks
 from compute.elasticbeanstalk import nuke_all_elasticbeanstalk
@@ -41,7 +41,11 @@ def lambda_handler(event, context):
     # Convert older_than date to seconds
     older_than_seconds = time.time() - timeparse.timeparse(older_than)
 
-    _strategy = {"autoscaling": NukeAutoscaling, "ebs": NukeEbs}
+    _strategy = {
+        "autoscaling": NukeAutoscaling,
+        "ebs": NukeEbs,
+        "ec2": NukeEc2
+    }
 
     for key, value in _strategy.items():
         if key not in exclude_resources:
@@ -50,7 +54,6 @@ def lambda_handler(event, context):
 
     aws_services = [
         "endpoint",
-        "ec2",
         "spot",
         "elb",
         "ecr",
@@ -64,7 +67,6 @@ def lambda_handler(event, context):
         "elasticache",
         "neptune",
         "redshift",
-        "ebs",
         "cloudwatch",
     ]
 

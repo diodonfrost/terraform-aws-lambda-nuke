@@ -3,141 +3,139 @@
 """Module deleting all ec2 instances, placement groups and launch templates."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError
 
 
-def nuke_all_ec2(older_than_seconds):
-    """Ec2 instance, placement group and template deleting function.
+class NukeEc2:
+    """Abstract ec2 nuke in a class."""
 
-    Deleting all ec2 instances, placement groups and launch templates with
-    a timestamp greater than older_than_seconds.
+    def __init__(self):
+        """Initialize ec2 nuke."""
+        self.ec2 = boto3.client("ec2")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
+    def nuke(self, older_than_seconds):
+        """Ec2 instance, placement group and template deleting function.
 
-    ec2_nuke_instances(time_delete)
-    ec2_nuke_launch_templates(time_delete)
-    ec2_nuke_placement_groups()
+        Deleting all ec2 instances, placement groups and launch
+        templates with a timestamp greater than older_than_seconds.
 
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        self.nuke_instances(older_than_seconds)
+        self.nuke_launch_templates(older_than_seconds)
+        self.nuke_placement_groups()
 
-def ec2_nuke_instances(time_delete):
-    """Ec2 instance delete function."""
-    ec2 = boto3.client("ec2")
+    def nuke_instances(self, time_delete):
+        """Ec2 instance delete function.
 
-    for ec2_instance in ec2_list_instances(time_delete):
-        try:
-            ec2.terminate_instances(InstanceIds=[ec2_instance])
-            print("Terminate instances {0}".format(ec2_instance))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "OperationNotPermitted":
-                logging.warning("Protected policy enable on %s", ec2_instance)
-            else:
+        Delete ec2 instances with a timestamp greater than time_delete
+
+        :param int time_delete:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for instance in self.list_instances(time_delete):
+            try:
+                self.ec2.terminate_instances(InstanceIds=[instance])
+                print("Terminate instances {0}".format(instance))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "OperationNotPermitted":
+                    logging.warning("Protected policy enable on %s", instance)
+                else:
+                    logging.error("Unexpected error: %s", e)
+
+    def nuke_launch_templates(self, time_delete):
+        """Ec2 launche template delete function.
+
+        Delete ec2 instances with a timestamp greater than time_delete
+
+        :param int time_delete:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for template in self.list_templates(time_delete):
+            try:
+                self.ec2.delete_launch_template(LaunchTemplateId=template)
+                print("Nuke Launch Template{0}".format(template))
+            except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
+    def nuke_placement_groups(self):
+        """Ec2 placement group delete function."""
+        for placement_group in self.list_placement_groups():
+            try:
+                self.ec2.delete_placement_group(GroupName=placement_group)
+                print("Nuke Placement Group {0}".format(placement_group))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
 
-def ec2_nuke_launch_templates(time_delete):
-    """Ec2 launche template delete function."""
-    ec2 = boto3.client("ec2")
+    def list_instances(self, time_delete):
+        """Ec2 instance list function.
 
-    for template in ec2_list_templates(time_delete):
-        try:
-            ec2.delete_launch_template(LaunchTemplateId=template)
-            print("Nuke Launch Template{0}".format(template))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+        List IDs of all ec2 instances with a timestamp lower than
+        time_delete.
 
+        :param int time_delete:
+            Timestamp in seconds used for filter ec2 instances
 
-def ec2_nuke_placement_groups():
-    """Ec2 placement group delete function."""
-    ec2 = boto3.client("ec2")
+        :return list instance_list:
+            List of ec2 instances IDs
+        """
+        instance_list = []
+        paginator = self.ec2.get_paginator("describe_instances")
+        page_iterator = paginator.paginate(
+            Filters=[
+                {
+                    "Name": "instance-state-name",
+                    "Values": ["pending", "running", "stopping", "stopped"],
+                }
+            ]
+        )
 
-    for placementgroup in ec2_list_placement_group():
-        try:
-            ec2.delete_placement_group(GroupName=placementgroup)
-            print("Nuke Placement Group {0}".format(placementgroup))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+        for page in page_iterator:
+            for reservation in page["Reservations"]:
+                for instance in reservation["Instances"]:
+                    if instance["LaunchTime"].timestamp() < time_delete:
+                        instance_list.append(instance["InstanceId"])
+        return instance_list
 
+    def list_templates(self, time_delete):
+        """Launch Template list function.
 
-def ec2_list_instances(time_delete):
-    """Ec2 instance list function.
+        List Ids of all Launch Templates with a timestamp lower than
+        time_delete.
 
-    List IDs of all ec2 instances with a timestamp
-    lower than time_delete.
+        :param int time_delete:
+            Timestamp in seconds used for filter Launch Templates
 
-    :param int time_delete:
-        Timestamp in seconds used for filter ec2 instances
-    :returns:
-        List of ec2 instances IDs
-    :rtype:
-        [str]
-    """
-    ec2_instance_list = []
-    ec2 = boto3.client("ec2")
-    paginator = ec2.get_paginator("describe_instances")
-    page_iterator = paginator.paginate(
-        Filters=[
-            {
-                "Name": "instance-state-name",
-                "Values": ["pending", "running", "stopping", "stopped"],
-            }
-        ]
-    )
+        :return list template_list:
+            List of Launch Templates Ids
+        """
+        template_list = []
+        response = self.ec2.describe_launch_templates()
 
-    for page in page_iterator:
-        for reservation in page["Reservations"]:
-            for instance in reservation["Instances"]:
-                if instance["LaunchTime"].timestamp() < time_delete:
-                    ec2_instance_list.append(instance["InstanceId"])
-    return ec2_instance_list
+        for template in response["LaunchTemplates"]:
+            if template["CreateTime"].timestamp() < time_delete:
+                template_list.append(template["LaunchTemplateId"])
+        return template_list
 
+    def list_placement_groups(self):
+        """Placement Group list function.
 
-def ec2_list_templates(time_delete):
-    """Launch Template list function.
+        List name of all placement group.
 
-    List Ids of all Launch Templates with a timestamp
-    lower than time_delete.
+        :return list placement_group_list:
+            List of placement groups names
+        """
+        placement_group_list = []
+        response = self.ec2.describe_placement_groups()
 
-    :param int time_delete:
-        Timestamp in seconds used for filter Launch Templates
-    :returns:
-        List of Launch Templates Ids
-    :rtype:
-        [str]
-    """
-    ec2_template_list = []
-    ec2 = boto3.client("ec2")
-    response = ec2.describe_launch_templates()
-
-    for template in response["LaunchTemplates"]:
-        if template["CreateTime"].timestamp() < time_delete:
-            ec2_template_list.append(template["LaunchTemplateId"])
-    return ec2_template_list
-
-
-def ec2_list_placement_group():
-    """Placement Group list function.
-
-    List name of all placement group.
-
-    :returns:
-        List of placement groups names
-    :rtype:
-        [str]
-    """
-    ec2_placement_group_list = []
-    ec2 = boto3.client("ec2")
-    response = ec2.describe_placement_groups()
-
-    for placementgroup in response["PlacementGroups"]:
-        ec2_placement_group_list.append(placementgroup["GroupName"])
-    return ec2_placement_group_list
+        for placementgroup in response["PlacementGroups"]:
+            placement_group_list.append(placementgroup["GroupName"])
+        return placement_group_list
