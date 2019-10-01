@@ -44,7 +44,7 @@ def lambda_handler(event, context):
     _strategy = {
         "autoscaling": NukeAutoscaling,
         "ebs": NukeEbs,
-        "ec2": NukeEc2
+        "ec2": NukeEc2,
     }
 
     for key, value in _strategy.items():
