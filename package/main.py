@@ -7,7 +7,7 @@ from compute.autoscaling import NukeAutoscaling
 from compute.ebs import NukeEbs
 from compute.ec2 import NukeEc2
 from compute.ecr import NukeEcr
-from compute.eks import nuke_all_eks
+from compute.eks import NukeEks
 from compute.elasticbeanstalk import nuke_all_elasticbeanstalk
 from compute.elb import nuke_all_elb
 from compute.key_pair import nuke_all_key_pair
@@ -46,6 +46,7 @@ def lambda_handler(event, context):
         "ebs": NukeEbs,
         "ec2": NukeEc2,
         "ecr": NukeEcr,
+        "eks": NukeEks,
     }
 
     for key, value in _strategy.items():
@@ -57,7 +58,6 @@ def lambda_handler(event, context):
         "endpoint",
         "spot",
         "elb",
-        "eks",
         "elasticbeanstalk",
         "s3",
         "efs",
