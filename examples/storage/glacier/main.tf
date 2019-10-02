@@ -7,7 +7,7 @@ resource "aws_glacier_vault" "my_archive" {
 
 module "nuke-everything" {
   source                         = "../../../"
-  name                           = "nuke-s3"
+  name                           = "nuke-glacier"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   exclude_resources              = ""
   older_than                     = "0d"
