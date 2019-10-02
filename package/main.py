@@ -19,7 +19,7 @@ from database.neptune import NukeNeptune
 from database.rds import NukeRds
 from database.redshift import NukeRedshift
 
-from governance.cloudwatch import nuke_all_cloudwatch
+from governance.cloudwatch import NukeCloudwatch
 
 from network.eip import nuke_all_eip
 from network.endpoint import nuke_all_endpoint
@@ -55,6 +55,7 @@ def lambda_handler(event, context):
         "neptune": NukeNeptune,
         "rds": NukeRds,
         "redshift": NukeRedshift,
+        "cloudwatch": NukeCloudwatch,
     }
 
     for key, value in _strategy.items():
@@ -62,7 +63,7 @@ def lambda_handler(event, context):
             strategy = value()
             strategy.nuke(older_than_seconds)
 
-    aws_services = ["endpoint", "s3", "efs", "glacier", "cloudwatch"]
+    aws_services = ["endpoint", "s3", "efs", "glacier"]
 
     aws_service_with_no_date = ["key_pair", "network_security", "eip"]
 
