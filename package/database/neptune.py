@@ -3,269 +3,271 @@
 """Module deleting all neptune resources."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
 
-def nuke_all_neptune(older_than_seconds):
-    """Neptune resources deleting function.
+class NukeNeptune:
+    """Abstract neptune nuke in a class."""
 
-    Deleting all neptune resources with
-    a timestamp greater than older_than_seconds.
-    That include:
-      - clusters
-      - instances
-      - snapshots
-      - subnets
-      - param groups
-      - cluster params
+    def __init__(self):
+        """Initialize neptune nuke."""
+        self.neptune = boto3.client("neptune")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
-    neptune = boto3.client("neptune")
-
-    # Test if neptune services is present in current aws region
-    try:
-        neptune.describe_db_clusters()
-    except EndpointConnectionError:
-        print("neptune resource is not available in this aws region")
-        return
-
-    neptune_nuke_instances(time_delete)
-    neptune_nuke_clusters(time_delete)
-    neptune_nuke_snapshots(time_delete)
-    neptune_nuke_subnets()
-    neptune_nuke_cluster_params()
-    neptune_nuke_group_params()
-
-
-def neptune_nuke_instances(time_delete):
-    """Neptune resources deleting function.
-
-    Deleting all neptune resources with
-    a timestamp greater than older_than_seconds.
-    That include:
-      - clusters
-      - snapshots
-      - subnets
-      - param groups
-
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    neptune = boto3.client("neptune")
-
-    for instance in neptune_list_instances(time_delete):
         try:
-            neptune.delete_db_instance(
-                DBInstanceIdentifier=instance, SkipFinalSnapshot=True
-            )
-            print("Nuke neptune instance {0}".format(instance))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "InvalidDBInstanceState":
-                logging.info(
-                    "neptune instance %s is already being deleted", instance
+            self.neptune.describe_db_clusters()
+        except EndpointConnectionError:
+            print("neptune resource is not available in this aws region")
+            return
+
+    def nuke(self, older_than_seconds):
+        """Neptune resources deleting function.
+
+        Deleting all neptune resources with
+        a timestamp greater than older_than_seconds.
+        That include:
+          - clusters
+          - instances
+          - snapshots
+          - subnets
+          - param groups
+          - cluster params
+
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws
+            resource will be deleted
+        """
+        self.nuke_instances(older_than_seconds)
+        self.nuke_clusters(older_than_seconds)
+        self.nuke_snapshots(older_than_seconds)
+        self.nuke_subnets()
+        self.nuke_cluster_params()
+        self.nuke_group_params()
+
+    def nuke_instances(self, time_delete):
+        """Neptune resources deleting function.
+
+        Deleting neptune instances with a timestamp lower than
+        time_delete.
+
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for instance in self.list_instances(time_delete):
+            try:
+                self.neptune.delete_db_instance(
+                    DBInstanceIdentifier=instance, SkipFinalSnapshot=True
                 )
-            else:
-                logging.error("Unexpected error: %s", e)
+                print("Nuke neptune instance {0}".format(instance))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBInstanceState":
+                    logging.info(
+                        "neptune instance %s is already being deleted",
+                        instance,
+                    )
+                else:
+                    logging.error("Unexpected error: %s", e)
 
+    def nuke_clusters(self, time_delete):
+        """Neptune cluster deleting function.
 
-def neptune_nuke_clusters(time_delete):
-    """Neptune cluster deleting function."""
-    neptune = boto3.client("neptune")
+        Deleting neptune clusters with a timestamp lower than
+        time_delete.
 
-    for cluster in neptune_list_clusters(time_delete):
-        try:
-            neptune.delete_db_cluster(
-                DBClusterIdentifier=cluster, SkipFinalSnapshot=True
-            )
-            print("Nuke neptune cluster {0}".format(cluster))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "InvalidDBClusterStateFault":
-                logging.info(
-                    "neptune cluster %s is not in started state", cluster
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for cluster in self.list_clusters(time_delete):
+            try:
+                self.neptune.delete_db_cluster(
+                    DBClusterIdentifier=cluster, SkipFinalSnapshot=True
                 )
-            else:
+                print("Nuke neptune cluster {0}".format(cluster))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBClusterStateFault":
+                    logging.info(
+                        "neptune cluster %s is not in started state", cluster
+                    )
+                else:
+                    logging.error("Unexpected error: %s", e)
+
+    def nuke_snapshots(self, time_delete):
+        """Neptune snapshot deleting function.
+
+        Deleting neptune snapshots with a timestamp lower than
+        time_delete.
+
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws resource
+            will be deleted
+        """
+        for snapshot in self.list_snapshots(time_delete):
+            try:
+                self.neptune.delete_db_cluster_snapshot(
+                    DBClusterSnapshotIdentifier=snapshot
+                )
+                print("Nuke neptune snapshot{0}".format(snapshot))
+            except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
+    def nuke_subnets(self):
+        """Neptune subnet deleting function."""
+        for subnet in self.list_subnet():
+            try:
+                self.neptune.delete_db_subnet_group(DBSubnetGroupName=subnet)
+                print("Nuke neptune subnet {0}".format(subnet))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBSubnetGroupStateFault":
+                    logging.info(
+                        "%s is reserved and cannot be modified.", subnet
+                    )
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-def neptune_nuke_snapshots(time_delete):
-    """Neptune snapshot deleting function."""
-    neptune = boto3.client("neptune")
+    def nuke_cluster_params(self):
+        """Neptune cluster params function."""
+        for param in self.list_cluster_params():
+            try:
+                self.neptune.delete_db_cluster_parameter_group(
+                    DBClusterParameterGroupName=param
+                )
+                print("Nuke neptune param {0}".format(param))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBParameterGroupState":
+                    logging.info(
+                        "%s is reserved and cannot be modified.", param
+                    )
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-    for snapshot in neptune_list_snapshots(time_delete):
-        try:
-            neptune.delete_db_cluster_snapshot(
-                DBClusterSnapshotIdentifier=snapshot
-            )
-            print("Nuke neptune snapshot{0}".format(snapshot))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+    def nuke_group_params(self):
+        """Neptune group parameter function."""
+        for param in self.list_params():
+            try:
+                self.neptune.delete_db_parameter_group(
+                    DBParameterGroupName=param
+                )
+                print("Nuke neptune param {0}".format(param))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBParameterGroupState":
+                    logging.info(
+                        "%s is reserved and cannot be modified.", param
+                    )
+                else:
+                    logging.error("Unexpected error: %s", e)
 
+    def list_instances(self, time_delete):
+        """Neptune instance list function.
 
-def neptune_nuke_subnets():
-    """Neptune subnet deleting function."""
-    neptune = boto3.client("neptune")
+        List IDs of all neptune instances with a timestamp
+        lower than time_delete.
 
-    for subnet in neptune_list_subnet():
-        try:
-            neptune.delete_db_subnet_group(DBSubnetGroupName=subnet)
-            print("Nuke neptune subnet {0}".format(subnet))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "InvalidDBSubnetGroupStateFault":
-                logging.info("%s is reserved and cannot be modified.", subnet)
-            else:
-                logging.error("Unexpected error: %s", e)
+        :param int time_delete:
+            Timestamp in seconds used for filter neptune instances
 
+        :return list instance_list:
+            List of neptune instances IDs
+        """
+        instance_list = []
+        response = self.neptune.describe_db_instances()
 
-def neptune_nuke_cluster_params():
-    """Neptune cluster params function."""
-    neptune = boto3.client("neptune")
+        for instance in response["DBInstances"]:
+            if instance["InstanceCreateTime"].timestamp() < time_delete:
+                instance_list.append(instance["DBInstanceIdentifier"])
+        return instance_list
 
-    for param in neptune_list_cluster_params():
-        try:
-            neptune.delete_db_cluster_parameter_group(
-                DBClusterParameterGroupName=param
-            )
-            print("Nuke neptune param {0}".format(param))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "InvalidDBParameterGroupState":
-                logging.info("%s is reserved and cannot be modified.", param)
-            else:
-                logging.error("Unexpected error: %s", e)
+    def list_clusters(self, time_delete):
+        """Neptune cluster list function.
 
+        List IDs of all neptune clusters with a timestamp
+        lower than time_delete.
 
-def neptune_nuke_group_params():
-    """Neptune group parameter function."""
-    neptune = boto3.client("neptune")
+        :param int time_delete:
+            Timestamp in seconds used for filter neptune clusters
 
-    for param in neptune_list_params():
-        try:
-            neptune.delete_db_parameter_group(DBParameterGroupName=param)
-            print("Nuke neptune param {0}".format(param))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "InvalidDBParameterGroupState":
-                logging.info("%s is reserved and cannot be modified.", param)
-            else:
-                logging.error("Unexpected error: %s", e)
+        :return list cluster_list:
+            List of neptune clusters IDs
+        """
+        cluster_list = []
+        response = self.neptune.describe_db_clusters()
 
+        for cluster in response["DBClusters"]:
+            if cluster["ClusterCreateTime"].timestamp() < time_delete:
+                cluster_list.append(cluster["DBClusterIdentifier"])
+        return cluster_list
 
-def neptune_list_instances(time_delete):
-    """Neptune instance list function.
+    def list_snapshots(self, time_delete):
+        """Neptune snapshot list function.
 
-    List IDs of all neptune instances with a timestamp
-    lower than time_delete.
+        List IDs of all neptune snapshots with a timestamp
+        lower than time_delete.
 
-    :param int time_delete:
-        Timestamp in seconds used for filter neptune instances
-    :returns:
-        List of neptune instances IDs
-    :rtype:
-        [str]
-    """
-    neptune_instance_list = []
-    neptune = boto3.client("neptune")
-    response = neptune.describe_db_instances()
+        :param int time_delete:
+            Timestamp in seconds used for filter neptune snapshots
 
-    for instance in response["DBInstances"]:
-        if instance["InstanceCreateTime"].timestamp() < time_delete:
-            neptune_instance = instance["DBInstanceIdentifier"]
-            neptune_instance_list.insert(0, neptune_instance)
-    return neptune_instance_list
+        :return list snapshot_list:
+            List of neptune snapshots IDs
+        """
+        snapshot_list = []
+        response = self.neptune.describe_db_cluster_snapshots()
 
+        for snapshot in response["DBClusterSnapshots"]:
+            if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
+                snapshot_list.append(snapshot["DBClusterSnapshotIdentifier"])
+        return snapshot_list
 
-def neptune_list_clusters(time_delete):
-    """Neptune cluster list function.
+    def list_subnet(self):
+        """Neptune subnet list function.
 
-    List IDs of all neptune clusters with a timestamp
-    lower than time_delete.
+        List neptune subnet names
 
-    :param int time_delete:
-        Timestamp in seconds used for filter neptune clusters
-    :returns:
-        List of neptune clusters IDs
-    :rtype:
-        [str]
-    """
-    neptune_cluster_list = []
-    neptune = boto3.client("neptune")
-    response = neptune.describe_db_clusters()
+        :return list subnet_list:
+            List of neptune subnet names
+        """
+        subnet_list = []
+        paginator = self.neptune.get_paginator("describe_db_subnet_groups")
 
-    for cluster in response["DBClusters"]:
-        if cluster["ClusterCreateTime"].timestamp() < time_delete:
-            neptune_cluster = cluster["DBClusterIdentifier"]
-            neptune_cluster_list.insert(0, neptune_cluster)
-    return neptune_cluster_list
+        for page in paginator.paginate():
+            for subnet in page["DBSubnetGroups"]:
+                subnet_list.append(subnet["DBSubnetGroupName"])
+        return subnet_list
 
+    def list_cluster_params(self):
+        """Neptune cluster param list function.
 
-def neptune_list_snapshots(time_delete):
-    """Neptune snapshot list function.
+        List neptune cluster param names
 
-    List IDs of all neptune snapshots with a timestamp
-    lower than time_delete.
+        :return list cluster_param_list:
+            List of neptune cluster param names
+        """
+        cluster_param_list = []
+        response = self.neptune.describe_db_cluster_parameter_groups()
 
-    :param int time_delete:
-        Timestamp in seconds used for filter neptune snapshots
-    :returns:
-        List of neptune snapshots IDs
-    :rtype:
-        [str]
-    """
-    neptune_snapshot_list = []
-    neptune = boto3.client("neptune")
-    response = neptune.describe_db_cluster_snapshots()
+        for param in response["DBClusterParameterGroups"]:
+            cluster_param_list.append(param["DBClusterParameterGroupName"])
+        return cluster_param_list
 
-    for snapshot in response["DBClusterSnapshots"]:
-        if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
-            neptune_snapshot_list.append(
-                snapshot["DBClusterSnapshotIdentifier"]
-            )
-    return neptune_snapshot_list
+    def list_params(self):
+        """Neptune parameter group list function.
 
+        List neptune param names
 
-def neptune_list_subnet():
-    """Neptune subnet list function."""
-    neptune_subnet_list = []
-    neptune = boto3.client("neptune")
-    paginator = neptune.get_paginator("describe_db_subnet_groups")
+        :return list param_group_list:
+            List of neptune param names
+        """
+        param_list = []
+        paginator = self.neptune.get_paginator("describe_db_parameter_groups")
 
-    for page in paginator.paginate():
-        for subnet in page["DBSubnetGroups"]:
-            neptune_subnet_list.append(subnet["DBSubnetGroupName"])
-    return neptune_subnet_list
-
-
-def neptune_list_cluster_params():
-    """Neptune cluster param list function."""
-    neptune_cluster_param_list = []
-    neptune = boto3.client("neptune")
-    response = neptune.describe_db_cluster_parameter_groups()
-
-    for param in response["DBClusterParameterGroups"]:
-        neptune_cluster_param_list.append(param["DBClusterParameterGroupName"])
-    return neptune_cluster_param_list
-
-
-def neptune_list_params():
-    """Neptune parameter group list function."""
-    neptune_param_list = []
-    neptune = boto3.client("neptune")
-    paginator = neptune.get_paginator("describe_db_parameter_groups")
-
-    for page in paginator.paginate():
-        for param in page["DBParameterGroups"]:
-            neptune_param_list.append(param["DBParameterGroupName"])
-    return neptune_param_list
+        for page in paginator.paginate():
+            for param in page["DBParameterGroups"]:
+                param_list.append(param["DBParameterGroupName"])
+        return param_list

@@ -15,7 +15,7 @@ from compute.spot import NukeSpot
 
 from database.dynamodb import NukeDynamodb
 from database.elasticache import NukeElasticache
-from database.neptune import nuke_all_neptune
+from database.neptune import NukeNeptune
 from database.rds import nuke_all_rds
 from database.redshift import nuke_all_redshift
 
@@ -52,6 +52,7 @@ def lambda_handler(event, context):
         "spot": NukeSpot,
         "dynamodb": NukeDynamodb,
         "elasticache": NukeElasticache,
+        "neptune": NukeNeptune,
     }
 
     for key, value in _strategy.items():
@@ -65,7 +66,6 @@ def lambda_handler(event, context):
         "efs",
         "glacier",
         "rds",
-        "neptune",
         "redshift",
         "cloudwatch",
     ]
