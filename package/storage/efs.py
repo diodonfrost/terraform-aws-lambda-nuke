@@ -3,60 +3,57 @@
 """Module deleting all aws efs resources."""
 
 import logging
-import time
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
 
-def nuke_all_efs(older_than_seconds):
-    """EFS deleting function.
+class NukeEfs:
+    """Abstract efs nuke in a class."""
 
-    Deleting all efs with a timestamp greater than older_than_seconds.
+    def __init__(self):
+        """Initialize efs nuke."""
+        self.efs = boto3.client("efs")
 
-    :param int older_than_seconds:
-        The timestamp in seconds used from which the aws
-        resource will be deleted
-    """
-    # Convert date in seconds
-    time_delete = time.time() - older_than_seconds
-    efs = boto3.client("efs")
-
-    # Test if efs services is present in current aws region
-    try:
-        efs.describe_file_systems()
-    except EndpointConnectionError:
-        print("EFS resource is not available in this aws region")
-        return
-
-    # Delete efs
-    for efs_file_system in efs_list_file_systems(time_delete):
         try:
-            efs.delete_file_system(FileSystemId=efs_file_system)
-            print("Nuke EFS share {0}".format(efs_file_system))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+            self.efs.describe_file_systems()
+        except EndpointConnectionError:
+            print("EFS resource is not available in this aws region")
+            return
 
+    def nuke(self, older_than_seconds):
+        """EFS deleting function.
 
-def efs_list_file_systems(time_delete):
-    """EFS list function.
+        Deleting all efs with a timestamp greater than older_than_seconds.
 
-    List IDS of all efs with a timestamp lower than time_delete.
+        :param int older_than_seconds:
+            The timestamp in seconds used from which the aws
+            resource will be deleted
+        """
+        for efs_file_system in self.list_file_systems(older_than_seconds):
+            try:
+                self.efs.delete_file_system(FileSystemId=efs_file_system)
+                print("Nuke EFS share {0}".format(efs_file_system))
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
 
-    :param int time_delete:
-        Timestamp in seconds used for filter efs
-    :returns:
-        List of efs IDs
-    :rtype:
-        [str]
-    """
-    efs_filesystem_list = []
-    efs = boto3.client("efs")
-    paginator = efs.get_paginator("describe_file_systems")
+    def list_file_systems(self, time_delete):
+        """EFS list function.
 
-    for page in paginator.paginate():
-        for filesystem in page["FileSystems"]:
-            if filesystem["CreationTime"].timestamp() < time_delete:
-                efs_filesystem_list.append(filesystem["FileSystemId"])
-    return efs_filesystem_list
+        List IDS of all efs with a timestamp lower than time_delete.
+
+        :param int time_delete:
+            Timestamp in seconds used for filter efs
+
+        :return list filesystem_list:
+            List of efs IDs
+        """
+        filesystem_list = []
+        paginator = self.efs.get_paginator("describe_file_systems")
+
+        for page in paginator.paginate():
+            for filesystem in page["FileSystems"]:
+                if filesystem["CreationTime"].timestamp() < time_delete:
+                    filesystem_list.append(filesystem["FileSystemId"])
+        return filesystem_list
