@@ -27,7 +27,7 @@ from network.security import nuke_all_network_security
 
 from storage.efs import NukeEfs
 from storage.glacier import NukeGlacier
-from storage.s3 import nuke_all_s3
+from storage.s3 import NukeS3
 
 import timeparse
 import time
@@ -59,6 +59,7 @@ def lambda_handler(event, context):
         "endpoint": NukeEndpoint,
         "efs": NukeEfs,
         "glacier": NukeGlacier,
+        "s3": NukeS3,
     }
 
     for key, value in _strategy.items():
@@ -66,13 +67,7 @@ def lambda_handler(event, context):
             strategy = value()
             strategy.nuke(older_than_seconds)
 
-    aws_services = ["s3"]
-
     aws_service_with_no_date = ["key_pair", "network_security", "eip"]
-
-    for service in aws_services:
-        if service not in exclude_resources:
-            globals()["nuke_all_" + service](timeparse.timeparse(older_than))
 
     for service in aws_service_with_no_date:
         if service not in exclude_resources:
