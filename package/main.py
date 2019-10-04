@@ -23,7 +23,7 @@ from governance.cloudwatch import NukeCloudwatch
 
 from network.eip import NukeEip
 from network.endpoint import NukeEndpoint
-from network.security import nuke_all_network_security
+from network.security import NukeNetworksecurity
 
 from storage.efs import NukeEfs
 from storage.glacier import NukeGlacier
@@ -65,6 +65,7 @@ def lambda_handler(event, context):
     _strategy_with_no_date = {
         "eip": NukeEip,
         "key_pair": NukeKeypair,
+        "network_security": NukeNetworksecurity,
     }
 
     for key, value in _strategy.items():
@@ -76,9 +77,3 @@ def lambda_handler(event, context):
         if key not in exclude_resources:
             strategy = value()
             strategy.nuke()
-
-    aws_service_with_no_date = ["network_security"]
-
-    for service in aws_service_with_no_date:
-        if service not in exclude_resources:
-            globals()["nuke_all_" + service]()
