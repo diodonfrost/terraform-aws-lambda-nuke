@@ -10,7 +10,7 @@ from compute.ecr import NukeEcr
 from compute.eks import NukeEks
 from compute.elasticbeanstalk import NukeElasticbeanstalk
 from compute.elb import NukeElb
-from compute.key_pair import nuke_all_key_pair
+from compute.key_pair import NukeKeypair
 from compute.spot import NukeSpot
 
 from database.dynamodb import NukeDynamodb
@@ -62,12 +62,21 @@ def lambda_handler(event, context):
         "s3": NukeS3,
     }
 
+    _strategy_with_no_date = {
+        "key_pair": NukeKeypair,
+    }
+
     for key, value in _strategy.items():
         if key not in exclude_resources:
             strategy = value()
             strategy.nuke(older_than_seconds)
 
-    aws_service_with_no_date = ["key_pair", "network_security", "eip"]
+    for key, value in _strategy_with_no_date.items():
+        if key not in exclude_resources:
+            strategy = value()
+            strategy.nuke()
+
+    aws_service_with_no_date = ["network_security", "eip"]
 
     for service in aws_service_with_no_date:
         if service not in exclude_resources:
