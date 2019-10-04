@@ -24,7 +24,7 @@ class NukeEip:
 
     def nuke(self):
         """Eip deleting function.
-        
+
         Delete all eip
         """
         for eip in self.list_eips():
