@@ -73,17 +73,15 @@ class NukeRds:
         :param int time_delete:
             Timestamp in seconds used for filter rds instances
 
-        :return list instance_list:
-            List of rds instances IDs
+        :yield Iterator[str]:
+            Rds instances IDs
         """
-        instance_list = []
         paginator = self.rds.get_paginator("describe_db_instances")
 
         for page in paginator.paginate():
             for instance in page["DBInstances"]:
                 if instance["InstanceCreateTime"].timestamp() < time_delete:
-                    instance_list.append(instance["DBInstanceIdentifier"])
-        return instance_list
+                    yield instance["DBInstanceIdentifier"]
 
     def list_clusters(self, time_delete):
         """Aurora cluster list function.
@@ -94,14 +92,12 @@ class NukeRds:
         :param int time_delete:
             Timestamp in seconds used for filter aurora clusters
 
-        :return list cluster_list:
-            List of aurora clusters IDs
+        :yield Iterator[str]:
+            Aurora clusters IDs
         """
-        cluster_list = []
         paginator = self.rds.get_paginator("describe_db_clusters")
 
         for page in paginator.paginate():
             for cluster in page["DBClusters"]:
                 if cluster["ClusterCreateTime"].timestamp() < time_delete:
-                    cluster_list.append(cluster["DBClusterIdentifier"])
-        return cluster_list
+                    yield cluster["DBClusterIdentifier"]

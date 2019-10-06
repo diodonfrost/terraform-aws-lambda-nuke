@@ -142,17 +142,15 @@ class NukeElasticache:
         :param int time_delete:
             Timestamp in seconds used for filter elasticache clusters
 
-        :return list cluster_list:
-            List of elasticache clusters IDs
+        :yield Iterator[str]:
+            Elasticache clusters IDs
         """
-        cluster_list = []
         paginator = self.elasticache.get_paginator("describe_cache_clusters")
 
         for page in paginator.paginate():
             for cluster in page["CacheClusters"]:
                 if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
-                    cluster_list.append(cluster["CacheClusterId"])
-        return cluster_list
+                    yield cluster["CacheClusterId"]
 
     def list_snapshots(self, time_delete):
         """Elasticache snapshots list function.
@@ -163,51 +161,45 @@ class NukeElasticache:
         :param int time_delete:
             Timestamp in seconds used for filter elasticache snapshots
 
-        :return list snapshot_list:
-            List of elasticache snpashots names
+        :yield Iterator[str]:
+            Elasticache snpashots names
         """
-        snapshot_list = []
         paginator = self.elasticache.get_paginator("describe_snapshots")
 
         for page in paginator.paginate():
             for snapshot in page["Snapshots"]:
                 date_snap = snapshot["NodeSnapshots"][0]["SnapshotCreateTime"]
                 if date_snap.timestamp() < time_delete:
-                    snapshot_list.append(snapshot["SnapshotName"])
-        return snapshot_list
+                    yield snapshot["SnapshotName"]
 
     def list_subnets(self):
         """Elasticache subnet list function.
 
         List elasticache subnet group names
 
-        :return list subnet_list:
-            List of elasticache subnet group names
+        :yield Iterator[str]:
+            Elasticache subnet group names
         """
-        subnet_list = []
         paginator = self.elasticache.get_paginator(
             "describe_cache_subnet_groups"
         )
 
         for page in paginator.paginate():
             for subnet in page["CacheSubnetGroups"]:
-                subnet_list.append(subnet["CacheSubnetGroupName"])
-        return subnet_list
+                yield subnet["CacheSubnetGroupName"]
 
     def list_param_groups(self):
         """Elasticache parameters group list function.
 
         List elasticache param group names
 
-        :return list param_group_list:
-            List of elasticache param group names
+        :yield Iterator[str]:
+            Elasticache param group names
         """
-        param_group_list = []
         paginator = self.elasticache.get_paginator(
             "describe_cache_parameter_groups"
         )
 
         for page in paginator.paginate():
             for param_group in page["CacheParameterGroups"]:
-                param_group_list.append(param_group["CacheParameterGroupName"])
-        return param_group_list
+                yield param_group["CacheParameterGroupName"]

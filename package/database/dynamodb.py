@@ -55,10 +55,9 @@ class NukeDynamodb:
         :param int time_delete:
             Timestamp in seconds used for filter dynamodb tables
 
-        :return list table_list:
-            List of dynamodb tables names
+        :yield Iterator[str]:
+            Dynamodb tables names
         """
-        table_list = []
         paginator = self.dynamodb.get_paginator("list_tables")
 
         for page in paginator.paginate():
@@ -66,8 +65,7 @@ class NukeDynamodb:
                 table_desc = self.dynamodb.describe_table(TableName=table)
                 date_table = table_desc["Table"]["CreationDateTime"]
                 if date_table.timestamp() < time_delete:
-                    table_list.append(table)
-        return table_list
+                    yield table
 
     def list_backups(self, time_delete):
         """Dynamodb backup list function.
@@ -78,10 +76,9 @@ class NukeDynamodb:
         :param int time_delete:
             Timestamp in seconds used for filter dynamodb backup
 
-        :return list backup_list:
-            List of dynamodb backup arn
+        :yield Iterator[str]:
+            Dynamodb backup arn
         """
-        backup_list = []
         paginator = self.dynamodb.get_paginator("list_backups")
 
         for page in paginator.paginate():
@@ -91,5 +88,4 @@ class NukeDynamodb:
                 )
                 desc = backup_desc["BackupDetails"]
                 if desc["BackupCreationDateTime"].timestamp() < time_delete:
-                    backup_list.append(backup["BackupArn"])
-        return backup_list
+                    yield backup["BackupArn"]

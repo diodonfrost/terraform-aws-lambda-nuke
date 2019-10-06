@@ -155,17 +155,15 @@ class NukeRedshift:
         :param int time_delete:
             Timestamp in seconds used for filter redshift cluster
 
-        :return list cluster_list:
-            List of redshift cluster IDs
+        :yield Iterator[str]:
+            Redshift cluster IDs
         """
-        cluster_list = []
         paginator = self.redshift.get_paginator("describe_clusters")
 
         for page in paginator.paginate():
             for cluster in page["Clusters"]:
                 if cluster["ClusterCreateTime"].timestamp() < time_delete:
-                    cluster_list.append(cluster["ClusterIdentifier"])
-        return cluster_list
+                    yield cluster["ClusterIdentifier"]
 
     def list_snapshots(self, time_delete):
         """Redshift snapshot list function.
@@ -176,46 +174,40 @@ class NukeRedshift:
         :param int time_delete:
             Timestamp in seconds used for filter redshift snapshots
 
-        :return list snapshot_list:
-            List of redshift snapshots IDs
+        :yield Iterator[str]:
+            Redshift snapshots IDs
         """
-        snapshot_list = []
         paginator = self.redshift.get_paginator("describe_cluster_snapshots")
 
         for page in paginator.paginate():
             for snapshot in page["Snapshots"]:
                 if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
-                    snapshot_list.append(snapshot["SnapshotIdentifier"])
-        return snapshot_list
+                    yield snapshot["SnapshotIdentifier"]
 
     def list_subnet(self):
         """Redshift subnet list function.
 
-        :return list subnet_list:
-            List of redshift subnet names
+        :yield Iterator[str]:
+            Redshift subnet names
         """
-        subnet_list = []
         paginator = self.redshift.get_paginator(
             "describe_cluster_subnet_groups"
         )
 
         for page in paginator.paginate():
             for subnet in page["ClusterSubnetGroups"]:
-                subnet_list.append(subnet["ClusterSubnetGroupName"])
-        return subnet_list
+                yield subnet["ClusterSubnetGroupName"]
 
     def list_cluster_params(self):
         """Redshift cluster parameter list function.
 
-        :return list cluster_param_list:
-            List of redshift cluster parameter names
+        :yield Iterator[str]:
+            Redshift cluster parameter names
         """
-        cluster_param_list = []
         paginator = self.redshift.get_paginator(
             "describe_cluster_parameter_groups"
         )
 
         for page in paginator.paginate():
             for param in page["ParameterGroups"]:
-                cluster_param_list.append(param["ParameterGroupName"])
-        return cluster_param_list
+                yield param["ParameterGroupName"]

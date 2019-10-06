@@ -174,16 +174,14 @@ class NukeNeptune:
         :param int time_delete:
             Timestamp in seconds used for filter neptune instances
 
-        :return list instance_list:
-            List of neptune instances IDs
+        :yield Iterator[str]:
+            Neptune instances IDs
         """
-        instance_list = []
         response = self.neptune.describe_db_instances()
 
         for instance in response["DBInstances"]:
             if instance["InstanceCreateTime"].timestamp() < time_delete:
-                instance_list.append(instance["DBInstanceIdentifier"])
-        return instance_list
+                yield instance["DBInstanceIdentifier"]
 
     def list_clusters(self, time_delete):
         """Neptune cluster list function.
@@ -194,16 +192,14 @@ class NukeNeptune:
         :param int time_delete:
             Timestamp in seconds used for filter neptune clusters
 
-        :return list cluster_list:
-            List of neptune clusters IDs
+        :yield Iterator[str]:
+            Neptune clusters IDs
         """
-        cluster_list = []
         response = self.neptune.describe_db_clusters()
 
         for cluster in response["DBClusters"]:
             if cluster["ClusterCreateTime"].timestamp() < time_delete:
-                cluster_list.append(cluster["DBClusterIdentifier"])
-        return cluster_list
+                yield cluster["DBClusterIdentifier"]
 
     def list_snapshots(self, time_delete):
         """Neptune snapshot list function.
@@ -214,60 +210,52 @@ class NukeNeptune:
         :param int time_delete:
             Timestamp in seconds used for filter neptune snapshots
 
-        :return list snapshot_list:
-            List of neptune snapshots IDs
+        :yield Iterator[str]:
+            Neptune snapshots IDs
         """
-        snapshot_list = []
         response = self.neptune.describe_db_cluster_snapshots()
 
         for snapshot in response["DBClusterSnapshots"]:
             if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
-                snapshot_list.append(snapshot["DBClusterSnapshotIdentifier"])
-        return snapshot_list
+                yield snapshot["DBClusterSnapshotIdentifier"]
 
     def list_subnet(self):
         """Neptune subnet list function.
 
         List neptune subnet names
 
-        :return list subnet_list:
-            List of neptune subnet names
+        :yield Iterator[str]:
+            Neptune subnet names
         """
-        subnet_list = []
         paginator = self.neptune.get_paginator("describe_db_subnet_groups")
 
         for page in paginator.paginate():
             for subnet in page["DBSubnetGroups"]:
-                subnet_list.append(subnet["DBSubnetGroupName"])
-        return subnet_list
+                yield subnet["DBSubnetGroupName"]
 
     def list_cluster_params(self):
         """Neptune cluster param list function.
 
         List neptune cluster param names
 
-        :return list cluster_param_list:
-            List of neptune cluster param names
+        :yield Iterator[str]:
+            Neptune cluster param names
         """
-        cluster_param_list = []
         response = self.neptune.describe_db_cluster_parameter_groups()
 
         for param in response["DBClusterParameterGroups"]:
-            cluster_param_list.append(param["DBClusterParameterGroupName"])
-        return cluster_param_list
+            yield param["DBClusterParameterGroupName"]
 
     def list_params(self):
         """Neptune parameter group list function.
 
         List neptune param names
 
-        :return list param_group_list:
-            List of neptune param names
+        :yield Iterator[str]:
+            Neptune param names
         """
-        param_list = []
         paginator = self.neptune.get_paginator("describe_db_parameter_groups")
 
         for page in paginator.paginate():
             for param in page["DBParameterGroups"]:
-                param_list.append(param["DBParameterGroupName"])
-        return param_list
+                yield param["DBParameterGroupName"]
