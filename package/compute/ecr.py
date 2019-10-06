@@ -48,14 +48,12 @@ class NukeEcr:
         :param int time_delete:
             Timestamp in seconds used for filter ECR
 
-        :return list registry_list:
-            List of Elastic Container Registry names
+        :yield Iterator[str]:
+            Elastic Container Registry names
         """
-        registry_list = []
         paginator = self.ecr.get_paginator("describe_repositories")
 
         for page in paginator.paginate():
             for registry in page["repositories"]:
                 if registry["createdAt"].timestamp() < time_delete:
-                    registry_list.append(registry["repositoryName"])
-        return registry_list
+                    yield registry["repositoryName"]

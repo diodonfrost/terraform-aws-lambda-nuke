@@ -59,29 +59,25 @@ class NukeElasticbeanstalk:
 
         List the names of all Elastic Beanstalk Applications.
 
-        :return list app_list:
-            List of Elastic Beanstalk Application names
+        :yield Iterator[str]:
+            Elastic Beanstalk Application names
         """
-        app_list = []
         response = self.elasticbeanstalk.describe_applications()
 
         for app in response["Applications"]:
             if app["DateCreated"].timestamp() < time_delete:
-                app_list.append(app["ApplicationName"])
-        return app_list
+                yield app["ApplicationName"]
 
     def list_envs(self, time_delete):
         """Elastic Beanstalk Environment list function.
 
         List the IDs of all Elastic Beanstalk Environments.
 
-        :returns:
-            List of Elastic Beanstalk Environment IDs
+        :yield Iterator[str]:
+            Elastic Beanstalk Environment IDs
         """
-        env_list = []
         response = self.elasticbeanstalk.describe_environments()
 
         for env in response["Environments"]:
             if env["DateCreated"].timestamp() < time_delete:
-                env_list.append(env["EnvironmentId"])
-        return env_list
+                yield env["EnvironmentId"]

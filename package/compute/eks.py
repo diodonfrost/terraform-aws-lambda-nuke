@@ -48,14 +48,12 @@ class NukeEks:
         :param int time_delete:
             Timestamp in seconds used for filter EKS clusters
 
-        :return list cluster_list:
-            List of EKS cluster names
+        :yield Iterator[str]:
+            EKS cluster names
         """
-        cluster_list = []
         response = self.eks.list_clusters()
 
         for kube in response["clusters"]:
             k8s = self.eks.describe_cluster(name=kube)
             if k8s["cluster"]["createdAt"].timestamp() < time_delete:
-                cluster_list.append(kube)
-        return cluster_list
+                yield kube

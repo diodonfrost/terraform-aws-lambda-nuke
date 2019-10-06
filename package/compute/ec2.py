@@ -84,10 +84,9 @@ class NukeEc2:
         :param int time_delete:
             Timestamp in seconds used for filter ec2 instances
 
-        :return list instance_list:
-            List of ec2 instances IDs
+        :yield Iterator[str]:
+            Ec2 instances IDs
         """
-        instance_list = []
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
             Filters=[
@@ -102,8 +101,7 @@ class NukeEc2:
             for reservation in page["Reservations"]:
                 for instance in reservation["Instances"]:
                     if instance["LaunchTime"].timestamp() < time_delete:
-                        instance_list.append(instance["InstanceId"])
-        return instance_list
+                        yield instance["InstanceId"]
 
     def list_templates(self, time_delete):
         """Launch Template list function.
@@ -114,28 +112,24 @@ class NukeEc2:
         :param int time_delete:
             Timestamp in seconds used for filter Launch Templates
 
-        :return list template_list:
-            List of Launch Templates Ids
+        :yield Iterator[str]:
+            Launch Templates Ids
         """
-        template_list = []
         response = self.ec2.describe_launch_templates()
 
         for template in response["LaunchTemplates"]:
             if template["CreateTime"].timestamp() < time_delete:
-                template_list.append(template["LaunchTemplateId"])
-        return template_list
+                yield template["LaunchTemplateId"]
 
     def list_placement_groups(self):
         """Placement Group list function.
 
         List name of all placement group.
 
-        :return list placement_group_list:
-            List of placement groups names
+        :yield Iterator[str]:
+            Placement groups names
         """
-        placement_group_list = []
         response = self.ec2.describe_placement_groups()
 
         for placementgroup in response["PlacementGroups"]:
-            placement_group_list.append(placementgroup["GroupName"])
-        return placement_group_list
+            yield placementgroup["GroupName"]

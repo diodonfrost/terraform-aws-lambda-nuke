@@ -33,12 +33,10 @@ class NukeKeypair:
 
          List all keypair names
 
-        :return list keypair_list:
-            List of key pair name
+        :yield Iterator[str]:
+            Key pair name
         """
-        keypair_list = []
         response = self.ec2.describe_key_pairs()
 
         for keypair in response["KeyPairs"]:
-            keypair_list.append(keypair["KeyName"])
-        return keypair_list
+            yield keypair["KeyName"]

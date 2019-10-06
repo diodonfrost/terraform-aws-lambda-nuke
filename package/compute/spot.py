@@ -53,18 +53,16 @@ class NukeSpot:
         :param int time_delete:
             Timestamp in seconds used for filter spot requests
 
-        :return list request_list:
-            List of  Spot requests IDs
+        :yield Iterator[str]:
+            Spot requests IDs
         """
-        request_list = []
         response = self.ec2.describe_spot_instance_requests(
             Filters=[{"Name": "state", "Values": ["active"]}]
         )
 
         for spot_request in response["SpotInstanceRequests"]:
             if spot_request["CreateTime"].timestamp() < time_delete:
-                request_list.append(spot_request["SpotInstanceRequestId"])
-        return request_list
+                yield spot_request["SpotInstanceRequestId"]
 
     def list_fleet(self, time_delete):
         """Spot Fleet list function.
@@ -75,14 +73,12 @@ class NukeSpot:
         :param int time_delete:
             Timestamp in seconds used for filter Spot Fleet
 
-        :return list fleet_list:
-            List of Spot Fleet IDs
+        :yield Iterator[str]:
+            Spot Fleet IDs
         """
-        fleet_list = []
         paginator = self.ec2.get_paginator("describe_spot_fleet_requests")
 
         for page in paginator.paginate():
             for fleet in page["SpotFleetRequestConfigs"]:
                 if fleet["CreateTime"].timestamp() < time_delete:
-                    fleet_list.append(fleet["SpotFleetRequestId"])
-        return fleet_list
+                    yield fleet["SpotFleetRequestId"]

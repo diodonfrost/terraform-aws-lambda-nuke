@@ -59,17 +59,15 @@ class NukeAutoscaling:
         :param int time_delete:
             Timestamp in seconds used for filter Autoscaling Groups
 
-        :return list asg_list:
-            List of Autoscaling Groups names
+        :yield Iterator[str]:
+            Autoscaling Groups names
         """
-        asg_list = []
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate():
             for asg in page["AutoScalingGroups"]:
                 if asg["CreatedTime"].timestamp() < time_delete:
-                    asg_list.append(asg["AutoScalingGroupName"])
-        return asg_list
+                    yield asg["AutoScalingGroupName"]
 
     def list_launch_confs(self, time_delete):
         """Launch configuration list function.
@@ -80,16 +78,12 @@ class NukeAutoscaling:
         :param int time_delete:
             Timestamp in seconds used for filter Launch Configuration Groups
 
-        :return list launch_conf_list:
-            List of Launch Configurations names
+        :yield Iterator[str]:
+            Launch Configurations names
         """
-        launch_conf_list = []
         paginator = self.asg.get_paginator("describe_launch_configurations")
 
         for page in paginator.paginate():
             for launch_conf in page["LaunchConfigurations"]:
                 if launch_conf["CreatedTime"].timestamp() < time_delete:
-                    launch_conf_list.append(
-                        launch_conf["LaunchConfigurationName"]
-                    )
-        return launch_conf_list
+                    yield launch_conf["LaunchConfigurationName"]

@@ -97,17 +97,15 @@ class NukeElb:
         :param int time_delete:
             Timestamp in seconds used for filter Elastic Load Balancer
 
-        :return list list_elb:
-            List of Elastic Load Balancer names
+        :yield Iterator[str]:
+            Load Balancer names
         """
-        list_elb = []
         paginator = self.elb.get_paginator("describe_load_balancers")
 
         for page in paginator.paginate():
             for loadbalancer in page["LoadBalancerDescriptions"]:
                 if loadbalancer["CreatedTime"].timestamp() < time_delete:
-                    list_elb.append(loadbalancer["LoadBalancerName"])
-        return list_elb
+                    yield loadbalancer["LoadBalancerName"]
 
     def list_elbv2(self, time_delete):
         """Elastic Load Balancer v2 list function.
@@ -118,17 +116,15 @@ class NukeElb:
         :param int time_delete:
             Timestamp in seconds used for filter elbv2
 
-        :return list elbv2_list:
-            List of elbv2 ARN
+        :yield Iterator[str]:
+            Elbv2 ARN
         """
-        elbv2_list = []
         paginator = self.elbv2.get_paginator("describe_load_balancers")
 
         for page in paginator.paginate():
             for lb in page["LoadBalancers"]:
                 if lb["CreatedTime"].timestamp() < time_delete:
-                    elbv2_list.append(lb["LoadBalancerArn"])
-        return elbv2_list
+                    yield lb["LoadBalancerArn"]
 
     def list_target_groups(self):
         """Elastic Load Balancer Target Group list function.
@@ -139,13 +135,11 @@ class NukeElb:
         :param int time_delete:
             Timestamp in seconds used for filter elbv2 Target Groups
 
-        :return list target_group_list:
-            List of elbv2 ARN
+        :yield Iterator[str]:
+            Elbv2 ARN
         """
-        target_group_list = []
         paginator = self.elbv2.get_paginator("describe_target_groups")
 
         for page in paginator.paginate():
             for targetgroup in page["TargetGroups"]:
-                target_group_list.append(targetgroup["TargetGroupArn"])
-        return target_group_list
+                yield targetgroup["TargetGroupArn"]

@@ -62,17 +62,16 @@ class NukeEbs:
 
         :param int time_delete:
             Timestamp in seconds used for filter ebs volumes
-        :return list ebs_list:
-            List of ebs volumes IDs
+
+        :yield Iterator[str]:
+            Ebs volumes IDs
         """
-        ebs_list = []
         paginator = self.ec2.get_paginator("describe_volumes")
 
         for page in paginator.paginate():
             for volume in page["Volumes"]:
                 if volume["CreateTime"].timestamp() < time_delete:
-                    ebs_list.append(volume["VolumeId"])
-        return ebs_list
+                    yield volume["VolumeId"]
 
     def list_policy(self, time_delete):
         """Data Lifecycle Policies list function.
@@ -82,10 +81,10 @@ class NukeEbs:
 
         :param int time_delete:
             Timestamp in seconds used for filter Data Lifecycle policies
-        :return list policy_list:
-            List of Data Lifecycle policies IDs
+
+        :yield Iterator[str]:
+            Data Lifecycle policies IDs
         """
-        policy_list = []
         response = self.dlm.get_lifecycle_policies()
 
         for policy in response["Policies"]:
@@ -93,5 +92,4 @@ class NukeEbs:
                 PolicyId=policy["PolicyId"]
             )
             if detailed["Policy"]["DateCreated"].timestamp() < time_delete:
-                policy_list.append(policy["PolicyId"])
-        return policy_list
+                yield policy["PolicyId"]
