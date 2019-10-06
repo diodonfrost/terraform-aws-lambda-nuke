@@ -46,14 +46,12 @@ class NukeEfs:
         :param int time_delete:
             Timestamp in seconds used for filter efs
 
-        :return list filesystem_list:
-            List of efs IDs
+        :yield Iterator[str]:
+            Rfs IDs
         """
-        filesystem_list = []
         paginator = self.efs.get_paginator("describe_file_systems")
 
         for page in paginator.paginate():
             for filesystem in page["FileSystems"]:
                 if filesystem["CreationTime"].timestamp() < time_delete:
-                    filesystem_list.append(filesystem["FileSystemId"])
-        return filesystem_list
+                    yield filesystem["FileSystemId"]

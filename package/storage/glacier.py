@@ -2,6 +2,7 @@
 
 """Module deleting all aws Glacier resources."""
 
+import datetime
 import logging
 
 import boto3
@@ -47,14 +48,15 @@ class NukeGlacier:
         :param int time_delete:
             Timestamp in seconds used for filter Glacier vaults
 
-        :return list vault_list:
-            List of Glacier vaults names
+        :yield Iterator[str]:
+            Glacier vaults names
         """
-        vault_list = []
         paginator = self.glacier.get_paginator("list_vaults")
 
         for page in paginator.paginate():
             for vault in page["VaultList"]:
-                if vault["CreationDate"].timestamp() < time_delete:
-                    vault_list.append(vault["VaultName"])
-        return vault_list
+                creation_date = datetime.datetime.strptime(
+                    vault["CreationDate"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                if creation_date.timestamp() < time_delete:
+                    yield vault["VaultName"]

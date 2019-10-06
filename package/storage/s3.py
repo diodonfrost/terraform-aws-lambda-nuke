@@ -59,14 +59,11 @@ class NukeS3:
         :param int time_delete:
             Timestamp in seconds used for filter S3 buckets
 
-        :return list bucket_list:
-            List of S3 buckets names
-
+        :yield Iterator[str]:
+            S3 buckets names
         """
-        bucket_list = []
         response = self.s3.list_buckets()
 
         for bucket in response["Buckets"]:
             if bucket["CreationDate"].timestamp() < time_delete:
-                bucket_list.append(bucket["Name"])
-        return bucket_list
+                yield bucket["Name"]
