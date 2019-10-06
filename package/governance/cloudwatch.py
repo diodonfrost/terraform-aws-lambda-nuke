@@ -49,17 +49,15 @@ class NukeCloudwatch:
         :param int time_delete:
             Timestamp in seconds used for filter cloudwatch dashboards
 
-        :return list dashboard_list:
-            List of cloudwatch dashboard names
+        :yield Iterator[str]:
+            Cloudwatch dashboard names
         """
-        dashboard_list = []
         paginator = self.cloudwatch.get_paginator("list_dashboards")
 
         for page in paginator.paginate():
             for dashboard in page["DashboardEntries"]:
                 if dashboard["LastModified"].timestamp() < time_delete:
-                    dashboard_list.append(dashboard["DashboardName"])
-        return dashboard_list
+                    yield dashboard["DashboardName"]
 
     def list_alarms(self, time_delete):
         """Cloudwatch alarm list function.
@@ -70,14 +68,12 @@ class NukeCloudwatch:
         :param int time_delete:
             Timestamp in seconds used for filter cloudwatch alarms
 
-        :return list alarm_list:
-            List of cloudwatch alarm IDs
+        :yield Iterator[str]:
+            Cloudwatch alarm IDs
         """
-        alarm_list = []
         paginator = self.cloudwatch.get_paginator("describe_alarms")
 
         for page in paginator.paginate():
             for alarm in page["MetricAlarms"]:
                 if alarm["StateUpdatedTimestamp"].timestamp() < time_delete:
-                    alarm_list.append(alarm["AlarmName"])
-        return alarm_list
+                    yield alarm["AlarmName"]
