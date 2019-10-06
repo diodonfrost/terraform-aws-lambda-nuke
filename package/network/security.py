@@ -45,20 +45,24 @@ class NukeNetworksecurity:
                     logging.error("Unexpected error: %s", e)
 
     def list_security_groups(self):
-        """Security groups list function."""
-        security_group_list = []
+        """Security groups list function.
+
+        :yield Iterator[str]:
+            Security group Id
+        """
         paginator = self.ec2.get_paginator("describe_security_groups")
 
         for page in paginator.paginate():
             for security_group in page["SecurityGroups"]:
-                security_group_list.append(security_group["GroupId"])
-        return security_group_list
+                yield security_group["GroupId"]
 
     def list_network_acls(self):
-        """Network acl list function."""
-        network_acl_list = []
+        """Network acl list function.
+
+        :yield Iterator[str]:
+            Network acl Id
+        """
         response = self.ec2.describe_network_acls()
 
         for network_acl in response["NetworkAcls"]:
-            network_acl_list.append(network_acl["NetworkAclId"])
-        return network_acl_list
+            yield network_acl["NetworkAclId"]

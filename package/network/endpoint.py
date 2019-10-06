@@ -54,13 +54,11 @@ class NukeEndpoint:
         :param int time_delete:
             Timestamp in seconds used for filter aws endpoint
 
-        :return list endpoint_list:
-            List of Elastic aws endpoint IDs
+        :yield Iterator[str]:
+            Elastic aws endpoint IDs
         """
-        endpoint_list = []
         response = self.ec2.describe_vpc_endpoints()
 
         for endpoint in response["VpcEndpoints"]:
             if endpoint["CreationTimestamp"].timestamp() < time_delete:
-                endpoint_list.append(endpoint["VpcEndpointId"])
-        return endpoint_list
+                yield endpoint["VpcEndpointId"]

@@ -39,12 +39,10 @@ class NukeEip:
 
         List all eip Id
 
-        :return list eip_list:
-            List of eip Id
+        :yield Iterator[str]:
+            Eip Id
         """
-        eip_list = []
         response = self.ec2.describe_addresses()
 
         for eip in response["Addresses"]:
-            eip_list.append(eip["AllocationId"])
-        return eip_list
+            yield eip["AllocationId"]
