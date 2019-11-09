@@ -6,3 +6,6 @@ Gemfile.lock
 terraform.tfstate.d
 .tox
 .mypy_cache
+__pycache__
+.pytest_cache
+.coverage
