@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeEfs:
     """Abstract efs nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize efs nuke."""
-        self.efs = boto3.client("efs")
+        if region_name:
+            self.efs = boto3.client("efs", region_name=region_name)
+        else:
+            self.efs = boto3.client("efs")
 
         try:
             self.efs.describe_file_systems()

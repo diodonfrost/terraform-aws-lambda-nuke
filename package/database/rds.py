@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeRds:
     """Abstract rds nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize rds nuke."""
-        self.rds = boto3.client("rds")
+        if region_name:
+            self.rds = boto3.client("rds", region_name=region_name)
+        else:
+            self.rds = boto3.client("rds")
 
         try:
             self.rds.describe_db_clusters()

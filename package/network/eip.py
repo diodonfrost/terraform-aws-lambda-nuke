@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeEip:
     """Abstract eip nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize eip nuke."""
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
 
         try:
             self.ec2.describe_addresses()

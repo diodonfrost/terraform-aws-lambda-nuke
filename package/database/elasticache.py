@@ -12,9 +12,15 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeElasticache:
     """Abstract elasticache nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize elasticache nuke."""
-        self.elasticache = boto3.client("elasticache")
+        if region_name:
+            self.elasticache = boto3.client(
+                "elasticache",
+                region_name=region_name
+            )
+        else:
+            self.elasticache = boto3.client("elasticache")
 
         try:
             self.elasticache.describe_cache_clusters()

@@ -13,9 +13,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeGlacier:
     """Abstract glacier nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize glacier nuke."""
-        self.glacier = boto3.client("glacier")
+        if region_name:
+            self.glacier = boto3.client("glacier", region_name=region_name)
+        else:
+            self.glacier = boto3.client("glacier")
 
         try:
             self.glacier.list_vaults()

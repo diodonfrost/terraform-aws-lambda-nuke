@@ -12,9 +12,15 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeElasticbeanstalk:
     """Initialize elasticbeanstalk nuke."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize elasticbeanstalk nuke."""
-        self.elasticbeanstalk = boto3.client("elasticbeanstalk")
+        if region_name:
+            self.elasticbeanstalk = boto3.client(
+                "elasticbeanstalk",
+                region_name=region_name
+            )
+        else:
+            self.elasticbeanstalk = boto3.client("elasticbeanstalk")
 
         try:
             self.elasticbeanstalk.describe_applications()

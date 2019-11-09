@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeDynamodb:
     """Abstract dynamodb nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize dynamodb nuke."""
-        self.dynamodb = boto3.client("dynamodb")
+        if region_name:
+            self.dynamodb = boto3.client("dynamodb", region_name=region_name)
+        else:
+            self.dynamodb = boto3.client("dynamodb")
 
         try:
             self.dynamodb.list_tables()

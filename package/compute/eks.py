@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeEks:
     """Abstract eks nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize eks nuke."""
-        self.eks = boto3.client("eks")
+        if region_name:
+            self.eks = boto3.client("eks", region_name=region_name)
+        else:
+            self.eks = boto3.client("eks")
 
         try:
             self.eks.list_clusters()

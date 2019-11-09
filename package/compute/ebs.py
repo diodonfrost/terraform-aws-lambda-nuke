@@ -12,10 +12,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeEbs:
     """Abstract ebs nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize ebs nuke."""
-        self.ec2 = boto3.client("ec2")
-        self.dlm = boto3.client("dlm")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+            self.dlm = boto3.client("dlm", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
+            self.dlm = boto3.client("dlm")
 
         try:
             self.dlm.get_lifecycle_policies()

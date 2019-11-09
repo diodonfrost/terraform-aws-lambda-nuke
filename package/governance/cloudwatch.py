@@ -12,9 +12,15 @@ from botocore.exceptions import ClientError
 class NukeCloudwatch:
     """Abstract cloudwatch nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize cloudwatch nuke."""
-        self.cloudwatch = boto3.client("cloudwatch")
+        if region_name:
+            self.cloudwatch = boto3.client(
+                "cloudwatch",
+                region_name=region_name
+            )
+        else:
+            self.cloudwatch = boto3.client("cloudwatch")
 
     def nuke(self, older_than_seconds):
         """Cloudwatch and dlm policies deleting function.

@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError
 class NukeEc2:
     """Abstract ec2 nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize ec2 nuke."""
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
 
     def nuke(self, older_than_seconds):
         """Ec2 instance, placement group and template deleting function.

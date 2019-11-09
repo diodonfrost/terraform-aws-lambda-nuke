@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeNeptune:
     """Abstract neptune nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize neptune nuke."""
-        self.neptune = boto3.client("neptune")
+        if region_name:
+            self.neptune = boto3.client("neptune", region_name=region_name)
+        else:
+            self.neptune = boto3.client("neptune")
 
         try:
             self.neptune.describe_db_clusters()

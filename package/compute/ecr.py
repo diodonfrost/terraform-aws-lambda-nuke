@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeEcr:
     """Abstract ecr nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize ecr nuke."""
-        self.ecr = boto3.client("ecr")
+        if region_name:
+            self.ecr = boto3.client("ecr", region_name=region_name)
+        else:
+            self.ecr = boto3.client("ecr")
 
         try:
             self.ecr.describe_repositories()

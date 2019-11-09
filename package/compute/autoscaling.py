@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeAutoscaling:
     """Abstract autoscaling nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize autoscaling nuke."""
-        self.asg = boto3.client("autoscaling")
+        if region_name:
+            self.asg = boto3.client("autoscaling", region_name=region_name)
+        else:
+            self.asg = boto3.client("autoscaling")
 
         try:
             self.asg.describe_auto_scaling_groups()

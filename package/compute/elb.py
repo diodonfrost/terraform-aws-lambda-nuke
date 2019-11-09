@@ -12,10 +12,14 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeElb:
     """Abstract elb nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize elb nuke."""
-        self.elb = boto3.client("elb")
-        self.elbv2 = boto3.client("elbv2")
+        if region_name:
+            self.elb = boto3.client("elb", region_name=region_name)
+            self.elbv2 = boto3.client("elbv2", region_name=region_name)
+        else:
+            self.elb = boto3.client("elb")
+            self.elbv2 = boto3.client("elbv2")
 
         try:
             self.elb.describe_load_balancers()

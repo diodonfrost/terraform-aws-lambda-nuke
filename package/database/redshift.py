@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 class NukeRedshift:
     """Abstract redshift nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize redshift nuke."""
-        self.redshift = boto3.client("redshift")
+        if region_name:
+            self.redshift = boto3.client("redshift", region_name=region_name)
+        else:
+            self.redshift = boto3.client("redshift")
 
         try:
             self.redshift.describe_clusters()

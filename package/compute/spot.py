@@ -12,9 +12,12 @@ from botocore.exceptions import ClientError
 class NukeSpot:
     """Abstract spot nuke in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize spot nuke."""
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
 
     def nuke(self, older_than_seconds):
         """Spot request and spot fleet deleting function.
@@ -57,7 +60,7 @@ class NukeSpot:
             Spot requests IDs
         """
         response = self.ec2.describe_spot_instance_requests(
-            Filters=[{"Name": "state", "Values": ["active"]}]
+            Filters=[{"Name": "state", "Values": ["active", "open"]}]
         )
 
         for spot_request in response["SpotInstanceRequests"]:
