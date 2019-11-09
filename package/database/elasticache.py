@@ -16,8 +16,7 @@ class NukeElasticache:
         """Initialize elasticache nuke."""
         if region_name:
             self.elasticache = boto3.client(
-                "elasticache",
-                region_name=region_name
+                "elasticache", region_name=region_name
             )
         else:
             self.elasticache = boto3.client("elasticache")

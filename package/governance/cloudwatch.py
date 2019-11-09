@@ -16,8 +16,7 @@ class NukeCloudwatch:
         """Initialize cloudwatch nuke."""
         if region_name:
             self.cloudwatch = boto3.client(
-                "cloudwatch",
-                region_name=region_name
+                "cloudwatch", region_name=region_name
             )
         else:
             self.cloudwatch = boto3.client("cloudwatch")

@@ -16,8 +16,7 @@ class NukeElasticbeanstalk:
         """Initialize elasticbeanstalk nuke."""
         if region_name:
             self.elasticbeanstalk = boto3.client(
-                "elasticbeanstalk",
-                region_name=region_name
+                "elasticbeanstalk", region_name=region_name
             )
         else:
             self.elasticbeanstalk = boto3.client("elasticbeanstalk")
