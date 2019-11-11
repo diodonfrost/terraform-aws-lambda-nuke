@@ -4,6 +4,7 @@
 import os
 
 from compute.autoscaling import NukeAutoscaling
+from compute.dlm import NukeDlm
 from compute.ebs import NukeEbs
 from compute.ec2 import NukeEc2
 from compute.ecr import NukeEcr
@@ -43,6 +44,7 @@ def lambda_handler(event, context):
 
     _strategy = {
         "autoscaling": NukeAutoscaling,
+        "dlm": NukeDlm,
         "ebs": NukeEbs,
         "ec2": NukeEc2,
         "ecr": NukeEcr,
