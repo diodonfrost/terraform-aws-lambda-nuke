@@ -29,7 +29,7 @@ class NukeElb:
             return
 
     def nuke(self, older_than_seconds):
-        """Classic Load Balancer deleting function.
+        """Main nuke entrypoint function for elb and elbv2.
 
         Entrypoint function
 
@@ -75,13 +75,11 @@ class NukeElb:
     def nuke_target_groups(self):
         """Elbv2 Target group delete function.
 
-        Deleteing all elbv2 target groups
+        Deleting all elbv2 target groups
         """
-        elbv2 = boto3.client("elbv2")
-
         for target_group in self.list_target_groups():
             try:
-                elbv2.delete_target_group(TargetGroupArn=target_group)
+                self.elbv2.delete_target_group(TargetGroupArn=target_group)
                 print("Nuke Target Group {0}".format(target_group))
             except ClientError as e:
                 error_code = e.response["Error"]["Code"]
