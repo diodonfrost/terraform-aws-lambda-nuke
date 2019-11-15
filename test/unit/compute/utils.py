@@ -31,9 +31,7 @@ def create_instances(count, region_name):
     """Create ec2 instances."""
     client = boto3.client("ec2", region_name=region_name)
     client.run_instances(
-        ImageId="ami-02df9ea15c1778c9c",
-        MaxCount=count,
-        MinCount=count,
+        ImageId="ami-02df9ea15c1778c9c", MaxCount=count, MinCount=count
     )
 
 
@@ -44,10 +42,8 @@ def create_ecr(region_name):
 
 
 def create_elb(region_name):
-    """Create elb and elbv2."""
+    """Create elb."""
     elb = boto3.client("elb", region_name=region_name)
-    elbv2 = boto3.client("elbv2", region_name=region_name)
-    ec2 = boto3.client("ec2", region_name=region_name)
 
     elb.create_load_balancer(
         LoadBalancerName="elb-test",
@@ -58,16 +54,23 @@ def create_elb(region_name):
                 "LoadBalancerPort": 80,
                 "InstanceProtocol": "tcp",
                 "InstancePort": 80,
-            },
+            }
         ],
     )
+
+
+def create_elbv2(region_name):
+    """Create elbv2."""
+    elbv2 = boto3.client("elbv2", region_name=region_name)
+    ec2 = boto3.client("ec2", region_name=region_name)
+
     elbv2.create_load_balancer(
         Name="elbv2-test",
         Subnets=[
             ec2.describe_subnets()["Subnets"][0]["SubnetId"],
-            ec2.describe_subnets()["Subnets"][1]["SubnetId"]
+            ec2.describe_subnets()["Subnets"][1]["SubnetId"],
         ],
-        Scheme="internal"
+        Scheme="internal",
     )
 
 
@@ -82,6 +85,4 @@ def create_spot(count, region_name):
     """Create spot request and spot fleet."""
     client = boto3.client("ec2", region_name=region_name)
 
-    client.request_spot_instances(
-        InstanceCount=count
-    )
+    client.request_spot_instances(InstanceCount=count)
