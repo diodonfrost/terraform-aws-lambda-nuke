@@ -10,29 +10,17 @@ def create_dynamodb(region_name):
     client.create_table(
         TableName="table-test",
         KeySchema=[
-            {
-                "AttributeName": "UserId",
-                "KeyType": "HASH"
-            },
-            {
-                "AttributeName": "GameTitle",
-                "KeyType": "RANGE"
-            }
+            {"AttributeName": "UserId", "KeyType": "HASH"},
+            {"AttributeName": "GameTitle", "KeyType": "RANGE"},
         ],
         AttributeDefinitions=[
-            {
-                "AttributeName": "UserId",
-                "AttributeType": "S"
-            },
-            {
-                "AttributeName": "GameTitle",
-                "AttributeType": "S"
-            }
+            {"AttributeName": "UserId", "AttributeType": "S"},
+            {"AttributeName": "GameTitle", "AttributeType": "S"},
         ],
         ProvisionedThroughput={
             "ReadCapacityUnits": 20,
-            "WriteCapacityUnits": 20
-        }
+            "WriteCapacityUnits": 20,
+        },
     )
 
 
