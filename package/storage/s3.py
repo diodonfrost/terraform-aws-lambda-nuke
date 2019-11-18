@@ -41,9 +41,12 @@ class NukeS3:
             try:
                 # Delete all objects in bucket
                 bucket = self.s3_resource.Bucket(s3_bucket)
-                for key in bucket.objects.all():
-                    key.delete()
+                bucket.object_versions.delete()
+                bucket.objects.delete()
+            except ClientError as e:
+                logging.error("Unexpected error: %s", e)
 
+            try:
                 # Delete bucket
                 self.s3.delete_bucket(Bucket=s3_bucket)
                 print("Nuke s3 bucket {0}".format(s3_bucket))
