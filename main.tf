@@ -95,8 +95,11 @@ resource "aws_iam_role_policy" "nuke_storage" {
             "Action": [
                 "s3:ListAllMyBuckets",
                 "s3:ListBucket",
+                "s3:ListBucketVersions",
                 "s3:GetObject",
+                "s3:GetObjectVersion",
                 "s3:DeleteObject",
+                "s3:DeleteObjectVersion",
                 "s3:DeleteBucketPolicy",
                 "s3:DeleteBucket",
                 "elasticfilesystem:DescribeFileSystems",
