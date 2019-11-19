@@ -24,7 +24,7 @@ variable "custom_iam_role_arn" {
 variable "exclude_resources" {
   description = "Define the resources that will not be destroyed"
   type        = string
-  default     = "key_pair"
+  default     = null
 }
 
 variable "older_than" {

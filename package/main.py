@@ -36,7 +36,7 @@ import time
 
 def lambda_handler(event, context):
     """Main function entrypoint for lambda."""
-    exclude_resources = os.getenv("EXCLUDE_RESOURCES")
+    exclude_resources = os.getenv("EXCLUDE_RESOURCES", "no_value")
     # Older than date
     older_than = os.getenv("OLDER_THAN")
     # Convert older_than date to seconds
