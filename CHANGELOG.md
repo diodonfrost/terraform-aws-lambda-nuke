@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+-  Allow empty value for terraform variable exclude_resources
+
 ## [2.2.0] - 2019-10-19
 ### Added
 -  Nuke s3 object version
