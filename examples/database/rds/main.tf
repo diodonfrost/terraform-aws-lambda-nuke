@@ -53,7 +53,7 @@ module "nuke-everything" {
   source                         = "../../../"
   name                           = "nuke-rds"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  exclude_resources              = ""
+  exclude_resources              = "rds, neptune"
   older_than                     = "0d"
 }
 
