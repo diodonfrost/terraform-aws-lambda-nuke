@@ -21,6 +21,12 @@ variable "custom_iam_role_arn" {
   default     = null
 }
 
+variable "aws_regions" {
+  description = "A list of one or more aws regions where the lambda will be apply, default use the current region"
+  type        = list(string)
+  default     = null
+}
+
 variable "exclude_resources" {
   description = "Define the resources that will not be destroyed"
   type        = string

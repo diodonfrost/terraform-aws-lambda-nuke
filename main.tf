@@ -263,6 +263,7 @@ EOF
 #            LAMBDA FUNCTION
 #
 ################################################
+data "aws_region" "current" {}
 
 data "archive_file" "this" {
   type        = "zip"
@@ -277,10 +278,11 @@ resource "aws_lambda_function" "this" {
   handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
-  timeout          = "600"
+  timeout          = "6000"
 
   environment {
     variables = {
+      AWS_REGIONS       = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       EXCLUDE_RESOURCES = var.exclude_resources
       OLDER_THAN        = var.older_than
     }

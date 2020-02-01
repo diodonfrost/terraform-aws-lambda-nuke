@@ -41,6 +41,8 @@ def lambda_handler(event, context):
     # Convert older_than date to seconds
     older_than_seconds = time.time() - timeparse.timeparse(older_than)
 
+    aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
+
     _strategy = {
         "autoscaling": NukeAutoscaling,
         "dlm": NukeDlm,
@@ -70,10 +72,12 @@ def lambda_handler(event, context):
 
     for key, value in _strategy.items():
         if key not in exclude_resources:
-            strategy = value()
-            strategy.nuke(older_than_seconds)
+            for aws_region in aws_regions:
+                strategy = value(region_name=aws_region)
+                strategy.nuke(older_than_seconds)
 
     for key, value in _strategy_with_no_date.items():
         if key not in exclude_resources:
-            strategy = value()
-            strategy.nuke()
+            for aws_region in aws_regions:
+                strategy = value(region_name=aws_region)
+                strategy.nuke()
