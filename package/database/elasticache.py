@@ -133,7 +133,11 @@ class NukeElasticache:
                     )
                 elif error_code == "InvalidParameterValue":
                     logging.info(
-                        "cache %s param group cannot be deleted", param
+                        "default cache %s param group cannot be deleted", param
+                    )
+                elif error_code == "ServiceLinkedRoleNotFoundFault":
+                    logging.info(
+                        "default cache %s param group cannot be deleted", param
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
