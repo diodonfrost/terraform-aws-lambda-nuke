@@ -278,7 +278,7 @@ resource "aws_lambda_function" "this" {
   handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
-  timeout          = "6000"
+  timeout          = "900"
 
   environment {
     variables = {
