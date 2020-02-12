@@ -5,7 +5,7 @@ import time
 
 from moto import mock_ec2
 
-from package.compute.key_pair import NukeKeypair
+from package.nuke.compute.key_pair import NukeKeypair
 
 from .utils import create_keypair
 

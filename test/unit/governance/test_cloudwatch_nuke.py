@@ -5,7 +5,7 @@ import time
 
 from moto import mock_cloudwatch
 
-from package.governance.cloudwatch import NukeCloudwatch
+from package.nuke.governance.cloudwatch import NukeCloudwatch
 
 from .utils import create_cloudwatch_dashboard, create_cloudwatch_alarm
 

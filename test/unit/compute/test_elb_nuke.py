@@ -5,7 +5,7 @@ import time
 
 from moto import mock_elb, mock_elbv2, mock_ec2
 
-from package.compute.elb import NukeElb
+from package.nuke.compute.elb import NukeElb
 
 from .utils import create_elb, create_elbv2
 

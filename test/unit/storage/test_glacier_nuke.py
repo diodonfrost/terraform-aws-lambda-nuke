@@ -5,7 +5,7 @@ import time
 
 from moto import mock_glacier
 
-from package.storage.glacier import NukeGlacier
+from package.nuke.storage.glacier import NukeGlacier
 
 from .utils import create_glacier
 

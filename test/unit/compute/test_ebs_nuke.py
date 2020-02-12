@@ -5,7 +5,7 @@ import time
 
 from moto import mock_ec2
 
-from package.compute.ebs import NukeEbs
+from package.nuke.compute.ebs import NukeEbs
 
 from .utils import create_ebs
 

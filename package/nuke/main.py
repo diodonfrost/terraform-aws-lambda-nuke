@@ -2,35 +2,30 @@
 
 """Main entrypoint function for destroy all aws resources."""
 import os
-
-from compute.autoscaling import NukeAutoscaling
-from compute.dlm import NukeDlm
-from compute.ebs import NukeEbs
-from compute.ec2 import NukeEc2
-from compute.ecr import NukeEcr
-from compute.eks import NukeEks
-from compute.elasticbeanstalk import NukeElasticbeanstalk
-from compute.elb import NukeElb
-from compute.key_pair import NukeKeypair
-from compute.spot import NukeSpot
-
-from database.dynamodb import NukeDynamodb
-from database.elasticache import NukeElasticache
-from database.rds import NukeRds
-from database.redshift import NukeRedshift
-
-from governance.cloudwatch import NukeCloudwatch
-
-from network.eip import NukeEip
-from network.endpoint import NukeEndpoint
-from network.security import NukeNetworksecurity
-
-from storage.efs import NukeEfs
-from storage.glacier import NukeGlacier
-from storage.s3 import NukeS3
-
-import timeparse
 import time
+
+from nuke.compute.autoscaling import NukeAutoscaling
+from nuke.compute.dlm import NukeDlm
+from nuke.compute.ebs import NukeEbs
+from nuke.compute.ec2 import NukeEc2
+from nuke.compute.ecr import NukeEcr
+from nuke.compute.eks import NukeEks
+from nuke.compute.elasticbeanstalk import NukeElasticbeanstalk
+from nuke.compute.elb import NukeElb
+from nuke.compute.key_pair import NukeKeypair
+from nuke.compute.spot import NukeSpot
+from nuke.database.dynamodb import NukeDynamodb
+from nuke.database.elasticache import NukeElasticache
+from nuke.database.rds import NukeRds
+from nuke.database.redshift import NukeRedshift
+from nuke.governance.cloudwatch import NukeCloudwatch
+from nuke.network.eip import NukeEip
+from nuke.network.endpoint import NukeEndpoint
+from nuke.network.security import NukeNetworksecurity
+from nuke.storage.efs import NukeEfs
+from nuke.storage.glacier import NukeGlacier
+from nuke.storage.s3 import NukeS3
+from nuke.timeparse import timeparse
 
 
 def lambda_handler(event, context):
@@ -39,7 +34,7 @@ def lambda_handler(event, context):
     # Older than date
     older_than = os.getenv("OLDER_THAN")
     # Convert older_than date to seconds
-    older_than_seconds = time.time() - timeparse.timeparse(older_than)
+    older_than_seconds = time.time() - timeparse(older_than)
 
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
 

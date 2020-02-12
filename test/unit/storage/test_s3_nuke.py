@@ -5,7 +5,7 @@ import time
 
 from moto import mock_s3
 
-from package.storage.s3 import NukeS3
+from package.nuke.storage.s3 import NukeS3
 
 from .utils import create_s3
 
