@@ -2,11 +2,11 @@
 
 """Module deleting all keypairs."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeKeypair:
@@ -28,8 +28,8 @@ class NukeKeypair:
             try:
                 self.ec2.delete_key_pair(KeyName=keypair)
                 print("Nuke Key Pair {0}".format(keypair))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("keypair", keypair, exc)
 
     def list_keypair(self):
         """Keypair list function.

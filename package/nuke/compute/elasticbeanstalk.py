@@ -2,11 +2,11 @@
 
 """Module deleting all aws Elastic Beanstalk resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeElasticbeanstalk:
@@ -46,8 +46,8 @@ class NukeElasticbeanstalk:
                         ApplicationName=app, TerminateEnvByForce=True
                     )
                     print("Nuke elasticbeanstalk application{0}".format(app))
-                except ClientError as e:
-                    logging.error("Unexpected error: %s", e)
+                except ClientError as exc:
+                    nuke_exceptions("elasticbenstalk app", app, exc)
 
         for env in self.list_envs(older_than_seconds):
             if env["DateCreated"].timestamp() < older_than_seconds:
@@ -56,8 +56,8 @@ class NukeElasticbeanstalk:
                         EnvironmentId=env, ForceTerminate=True
                     )
                     print("Nuke elasticbeanstalk environment {0}".format(env))
-                except ClientError as e:
-                    logging.error("Unexpected error: %s", e)
+                except ClientError as exc:
+                    nuke_exceptions("elasticbenstalk env", env, exc)
 
     def list_apps(self, time_delete):
         """Elastic Beanstalk Application list function.

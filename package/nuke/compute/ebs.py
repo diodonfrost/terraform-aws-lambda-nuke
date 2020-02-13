@@ -2,11 +2,11 @@
 
 """Module deleting all aws ebs volume."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEbs:
@@ -33,14 +33,8 @@ class NukeEbs:
             try:
                 self.ec2.delete_volume(VolumeId=volume)
                 print("Nuke EBS Volume {0}".format(volume))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "VolumeInUse":
-                    logging.info("volume %s is already used", volume)
-                elif error_code == "InvalidVolume":
-                    logging.info("volume %s has already been deleted", volume)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("ebs volume", volume, exc)
 
     def list_ebs(self, time_delete):
         """Ebs volume list function.

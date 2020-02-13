@@ -2,11 +2,11 @@
 
 """Module deleting all aws EKS cluster resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEks:
@@ -39,8 +39,8 @@ class NukeEks:
             try:
                 self.eks.delete_cluster(name=cluster)
                 print("Nuke EKS Cluster{0}".format(cluster))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("eks cluster", cluster, exc)
 
     def list_clusters(self, time_delete):
         """EKS cluster list function.

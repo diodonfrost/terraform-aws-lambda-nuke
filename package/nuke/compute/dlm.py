@@ -2,11 +2,11 @@
 
 """Module deleting all aws dlm policie resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeDlm:
@@ -39,8 +39,8 @@ class NukeDlm:
             try:
                 self.dlm.delete_lifecycle_policy(PolicyId=policy)
                 print("Nuke dlm Lifecycle Policy {0}".format(policy))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("dlm policy", policy, exc)
 
     def list_policy(self, time_delete):
         """Data Lifecycle Policies list function.

@@ -2,11 +2,11 @@
 
 """Module deleting all aws Classic Load Balancer resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeElb:
@@ -54,23 +54,15 @@ class NukeElb:
             try:
                 self.elb.delete_load_balancer(LoadBalancerName=elb)
                 print("Nuke Load Balancer {0}".format(elb))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "OperationNotPermitted":
-                    logging.warning("Protected policy enable on %s", elb)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elb", elb, exc)
 
         for elbv2 in self.list_elbv2(time_delete):
             try:
                 self.elbv2.delete_load_balancer(LoadBalancerArn=elbv2)
                 print("Nuke Load Balancer {0}".format(elbv2))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "OperationNotPermitted":
-                    logging.warning("Protected policy enable on %s", elbv2)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elbv2", elbv2, exc)
 
     def nuke_target_groups(self):
         """Elbv2 Target group delete function.
@@ -81,14 +73,8 @@ class NukeElb:
             try:
                 self.elbv2.delete_target_group(TargetGroupArn=target_group)
                 print("Nuke Target Group {0}".format(target_group))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "ResourceInUse":
-                    logging.warning(
-                        "%s is use by listener or rule", target_group
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("lb target group", target_group, exc)
 
     def list_elb(self, time_delete):
         """Elastic Load Balancer list function.

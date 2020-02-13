@@ -2,11 +2,11 @@
 
 """Module deleting all ec2 instances, placement groups and launch templates."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEc2:
@@ -46,12 +46,8 @@ class NukeEc2:
             try:
                 self.ec2.terminate_instances(InstanceIds=[instance])
                 print("Terminate instances {0}".format(instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "OperationNotPermitted":
-                    logging.warning("Protected policy enable on %s", instance)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("instance", instance, exc)
 
     def nuke_launch_templates(self, time_delete):
         """Ec2 launche template delete function.
@@ -66,8 +62,8 @@ class NukeEc2:
             try:
                 self.ec2.delete_launch_template(LaunchTemplateId=template)
                 print("Nuke Launch Template{0}".format(template))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("ec2 template", template, exc)
 
     def nuke_placement_groups(self):
         """Ec2 placement group delete function."""
@@ -75,8 +71,8 @@ class NukeEc2:
             try:
                 self.ec2.delete_placement_group(GroupName=placement_group)
                 print("Nuke Placement Group {0}".format(placement_group))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("placement group", placement_group, exc)
 
     def list_instances(self, time_delete):
         """Ec2 instance list function.

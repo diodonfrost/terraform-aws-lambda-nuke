@@ -2,11 +2,11 @@
 
 """Module deleting all aws Elastic Container Registry resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEcr:
@@ -39,8 +39,8 @@ class NukeEcr:
             try:
                 self.ecr.delete_repository(repositoryName=registry, force=True)
                 print("Nuke ECR Registry{0}".format(registry))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("ecr registry", registry, exc)
 
     def list_registry(self, time_delete):
         """Elastic Container Registry list function.

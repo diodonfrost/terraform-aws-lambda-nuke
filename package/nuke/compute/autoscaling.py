@@ -2,11 +2,11 @@
 
 """Module deleting all aws autoscaling resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeAutoscaling:
@@ -41,8 +41,8 @@ class NukeAutoscaling:
                     AutoScalingGroupName=scaling, ForceDelete=True
                 )
                 print("Nuke Autoscaling Group {0}".format(scaling))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("autoscaling group", scaling, exc)
 
         for launch_conf in self.list_launch_confs(older_than_seconds):
             try:
@@ -50,8 +50,8 @@ class NukeAutoscaling:
                     LaunchConfigurationName=launch_conf
                 )
                 print("Nuke Launch Configuration {0}".format(launch_conf))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("launch configuration", launch_conf, exc)
 
     def list_asg(self, time_delete):
         """Autoscaling Group list function.

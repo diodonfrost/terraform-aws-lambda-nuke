@@ -2,11 +2,11 @@
 
 """Module deleting all spot requests and spot fleets."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeSpot:
@@ -35,8 +35,8 @@ class NukeSpot:
                     SpotInstanceRequestIds=[spot_request]
                 )
                 print("Cancel spot instance request {0}".format(spot_request))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("spot request", spot_request, exc)
 
         for spot_fleet in self.list_fleet(older_than_seconds):
             try:
@@ -44,8 +44,8 @@ class NukeSpot:
                     SpotFleetRequestIds=[spot_fleet]
                 )
                 print("Nuke spot fleet request {0}".format(spot_fleet))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("spot fleet", spot_fleet, exc)
 
     def list_requests(self, time_delete):
         """Spot Request list function.
