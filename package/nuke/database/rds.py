@@ -2,11 +2,11 @@
 
 """Module deleting all rds resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeRds:
@@ -47,12 +47,8 @@ class NukeRds:
                     DBInstanceIdentifier=instance, SkipFinalSnapshot=True
                 )
                 print("Stop rds instance {0}".format(instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBInstanceState":
-                    logging.info("rds instance %s is not started", instance)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("rds instance", instance, exc)
 
         for cluster in self.list_clusters(older_than_seconds):
             try:
@@ -60,12 +56,8 @@ class NukeRds:
                     DBClusterIdentifier=cluster, SkipFinalSnapshot=True
                 )
                 print("Nuke rds cluster {0}".format(cluster))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBClusterStateFault":
-                    logging.info("rds cluster %s is not started", cluster)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("rds cluster", cluster, exc)
 
     def list_instances(self, time_delete):
         """Rds instance list function.

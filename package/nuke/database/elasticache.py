@@ -2,11 +2,11 @@
 
 """Module deleting all elasticache resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeElasticache:
@@ -61,14 +61,8 @@ class NukeElasticache:
             try:
                 self.elasticache.delete_cache_cluster(CacheClusterId=cluster)
                 print("Nuke elasticache cluster {0}".format(cluster))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidCacheClusterState":
-                    logging.info(
-                        "cache cluster %s is not in available state", cluster
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elasticache cluster", cluster, exc)
 
     def nuke_snapshots(self, time_delete):
         """Elasticache snapshot deleting function.
@@ -84,14 +78,8 @@ class NukeElasticache:
             try:
                 self.elasticache.delete_snapshot(SnapshotName=snapshot)
                 print("Nuke elasticache snapshot {0}".format(snapshot))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidSnapshotState":
-                    logging.info(
-                        "cache snapshot %s is not in available state", snapshot
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elasticache snapshot", snapshot, exc)
 
     def nuke_subnets(self):
         """Elasticache subnet deleting function.
@@ -105,14 +93,8 @@ class NukeElasticache:
                     CacheSubnetGroupName=subnet
                 )
                 print("Nuke elasticache subnet{0}".format(subnet))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidCacheSubnetState":
-                    logging.info("cache %s is not in available state", subnet)
-                elif error_code == "InvalidParameterValue":
-                    logging.info("cache %s cannot be deleted", subnet)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elasticache subnet", subnet, exc)
 
     def nuke_param_groups(self):
         """Elasticache param group deleting function.
@@ -125,22 +107,8 @@ class NukeElasticache:
                     CacheParameterGroupName=param
                 )
                 print("Nuke elasticache param {0}".format(param))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidCacheParameterGroupState":
-                    logging.info(
-                        "cache param %s is not in available state", param
-                    )
-                elif error_code == "InvalidParameterValue":
-                    logging.info(
-                        "default cache %s param group cannot be deleted", param
-                    )
-                elif error_code == "ServiceLinkedRoleNotFoundFault":
-                    logging.info(
-                        "default cache %s param group cannot be deleted", param
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("elasticache param", param, exc)
 
     def list_clusters(self, time_delete):
         """Elasticache cluster list function.

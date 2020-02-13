@@ -2,11 +2,11 @@
 
 """Module deleting all dynamodb tables and backups."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeDynamodb:
@@ -39,15 +39,15 @@ class NukeDynamodb:
             try:
                 self.dynamodb.delete_table(TableName=table)
                 print("Nuke dynamodb table{0}".format(table))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("dynamodb table", table, exc)
 
         for backup in self.list_backups(older_than_seconds):
             try:
                 self.dynamodb.delete_backup(BackupArn=backup)
                 print("Nuke dynamodb backup {0}".format(backup))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("dynamodb backup", backup, exc)
 
     def list_tables(self, time_delete):
         """Dynamodb table list function.

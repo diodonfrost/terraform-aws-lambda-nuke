@@ -2,11 +2,11 @@
 
 """Module deleting all redshift resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeRedshift:
@@ -61,14 +61,8 @@ class NukeRedshift:
                     ClusterIdentifier=cluster, SkipFinalClusterSnapshot=True
                 )
                 print("Nuke redshift cluster{0}".format(cluster))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidClusterStateFault":
-                    logging.info(
-                        "redshift cluster %s is not in state started", cluster
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("redshift cluster", cluster, exc)
 
     def nuke_snapshots(self, time_delete):
         """Redshift snapshot deleting function.
@@ -86,14 +80,8 @@ class NukeRedshift:
                     SnapshotIdentifier=snapshot
                 )
                 print("Nuke redshift snapshot {0}".format(snapshot))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidClusterSnapshotStateFault":
-                    logging.info(
-                        "redshift snap %s is not in state available", snapshot
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("redshift snapshot", snapshot, exc)
 
     def nuke_subnets(self):
         """Redshift subnet deleting function.
@@ -111,14 +99,8 @@ class NukeRedshift:
                     ClusterSubnetGroupName=subnet
                 )
                 print("Nuke redshift subnet {0}".format(subnet))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidClusterSubnetGroupStateFault":
-                    logging.info(
-                        "redshift subnet %s is not in state available", subnet
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("redshift subnet", subnet, exc)
 
     def nuke_param_groups(self):
         """Redshift parameter group deleting function.
@@ -136,18 +118,8 @@ class NukeRedshift:
                     ParameterGroupName=param
                 )
                 print("Nuke redshift param {0}".format(param))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidClusterParameterGroupStateFault":
-                    logging.info(
-                        "redshift param %s is not in state available", param
-                    )
-                elif error_code == "InvalidParameterValue":
-                    logging.info(
-                        "default %s parameter group cannot be deleted", param
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("redshift param", param, exc)
 
     def list_clusters(self, time_delete):
         """Redshift cluster list function.
