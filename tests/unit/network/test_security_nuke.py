@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_ec2
 
-from package.network.security import NukeNetworksecurity
+from package.nuke.network.security import NukeNetworksecurity
 
 from .utils import create_security
 

@@ -5,7 +5,7 @@ import time
 
 from moto import mock_autoscaling, mock_ec2
 
-from package.compute.autoscaling import NukeAutoscaling
+from package.nuke.compute.autoscaling import NukeAutoscaling
 
 from .utils import create_autoscaling
 

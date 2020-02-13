@@ -5,7 +5,7 @@ import time
 
 from moto import mock_ec2
 
-from package.compute.spot import NukeSpot
+from package.nuke.compute.spot import NukeSpot
 
 from .utils import create_spot
 

@@ -5,7 +5,7 @@ import time
 
 from moto import mock_ec2
 
-from package.compute.ec2 import NukeEc2
+from package.nuke.compute.ec2 import NukeEc2
 
 from .utils import create_instances
 

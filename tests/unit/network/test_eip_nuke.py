@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_ec2
 
-from package.network.eip import NukeEip
+from package.nuke.network.eip import NukeEip
 
 from .utils import create_eip
 

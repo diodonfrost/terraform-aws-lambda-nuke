@@ -5,7 +5,7 @@ import time
 
 from moto import mock_redshift
 
-from package.database.redshift import NukeRedshift
+from package.nuke.database.redshift import NukeRedshift
 
 from .utils import create_redshift
 
