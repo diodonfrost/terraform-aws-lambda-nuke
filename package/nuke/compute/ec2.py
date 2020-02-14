@@ -2,6 +2,8 @@
 
 """Module deleting all ec2 instances, placement groups and launch templates."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,14 +14,14 @@ from nuke.exceptions import nuke_exceptions
 class NukeEc2:
     """Abstract ec2 nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize ec2 nuke."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds) -> None:
         """Ec2 instance, placement group and template deleting function.
 
         Deleting all ec2 instances, placement groups and launch
@@ -33,7 +35,7 @@ class NukeEc2:
         self.nuke_launch_templates(older_than_seconds)
         self.nuke_placement_groups()
 
-    def nuke_instances(self, time_delete):
+    def nuke_instances(self, time_delete: float) -> None:
         """Ec2 instance delete function.
 
         Delete ec2 instances with a timestamp greater than time_delete
@@ -49,7 +51,7 @@ class NukeEc2:
             except ClientError as exc:
                 nuke_exceptions("instance", instance, exc)
 
-    def nuke_launch_templates(self, time_delete):
+    def nuke_launch_templates(self, time_delete: float) -> None:
         """Ec2 launche template delete function.
 
         Delete ec2 instances with a timestamp greater than time_delete
@@ -65,7 +67,7 @@ class NukeEc2:
             except ClientError as exc:
                 nuke_exceptions("ec2 template", template, exc)
 
-    def nuke_placement_groups(self):
+    def nuke_placement_groups(self) -> None:
         """Ec2 placement group delete function."""
         for placement_group in self.list_placement_groups():
             try:
@@ -74,7 +76,7 @@ class NukeEc2:
             except ClientError as exc:
                 nuke_exceptions("placement group", placement_group, exc)
 
-    def list_instances(self, time_delete):
+    def list_instances(self, time_delete: float) -> Iterator[str]:
         """Ec2 instance list function.
 
         List IDs of all ec2 instances with a timestamp lower than
@@ -102,7 +104,7 @@ class NukeEc2:
                     if instance["LaunchTime"].timestamp() < time_delete:
                         yield instance["InstanceId"]
 
-    def list_templates(self, time_delete):
+    def list_templates(self, time_delete: float) -> Iterator[str]:
         """Launch Template list function.
 
         List Ids of all Launch Templates with a timestamp lower than
@@ -120,7 +122,7 @@ class NukeEc2:
             if template["CreateTime"].timestamp() < time_delete:
                 yield template["LaunchTemplateId"]
 
-    def list_placement_groups(self):
+    def list_placement_groups(self) -> Iterator[str]:
         """Placement Group list function.
 
         List name of all placement group.

@@ -2,6 +2,8 @@
 
 """Module deleting all aws Elastic Container Registry resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeEcr:
     """Abstract ecr nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize ecr nuke."""
         if region_name:
             self.ecr = boto3.client("ecr", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeEcr:
             print("Ecr resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Elastic Container Registry deleting function.
 
         Deleting all Elastic Container Registry with a timestamp greater
@@ -42,7 +44,7 @@ class NukeEcr:
             except ClientError as exc:
                 nuke_exceptions("ecr registry", registry, exc)
 
-    def list_registry(self, time_delete):
+    def list_registry(self, time_delete: float) -> Iterator[str]:
         """Elastic Container Registry list function.
 
         List the names of all Elastic Container Registry with

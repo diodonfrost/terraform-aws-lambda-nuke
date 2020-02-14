@@ -2,6 +2,8 @@
 
 """Module deleting all aws Elastic Beanstalk resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeElasticbeanstalk:
     """Initialize elasticbeanstalk nuke."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize elasticbeanstalk nuke."""
         if region_name:
             self.elasticbeanstalk = boto3.client(
@@ -29,7 +31,7 @@ class NukeElasticbeanstalk:
             )
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Elastic Beanstalk deleting function.
 
         Deleting all Elastic Beanstalk with a timestamp greater than
@@ -40,26 +42,24 @@ class NukeElasticbeanstalk:
             will be deleted
         """
         for app in self.list_apps(older_than_seconds):
-            if app["DateCreated"].timestamp() < older_than_seconds:
-                try:
-                    self.elasticbeanstalk.delete_application(
-                        ApplicationName=app, TerminateEnvByForce=True
-                    )
-                    print("Nuke elasticbeanstalk application{0}".format(app))
-                except ClientError as exc:
-                    nuke_exceptions("elasticbenstalk app", app, exc)
+            try:
+                self.elasticbeanstalk.delete_application(
+                    ApplicationName=app, TerminateEnvByForce=True
+                )
+                print("Nuke elasticbeanstalk application{0}".format(app))
+            except ClientError as exc:
+                nuke_exceptions("elasticbenstalk app", app, exc)
 
         for env in self.list_envs(older_than_seconds):
-            if env["DateCreated"].timestamp() < older_than_seconds:
-                try:
-                    self.elasticbeanstalk.terminate_environment(
-                        EnvironmentId=env, ForceTerminate=True
-                    )
-                    print("Nuke elasticbeanstalk environment {0}".format(env))
-                except ClientError as exc:
-                    nuke_exceptions("elasticbenstalk env", env, exc)
+            try:
+                self.elasticbeanstalk.terminate_environment(
+                    EnvironmentId=env, ForceTerminate=True
+                )
+                print("Nuke elasticbeanstalk environment {0}".format(env))
+            except ClientError as exc:
+                nuke_exceptions("elasticbenstalk env", env, exc)
 
-    def list_apps(self, time_delete):
+    def list_apps(self, time_delete: float) -> Iterator[str]:
         """Elastic Beanstalk Application list function.
 
         List the names of all Elastic Beanstalk Applications.
@@ -73,7 +73,7 @@ class NukeElasticbeanstalk:
             if app["DateCreated"].timestamp() < time_delete:
                 yield app["ApplicationName"]
 
-    def list_envs(self, time_delete):
+    def list_envs(self, time_delete: float) -> Iterator[str]:
         """Elastic Beanstalk Environment list function.
 
         List the IDs of all Elastic Beanstalk Environments.

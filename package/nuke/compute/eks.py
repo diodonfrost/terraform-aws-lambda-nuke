@@ -2,6 +2,8 @@
 
 """Module deleting all aws EKS cluster resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeEks:
     """Abstract eks nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize eks nuke."""
         if region_name:
             self.eks = boto3.client("eks", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeEks:
             print("eks resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """EKS cluster deleting function.
 
         Deleting all EKS clusters with a timestamp greater than
@@ -42,7 +44,7 @@ class NukeEks:
             except ClientError as exc:
                 nuke_exceptions("eks cluster", cluster, exc)
 
-    def list_clusters(self, time_delete):
+    def list_clusters(self, time_delete: float) -> Iterator[str]:
         """EKS cluster list function.
 
         List the names of all EKS clusters with a timestamp lower than

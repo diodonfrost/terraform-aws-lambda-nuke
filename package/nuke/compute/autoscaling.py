@@ -2,6 +2,8 @@
 
 """Module deleting all aws autoscaling resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeAutoscaling:
     """Abstract autoscaling nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize autoscaling nuke."""
         if region_name:
             self.asg = boto3.client("autoscaling", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeAutoscaling:
             print("Autoscaling resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Autoscaling deleting function.
 
         Deleting all Autoscaling Groups and Launch Configurations
@@ -53,7 +55,7 @@ class NukeAutoscaling:
             except ClientError as exc:
                 nuke_exceptions("launch configuration", launch_conf, exc)
 
-    def list_asg(self, time_delete):
+    def list_asg(self, time_delete: float) -> Iterator[str]:
         """Autoscaling Group list function.
 
         List the names of all Autoscaling Groups with a timestamp lower
@@ -72,7 +74,7 @@ class NukeAutoscaling:
                 if asg["CreatedTime"].timestamp() < time_delete:
                     yield asg["AutoScalingGroupName"]
 
-    def list_launch_confs(self, time_delete):
+    def list_launch_confs(self, time_delete: float) -> Iterator[str]:
         """Launch configuration list function.
 
         Returns the names of all Launch Configuration Groups with

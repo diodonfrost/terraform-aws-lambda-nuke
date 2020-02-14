@@ -2,6 +2,8 @@
 
 """Module deleting all spot requests and spot fleets."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,14 +14,14 @@ from nuke.exceptions import nuke_exceptions
 class NukeSpot:
     """Abstract spot nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize spot nuke."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Spot request and spot fleet deleting function.
 
         Deleting all Spot request and spot fleet deleting function with
@@ -47,7 +49,7 @@ class NukeSpot:
             except ClientError as exc:
                 nuke_exceptions("spot fleet", spot_fleet, exc)
 
-    def list_requests(self, time_delete):
+    def list_requests(self, time_delete: float) -> Iterator[str]:
         """Spot Request list function.
 
         List IDs of all Spot Requests with a timestamp
@@ -67,7 +69,7 @@ class NukeSpot:
             if spot_request["CreateTime"].timestamp() < time_delete:
                 yield spot_request["SpotInstanceRequestId"]
 
-    def list_fleet(self, time_delete):
+    def list_fleet(self, time_delete: float) -> Iterator[str]:
         """Spot Fleet list function.
 
         List IDs of all Spot Fleets with a timestamp

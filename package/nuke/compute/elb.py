@@ -2,6 +2,8 @@
 
 """Module deleting all aws Classic Load Balancer resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeElb:
     """Abstract elb nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize elb nuke."""
         if region_name:
             self.elb = boto3.client("elb", region_name=region_name)
@@ -28,7 +30,7 @@ class NukeElb:
             print("elb resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds) -> None:
         """Main nuke entrypoint function for elb and elbv2.
 
         Entrypoint function
@@ -40,7 +42,7 @@ class NukeElb:
         self.nuke_loadbalancers(older_than_seconds)
         self.nuke_target_groups()
 
-    def nuke_loadbalancers(self, time_delete):
+    def nuke_loadbalancers(self, time_delete) -> None:
         """Loadbalancer delete function.
 
         Deleting all elbv and elbv2 with a timestamp greater than
@@ -64,7 +66,7 @@ class NukeElb:
             except ClientError as exc:
                 nuke_exceptions("elbv2", elbv2, exc)
 
-    def nuke_target_groups(self):
+    def nuke_target_groups(self) -> None:
         """Elbv2 Target group delete function.
 
         Deleting all elbv2 target groups
@@ -76,7 +78,7 @@ class NukeElb:
             except ClientError as exc:
                 nuke_exceptions("lb target group", target_group, exc)
 
-    def list_elb(self, time_delete):
+    def list_elb(self, time_delete: float) -> Iterator[str]:
         """Elastic Load Balancer list function.
 
         List the names of all Elastic Load Balancer with
@@ -95,7 +97,7 @@ class NukeElb:
                 if loadbalancer["CreatedTime"].timestamp() < time_delete:
                     yield loadbalancer["LoadBalancerName"]
 
-    def list_elbv2(self, time_delete):
+    def list_elbv2(self, time_delete: float) -> Iterator[str]:
         """Elastic Load Balancer v2 list function.
 
         List ARN of all Elastic Load Balancer v2 with
@@ -114,7 +116,7 @@ class NukeElb:
                 if lb["CreatedTime"].timestamp() < time_delete:
                     yield lb["LoadBalancerArn"]
 
-    def list_target_groups(self):
+    def list_target_groups(self) -> Iterator[str]:
         """Elastic Load Balancer Target Group list function.
 
         List ARN of all elbv2 Target Group with

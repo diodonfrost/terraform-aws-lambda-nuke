@@ -2,6 +2,8 @@
 
 """Module deleting all aws dlm policie resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeDlm:
     """Abstract dlm nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize dlm nuke."""
         if region_name:
             self.dlm = boto3.client("dlm", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeDlm:
             print("Dlm resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Dlm policies deleting function.
 
         Deleting all dlm policy resources with a timestamp greater
@@ -42,7 +44,7 @@ class NukeDlm:
             except ClientError as exc:
                 nuke_exceptions("dlm policy", policy, exc)
 
-    def list_policy(self, time_delete):
+    def list_policy(self, time_delete: float) -> Iterator[str]:
         """Data Lifecycle Policies list function.
 
         Returns the IDs of all Data Lifecycle Policies with
