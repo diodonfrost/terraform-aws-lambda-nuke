@@ -2,11 +2,11 @@
 
 """Module deleting all security group and network acl."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeNetworksecurity:
@@ -25,27 +25,15 @@ class NukeNetworksecurity:
             try:
                 self.ec2.delete_security_group(GroupId=sec_grp)
                 print("Nuke ec2 security group {0}".format(sec_grp))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "CannotDelete":
-                    logging.info("security grp %s cannot be deleted", sec_grp)
-                elif error_code == "DependencyViolation":
-                    logging.info(
-                        "security grp %s has a dependent object", sec_grp
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("security group", sec_grp, exc)
 
         for net_acl in self.list_network_acls():
             try:
                 self.ec2.delete_network_acl(NetworkAclId=net_acl)
                 print("Nuke ec2 network acl {0}".format(net_acl))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidParameterValue":
-                    logging.info("network acl %s cannot be deleted", net_acl)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("network acl", net_acl, exc)
 
     def list_security_groups(self):
         """Security groups list function.

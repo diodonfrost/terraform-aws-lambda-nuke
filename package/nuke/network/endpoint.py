@@ -2,11 +2,11 @@
 
 """Module deleting all aws endpoints."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEndpoint:
@@ -39,14 +39,8 @@ class NukeEndpoint:
             try:
                 self.ec2.delete_vpc_endpoints(VpcEndpointIds=[endpoint])
                 print("Nuke ec2 endpoint {0}".format(endpoint))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "RequestLimitExceeded":
-                    logging.info(
-                        "DeleteVpcEndpoints operation max retries reached"
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("vpc endpoint", endpoint, exc)
 
     def list_endpoints(self, time_delete):
         """Aws enpoint list function.

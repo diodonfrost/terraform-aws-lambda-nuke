@@ -2,11 +2,11 @@
 
 """Module deleting all aws eip."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEip:
@@ -34,8 +34,8 @@ class NukeEip:
             try:
                 self.ec2.release_address(AllocationId=eip)
                 print("Nuke elastic ip {0}".format(eip))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("eip", eip, exc)
 
     def list_eips(self):
         """Eip list function.
