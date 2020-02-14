@@ -2,6 +2,8 @@
 
 """Module deleting all aws eip."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeEip:
     """Abstract eip nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize eip nuke."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeEip:
             print("Eip resource is not available in this aws region")
             return
 
-    def nuke(self):
+    def nuke(self) -> None:
         """Eip deleting function.
 
         Delete all eip
@@ -37,7 +39,7 @@ class NukeEip:
             except ClientError as exc:
                 nuke_exceptions("eip", eip, exc)
 
-    def list_eips(self):
+    def list_eips(self) -> Iterator[str]:
         """Eip list function.
 
         List all eip Id

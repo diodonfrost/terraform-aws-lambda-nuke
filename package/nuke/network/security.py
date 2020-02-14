@@ -2,6 +2,8 @@
 
 """Module deleting all security group and network acl."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,14 +14,14 @@ from nuke.exceptions import nuke_exceptions
 class NukeNetworksecurity:
     """Abstract endpoint nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize endpoint nuke."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
 
-    def nuke(self):
+    def nuke(self) -> None:
         """Security groups delete function."""
         for sec_grp in self.list_security_groups():
             try:
@@ -35,7 +37,7 @@ class NukeNetworksecurity:
             except ClientError as exc:
                 nuke_exceptions("network acl", net_acl, exc)
 
-    def list_security_groups(self):
+    def list_security_groups(self) -> Iterator[str]:
         """Security groups list function.
 
         :yield Iterator[str]:
@@ -47,7 +49,7 @@ class NukeNetworksecurity:
             for security_group in page["SecurityGroups"]:
                 yield security_group["GroupId"]
 
-    def list_network_acls(self):
+    def list_network_acls(self) -> Iterator[str]:
         """Network acl list function.
 
         :yield Iterator[str]:
