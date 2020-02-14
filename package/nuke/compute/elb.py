@@ -42,7 +42,7 @@ class NukeElb:
         self.nuke_loadbalancers(older_than_seconds)
         self.nuke_target_groups()
 
-    def nuke_loadbalancers(self, time_delete) -> None:
+    def nuke_loadbalancers(self, time_delete: float) -> None:
         """Loadbalancer delete function.
 
         Deleting all elbv and elbv2 with a timestamp greater than
