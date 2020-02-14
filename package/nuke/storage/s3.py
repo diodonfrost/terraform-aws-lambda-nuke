@@ -2,6 +2,8 @@
 
 """Module deleting all aws s3 bucket resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeS3:
     """Abstract s3 nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize s3 nuke."""
         if region_name:
             self.s3 = boto3.client("s3", region_name=region_name)
@@ -27,7 +29,7 @@ class NukeS3:
             print("s3 resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """S3 bucket deleting function.
 
         Deleting all s3 buckets with a timestamp greater than
@@ -53,7 +55,7 @@ class NukeS3:
             except ClientError as exc:
                 nuke_exceptions("s3 bucket", s3_bucket, exc)
 
-    def list_buckets(self, time_delete):
+    def list_buckets(self, time_delete: float) -> Iterator[str]:
         """S3 bucket list function.
 
         List the names of all S3 buckets with

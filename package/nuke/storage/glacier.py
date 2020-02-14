@@ -3,6 +3,7 @@
 """Module deleting all aws Glacier resources."""
 
 import datetime
+from typing import Iterator
 
 import boto3
 
@@ -14,7 +15,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeGlacier:
     """Abstract glacier nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize glacier nuke."""
         if region_name:
             self.glacier = boto3.client("glacier", region_name=region_name)
@@ -27,7 +28,7 @@ class NukeGlacier:
             print("Glacier resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds) -> None:
         """Glacier deleting function.
 
         Deleting all Glacier with a timestamp greater than older_than_seconds.
@@ -43,7 +44,7 @@ class NukeGlacier:
             except ClientError as exc:
                 nuke_exceptions("glacier vault", vault, exc)
 
-    def list_vaults(self, time_delete):
+    def list_vaults(self, time_delete: float) -> Iterator[str]:
         """Glacier vault list function.
 
         List the names of all Glacier vaults with a timestamp lower

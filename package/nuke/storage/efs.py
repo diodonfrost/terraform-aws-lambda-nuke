@@ -2,6 +2,8 @@
 
 """Module deleting all aws efs resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeEfs:
     """Abstract efs nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize efs nuke."""
         if region_name:
             self.efs = boto3.client("efs", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeEfs:
             print("EFS resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """EFS deleting function.
 
         Deleting all efs with a timestamp greater than older_than_seconds.
@@ -41,7 +43,7 @@ class NukeEfs:
             except ClientError as exc:
                 nuke_exceptions("efs filesystem", efs_file_system, exc)
 
-    def list_file_systems(self, time_delete):
+    def list_file_systems(self, time_delete: float) -> Iterator[str]:
         """EFS list function.
 
         List IDS of all efs with a timestamp lower than time_delete.
