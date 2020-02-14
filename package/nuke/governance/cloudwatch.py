@@ -2,11 +2,11 @@
 
 """Module deleting all aws cloudwatch dashboards and alarms."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeCloudwatch:
@@ -35,15 +35,15 @@ class NukeCloudwatch:
             try:
                 self.cloudwatch.delete_dashboards(DashboardNames=[dashboard])
                 print("Nuke cloudwatch dashboard {0}".format(dashboard))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("cloudwatch dashboard", dashboard, exc)
 
         for alarm in self.list_alarms(older_than_seconds):
             try:
                 self.cloudwatch.delete_alarms(AlarmNames=[alarm])
                 print("Nuke cloudwatch alarm {0}".format(alarm))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("cloudwatch alarm", alarm, exc)
 
     def list_dashboards(self, time_delete):
         """Cloudwatch dashboard list function.
