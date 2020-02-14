@@ -47,7 +47,7 @@ DAYCLOCK = (
     r"(?P<mins>\d{2}):(?P<secs>\d{2}(?:\.\d+)?)"
 )
 
-OPT = lambda x: r"(?:{x})?".format(x=x, SEPARATORS=SEPARATORS)
+OPT = lambda x: r"(?:{x})?".format(x=x, SEPARATORS=SEPARATORS)  # type: ignore
 OPTSEP = lambda x: r"(?:{x}\s*(?:{SEPARATORS}\s*)?)?".format(
     x=x, SEPARATORS=SEPARATORS
 )
