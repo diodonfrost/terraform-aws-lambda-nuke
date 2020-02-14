@@ -2,6 +2,8 @@
 
 """Module deleting all aws cloudwatch dashboards and alarms."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeCloudwatch:
     """Abstract cloudwatch nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize cloudwatch nuke."""
         if region_name:
             self.cloudwatch = boto3.client(
@@ -21,7 +23,7 @@ class NukeCloudwatch:
         else:
             self.cloudwatch = boto3.client("cloudwatch")
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Cloudwatch and dlm policies deleting function.
 
         Deleting all cloudwatch dashboards and alarms resources with
@@ -45,7 +47,7 @@ class NukeCloudwatch:
             except ClientError as exc:
                 nuke_exceptions("cloudwatch alarm", alarm, exc)
 
-    def list_dashboards(self, time_delete):
+    def list_dashboards(self, time_delete: float) -> Iterator[str]:
         """Cloudwatch dashboard list function.
 
         List the names of all cloudwatch dashboards with a timestamp
@@ -64,7 +66,7 @@ class NukeCloudwatch:
                 if dashboard["LastModified"].timestamp() < time_delete:
                     yield dashboard["DashboardName"]
 
-    def list_alarms(self, time_delete):
+    def list_alarms(self, time_delete: float) -> Iterator[str]:
         """Cloudwatch alarm list function.
 
         List the IDs of all cloudwatch alarms with a timestamp
