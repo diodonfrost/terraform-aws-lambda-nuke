@@ -2,6 +2,8 @@
 
 """Module deleting all redshift resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeRedshift:
     """Abstract redshift nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize redshift nuke."""
         if region_name:
             self.redshift = boto3.client("redshift", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeRedshift:
             print("Redshift resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds) -> None:
         """Redshift resources deleting function.
 
         Deleting all redshift resources with
@@ -45,7 +47,7 @@ class NukeRedshift:
         self.nuke_subnets()
         self.nuke_param_groups()
 
-    def nuke_clusters(self, time_delete):
+    def nuke_clusters(self, time_delete) -> None:
         """Redshift cluster deleting function.
 
         Deleting redshift clusters with a timestamp lower than
@@ -64,7 +66,7 @@ class NukeRedshift:
             except ClientError as exc:
                 nuke_exceptions("redshift cluster", cluster, exc)
 
-    def nuke_snapshots(self, time_delete):
+    def nuke_snapshots(self, time_delete) -> None:
         """Redshift snapshot deleting function.
 
         Deleting redshift snapshots with a timestamp lower than
@@ -83,7 +85,7 @@ class NukeRedshift:
             except ClientError as exc:
                 nuke_exceptions("redshift snapshot", snapshot, exc)
 
-    def nuke_subnets(self):
+    def nuke_subnets(self) -> None:
         """Redshift subnet deleting function.
 
         Deleting redshift subnets with a timestamp lower than
@@ -102,7 +104,7 @@ class NukeRedshift:
             except ClientError as exc:
                 nuke_exceptions("redshift subnet", subnet, exc)
 
-    def nuke_param_groups(self):
+    def nuke_param_groups(self) -> None:
         """Redshift parameter group deleting function.
 
         Deleting redshift parameter groups with a timestamp lower than
@@ -121,7 +123,7 @@ class NukeRedshift:
             except ClientError as exc:
                 nuke_exceptions("redshift param", param, exc)
 
-    def list_clusters(self, time_delete):
+    def list_clusters(self, time_delete: float) -> Iterator[str]:
         """Redshift cluster list function.
 
         List IDs of all redshift cluster with a timestamp lower than
@@ -140,7 +142,7 @@ class NukeRedshift:
                 if cluster["ClusterCreateTime"].timestamp() < time_delete:
                     yield cluster["ClusterIdentifier"]
 
-    def list_snapshots(self, time_delete):
+    def list_snapshots(self, time_delete: float) -> Iterator[str]:
         """Redshift snapshot list function.
 
         List IDs of all redshift snapshots with a timestamp
@@ -159,7 +161,7 @@ class NukeRedshift:
                 if snapshot["SnapshotCreateTime"].timestamp() < time_delete:
                     yield snapshot["SnapshotIdentifier"]
 
-    def list_subnet(self):
+    def list_subnet(self) -> Iterator[str]:
         """Redshift subnet list function.
 
         :yield Iterator[str]:
@@ -173,7 +175,7 @@ class NukeRedshift:
             for subnet in page["ClusterSubnetGroups"]:
                 yield subnet["ClusterSubnetGroupName"]
 
-    def list_cluster_params(self):
+    def list_cluster_params(self) -> Iterator[str]:
         """Redshift cluster parameter list function.
 
         :yield Iterator[str]:

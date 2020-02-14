@@ -2,6 +2,8 @@
 
 """Module deleting all rds resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeRds:
     """Abstract rds nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize rds nuke."""
         if region_name:
             self.rds = boto3.client("rds", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeRds:
             print("Rds resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Rds resources deleting function.
 
         Deleting all rds resources with
@@ -59,7 +61,7 @@ class NukeRds:
             except ClientError as exc:
                 nuke_exceptions("rds cluster", cluster, exc)
 
-    def list_instances(self, time_delete):
+    def list_instances(self, time_delete: float) -> Iterator[str]:
         """Rds instance list function.
 
         List IDs of all rds instances with a timestamp
@@ -78,7 +80,7 @@ class NukeRds:
                 if instance["InstanceCreateTime"].timestamp() < time_delete:
                     yield instance["DBInstanceIdentifier"]
 
-    def list_clusters(self, time_delete):
+    def list_clusters(self, time_delete: float) -> Iterator[str]:
         """Aurora cluster list function.
 
         List IDs of all aurora clusters with a timestamp

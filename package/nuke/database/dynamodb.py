@@ -2,6 +2,8 @@
 
 """Module deleting all dynamodb tables and backups."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeDynamodb:
     """Abstract dynamodb nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize dynamodb nuke."""
         if region_name:
             self.dynamodb = boto3.client("dynamodb", region_name=region_name)
@@ -25,7 +27,7 @@ class NukeDynamodb:
             print("Dynamodb resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Dynamodb table and backup deleting function.
 
         Deleting all dynamodb table and backup with a timestamp greater
@@ -49,7 +51,7 @@ class NukeDynamodb:
             except ClientError as exc:
                 nuke_exceptions("dynamodb backup", backup, exc)
 
-    def list_tables(self, time_delete):
+    def list_tables(self, time_delete: float) -> Iterator[str]:
         """Dynamodb table list function.
 
         List names of all dynamodb tables with a timestamp lower than
@@ -70,7 +72,7 @@ class NukeDynamodb:
                 if date_table.timestamp() < time_delete:
                     yield table
 
-    def list_backups(self, time_delete):
+    def list_backups(self, time_delete: float) -> Iterator[str]:
         """Dynamodb backup list function.
 
         List arn of all dynamodb backup with a timestamp lower than

@@ -2,6 +2,8 @@
 
 """Module deleting all elasticache resources."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -12,7 +14,7 @@ from nuke.exceptions import nuke_exceptions
 class NukeElasticache:
     """Abstract elasticache nuke in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize elasticache nuke."""
         if region_name:
             self.elasticache = boto3.client(
@@ -27,7 +29,7 @@ class NukeElasticache:
             print("Elasticache resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds):
+    def nuke(self, older_than_seconds: float) -> None:
         """Elasticache resources deleting function.
 
         Deleting all elasticache resources with
@@ -47,7 +49,7 @@ class NukeElasticache:
         self.nuke_subnets()
         self.nuke_param_groups()
 
-    def nuke_clusters(self, time_delete):
+    def nuke_clusters(self, time_delete: float) -> None:
         """Elasticache cluster deleting function.
 
         Deleting elasticache cluster with a timestamp lower than
@@ -64,7 +66,7 @@ class NukeElasticache:
             except ClientError as exc:
                 nuke_exceptions("elasticache cluster", cluster, exc)
 
-    def nuke_snapshots(self, time_delete):
+    def nuke_snapshots(self, time_delete: float) -> None:
         """Elasticache snapshot deleting function.
 
         Deleting elasticache snapshot with a timestamp lower than
@@ -81,7 +83,7 @@ class NukeElasticache:
             except ClientError as exc:
                 nuke_exceptions("elasticache snapshot", snapshot, exc)
 
-    def nuke_subnets(self):
+    def nuke_subnets(self) -> None:
         """Elasticache subnet deleting function.
 
         Deleting elasticache subnets
@@ -96,7 +98,7 @@ class NukeElasticache:
             except ClientError as exc:
                 nuke_exceptions("elasticache subnet", subnet, exc)
 
-    def nuke_param_groups(self):
+    def nuke_param_groups(self) -> None:
         """Elasticache param group deleting function.
 
         Deleting elasticache parameter groups
@@ -110,7 +112,7 @@ class NukeElasticache:
             except ClientError as exc:
                 nuke_exceptions("elasticache param", param, exc)
 
-    def list_clusters(self, time_delete):
+    def list_clusters(self, time_delete: float) -> Iterator[str]:
         """Elasticache cluster list function.
 
         List IDs of all elasticache clusters with a timestamp
@@ -129,7 +131,7 @@ class NukeElasticache:
                 if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
                     yield cluster["CacheClusterId"]
 
-    def list_snapshots(self, time_delete):
+    def list_snapshots(self, time_delete: float) -> Iterator[str]:
         """Elasticache snapshots list function.
 
         List names of all elasticache snapshots with a timestamp
@@ -149,7 +151,7 @@ class NukeElasticache:
                 if date_snap.timestamp() < time_delete:
                     yield snapshot["SnapshotName"]
 
-    def list_subnets(self):
+    def list_subnets(self) -> Iterator[str]:
         """Elasticache subnet list function.
 
         List elasticache subnet group names
@@ -165,7 +167,7 @@ class NukeElasticache:
             for subnet in page["CacheSubnetGroups"]:
                 yield subnet["CacheSubnetGroupName"]
 
-    def list_param_groups(self):
+    def list_param_groups(self) -> Iterator[str]:
         """Elasticache parameters group list function.
 
         List elasticache param group names
