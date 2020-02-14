@@ -2,11 +2,11 @@
 
 """Module deleting all aws efs resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeEfs:
@@ -38,8 +38,8 @@ class NukeEfs:
             try:
                 self.efs.delete_file_system(FileSystemId=efs_file_system)
                 print("Nuke EFS share {0}".format(efs_file_system))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("efs filesystem", efs_file_system, exc)
 
     def list_file_systems(self, time_delete):
         """EFS list function.

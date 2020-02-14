@@ -3,11 +3,12 @@
 """Module deleting all aws Glacier resources."""
 
 import datetime
-import logging
 
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeGlacier:
@@ -39,8 +40,8 @@ class NukeGlacier:
             try:
                 self.glacier.delete_vault(vaultName=vault)
                 print("Nuke glacier vault {0}".format(vault))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("glacier vault", vault, exc)
 
     def list_vaults(self, time_delete):
         """Glacier vault list function.

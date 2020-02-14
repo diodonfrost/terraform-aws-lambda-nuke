@@ -2,11 +2,11 @@
 
 """Module deleting all aws s3 bucket resources."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError, EndpointConnectionError
+
+from nuke.exceptions import nuke_exceptions
 
 
 class NukeS3:
@@ -43,19 +43,15 @@ class NukeS3:
                 bucket = self.s3_resource.Bucket(s3_bucket)
                 bucket.object_versions.delete()
                 bucket.objects.delete()
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("s3 object", s3_bucket, exc)
 
             try:
                 # Delete bucket
                 self.s3.delete_bucket(Bucket=s3_bucket)
                 print("Nuke s3 bucket {0}".format(s3_bucket))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "AccessDenied":
-                    logging.warning("Protected policy enable on %s", s3_bucket)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                nuke_exceptions("s3 bucket", s3_bucket, exc)
 
     def list_buckets(self, time_delete):
         """S3 bucket list function.
