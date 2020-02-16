@@ -207,7 +207,6 @@ resource "aws_iam_role_policy" "nuke_network" {
     ]
 }
 EOF
-
 }
 
 resource "aws_iam_role_policy" "nuke_monitoring" {
@@ -234,28 +233,49 @@ resource "aws_iam_role_policy" "nuke_monitoring" {
 EOF
 }
 
-# Allow lambda to send logs to cloudwatch
-resource "aws_iam_role_policy" "lambda_logging" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-lambda-logging"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version":"2012-10-17",
-    "Statement":[
-        {
-            "Action":[
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ],
-            "Resource":"arn:aws:logs:*:*:*",
-            "Effect":"Allow"
-        }
+locals {
+  lambda_logging_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:*:*:*",
+        "Effect": "Allow"
+      }
     ]
+  }
+  lambda_logging_and_kms_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:*:*:*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:CreateGrant"
+        ],
+        "Resource": "${var.kms_key_arn}",
+        "Effect": "Allow"
+      }
+    ]
+  }
 }
-EOF
 
+resource "aws_iam_role_policy" "lambda_logging" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-lambda-logging"
+  role   = aws_iam_role.this[0].id
+  policy = var.kms_key_arn == null ? jsonencode(local.lambda_logging_policy) : jsonencode(local.lambda_logging_and_kms_policy)
 }
 
 ################################################
@@ -279,6 +299,7 @@ resource "aws_lambda_function" "this" {
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
   timeout          = "900"
+  kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
 
   environment {
     variables = {
@@ -294,7 +315,6 @@ resource "aws_lambda_function" "this" {
 #            CLOUDWATCH EVENT
 #
 ################################################
-
 resource "aws_cloudwatch_event_rule" "this" {
   name                = "trigger-lambda-nuke-${var.name}"
   description         = "Trigger lambda nuke"
@@ -318,4 +338,3 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
 }
-
