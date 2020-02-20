@@ -7,7 +7,7 @@ Terraform module which create lambda which nuke all resources on aws account
 
 ## Requirements
 
-This role was developed using python lib boto3 1.9.46 Backwards compatibility is not guaranteed.
+This role was developed using python lib boto3 1.13.34 Backwards compatibility is not guaranteed.
 
 ## Terraform versions
 
