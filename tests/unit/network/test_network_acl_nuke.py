@@ -4,9 +4,9 @@ import boto3
 
 from moto import mock_ec2
 
-from package.nuke.network.security import NukeNetworksecurity
+from package.nuke.network.network_acl import NukeNetworkAcl
 
-from .utils import create_security
+from .utils import create_network_acl
 
 import pytest
 
@@ -22,10 +22,8 @@ def test_security_nuke(aws_region, result_count):
     """Verify security nuke function."""
     client = boto3.client("ec2", region_name=aws_region)
 
-    create_security(region_name=aws_region)
-    security = NukeNetworksecurity(aws_region)
+    create_network_acl(region_name=aws_region)
+    security = NukeNetworkAcl(aws_region)
     security.nuke()
-    security_group_list = client.describe_security_groups()["SecurityGroups"]
     network_acl_list = client.describe_network_acls()["NetworkAcls"]
-    assert len(security_group_list) == result_count
     assert len(network_acl_list) == result_count

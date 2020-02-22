@@ -21,7 +21,8 @@ from nuke.database.redshift import NukeRedshift
 from nuke.governance.cloudwatch import NukeCloudwatch
 from nuke.network.eip import NukeEip
 from nuke.network.endpoint import NukeEndpoint
-from nuke.network.security import NukeNetworksecurity
+from nuke.network.network_acl import NukeNetworkAcl
+from nuke.network.security_group import NukeSecurityGroup
 from nuke.storage.efs import NukeEfs
 from nuke.storage.glacier import NukeGlacier
 from nuke.storage.s3 import NukeS3
@@ -62,7 +63,8 @@ def lambda_handler(event, context):
     _strategy_with_no_date = {
         "eip": NukeEip,
         "key_pair": NukeKeypair,
-        "network_security": NukeNetworksecurity,
+        "security_group": NukeSecurityGroup,
+        "network_acl": NukeNetworkAcl,
     }
 
     for key, value in _strategy.items():
