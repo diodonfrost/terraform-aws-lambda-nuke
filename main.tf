@@ -199,7 +199,9 @@ resource "aws_iam_role_policy" "nuke_network" {
                 "ec2:DescribeInternetGateways",
                 "ec2:DeleteInternetGateway",
                 "ec2:DescribeEgressOnlyInternetGateways",
-                "ec2:DeleteEgressOnlyInternetGateway"
+                "ec2:DeleteEgressOnlyInternetGateway",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:RevokeSecurityGroupIngress"
             ],
             "Effect": "Allow",
             "Resource": "*"

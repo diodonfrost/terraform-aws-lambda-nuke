@@ -25,10 +25,34 @@ class NukeSecurityGroup:
         """Security groups delete function."""
         for sec_grp in self.list_security_groups():
             try:
+                self.revoke_all_rules_in_security_group(sec_grp)
+            except ClientError as exc:
+                nuke_exceptions("security group rule", sec_grp, exc)
+
+        for sec_grp in self.list_security_groups():
+            try:
                 self.ec2.delete_security_group(GroupId=sec_grp)
                 print("Nuke ec2 security group {0}".format(sec_grp))
             except ClientError as exc:
                 nuke_exceptions("security group", sec_grp, exc)
+
+    def revoke_all_rules_in_security_group(self, security_group_id):
+        """Revoke all rules in specific security group.
+
+        :param str security_group_id:
+            The security group to apply this rule to.
+        """
+        sg_desc = self.ec2.describe_security_groups(
+            GroupIds=[security_group_id]
+        )
+        self.ec2.revoke_security_group_egress(
+            GroupId=security_group_id,
+            IpPermissions=sg_desc["SecurityGroups"][0]["IpPermissions"],
+        )
+        self.ec2.revoke_security_group_ingress(
+            GroupId=security_group_id,
+            IpPermissions=sg_desc["SecurityGroups"][0]["IpPermissionsEgress"],
+        )
 
     def list_security_groups(self) -> Iterator[str]:
         """Security groups list function.

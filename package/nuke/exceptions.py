@@ -27,6 +27,7 @@ def nuke_exceptions(resource_name, resource_id, exception):
         "InvalidCacheParameterGroupState",
         "ServiceLinkedRoleNotFoundFault",
         "RequestLimitExceeded",
+        "InvalidPermission.NotFound",
     ]
     warning_error_codes = [
         "VolumeInUse",
