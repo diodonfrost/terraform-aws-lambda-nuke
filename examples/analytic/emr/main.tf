@@ -17,6 +17,11 @@ resource "aws_emr_cluster" "cluster" {
     instance_count = 1
   }
 
+  core_instance_group {
+    instance_type  = "m4.large"
+    instance_count = 3
+  }
+
   tags = {
     role     = "rolename"
     dns_zone = "env_zone"
