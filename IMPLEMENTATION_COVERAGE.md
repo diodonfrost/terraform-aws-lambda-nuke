@@ -51,3 +51,7 @@
 - efs filesystem
 - glacier vault
 - s3 bucket
+
+## Analytic
+
+- emr cluster
