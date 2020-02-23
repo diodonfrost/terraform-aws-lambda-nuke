@@ -211,6 +211,28 @@ resource "aws_iam_role_policy" "nuke_network" {
 EOF
 }
 
+resource "aws_iam_role_policy" "nuke_analytic" {
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-nuke-analytic"
+  role  = aws_iam_role.this[0].id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "elasticmapreduce:ListClusters",
+                "elasticmapreduce:TerminateJobFlows"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy" "nuke_monitoring" {
   count = var.custom_iam_role_arn == null ? 1 : 0
   name  = "${var.name}-nuke-monitoring"

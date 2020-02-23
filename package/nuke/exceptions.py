@@ -19,6 +19,7 @@ def nuke_exceptions(resource_name, resource_id, exception):
     """
     info_error_codes = [
         "CannotDelete",
+        "DependencyViolation",
         "InvalidVolume",
         "InvalidCacheClusterState",
         "InvalidSnapshotState",
@@ -28,9 +29,9 @@ def nuke_exceptions(resource_name, resource_id, exception):
         "ServiceLinkedRoleNotFoundFault",
         "RequestLimitExceeded",
         "InvalidPermission.NotFound",
+        "VolumeInUse",
     ]
     warning_error_codes = [
-        "VolumeInUse",
         "OperationNotPermitted",
         "ResourceInUse",
         "InvalidDBInstanceState",
@@ -39,7 +40,6 @@ def nuke_exceptions(resource_name, resource_id, exception):
         "InvalidClusterSnapshotStateFault",
         "InvalidClusterSubnetGroupStateFault",
         "InvalidClusterParameterGroupStateFault",
-        "DependencyViolation",
         "AccessDenied",
     ]
 
