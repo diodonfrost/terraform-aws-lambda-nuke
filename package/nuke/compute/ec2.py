@@ -6,7 +6,7 @@ from typing import Iterator
 
 import boto3
 
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, WaiterError
 
 from nuke.exceptions import nuke_exceptions
 
@@ -44,12 +44,26 @@ class NukeEc2:
             The timestamp in seconds used from which the aws resource
             will be deleted
         """
+        instance_terminating = []
+        ec2_waiter = self.ec2.get_waiter("instance_terminated")
+
         for instance in self.list_instances(time_delete):
             try:
                 self.ec2.terminate_instances(InstanceIds=[instance])
                 print("Terminate instances {0}".format(instance))
             except ClientError as exc:
                 nuke_exceptions("instance", instance, exc)
+            else:
+                instance_terminating.append(instance)
+
+        if instance_terminating:
+            try:
+                ec2_waiter.wait(
+                    InstanceIds=instance_terminating,
+                    WaiterConfig={"Delay": 10, "MaxAttempts": 30},
+                )
+            except WaiterError as exc:
+                nuke_exceptions("instance waiter", instance_terminating, exc)
 
     def nuke_launch_templates(self, time_delete: float) -> None:
         """Ec2 launche template delete function.
