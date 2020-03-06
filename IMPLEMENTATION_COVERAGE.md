@@ -1,6 +1,7 @@
 
 ## Compute
 
+- ami
 - autoscaling group
 - launch configuration
 - data lifecycle manager policy
