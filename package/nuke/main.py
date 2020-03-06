@@ -15,6 +15,7 @@ from nuke.compute.eks import NukeEks
 from nuke.compute.elasticbeanstalk import NukeElasticbeanstalk
 from nuke.compute.elb import NukeElb
 from nuke.compute.key_pair import NukeKeypair
+from nuke.compute.snapshot import NukeSnapshot
 from nuke.compute.spot import NukeSpot
 from nuke.database.dynamodb import NukeDynamodb
 from nuke.database.elasticache import NukeElasticache
@@ -47,6 +48,7 @@ def lambda_handler(event, context):
         "autoscaling": NukeAutoscaling,
         "dlm": NukeDlm,
         "ebs": NukeEbs,
+        "snapshot": NukeSnapshot,
         "ec2": NukeEc2,
         "ecr": NukeEcr,
         "eks": NukeEks,
