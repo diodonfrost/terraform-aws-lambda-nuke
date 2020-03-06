@@ -53,6 +53,8 @@ resource "aws_iam_role_policy" "nuke_compute" {
                 "ec2:DeleteKeyPair",
                 "ec2:DescribePlacementGroups",
                 "ec2:DeletePlacementGroup",
+                "ec2:DescribeImages",
+                "ec2:DeregisterImage",
                 "dlm:GetLifecyclePolicy",
                 "dlm:GetLifecyclePolicies",
                 "dlm:DeleteLifecyclePolicy",

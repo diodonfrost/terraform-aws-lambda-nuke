@@ -5,6 +5,7 @@ import os
 import time
 
 from nuke.analytic.emr import NukeEmr
+from nuke.compute.ami import NukeAmi
 from nuke.compute.autoscaling import NukeAutoscaling
 from nuke.compute.dlm import NukeDlm
 from nuke.compute.ebs import NukeEbs
@@ -41,6 +42,7 @@ def lambda_handler(event, context):
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
 
     _strategy = {
+        "ami": NukeAmi,
         "emr": NukeEmr,
         "autoscaling": NukeAutoscaling,
         "dlm": NukeDlm,
