@@ -5,6 +5,7 @@ import os
 import time
 
 from nuke.analytic.emr import NukeEmr
+from nuke.analytic.kafka import NukeKafka
 from nuke.compute.ami import NukeAmi
 from nuke.compute.autoscaling import NukeAutoscaling
 from nuke.compute.dlm import NukeDlm
@@ -45,6 +46,7 @@ def lambda_handler(event, context):
     _strategy = {
         "ami": NukeAmi,
         "emr": NukeEmr,
+        "kafka": NukeKafka,
         "autoscaling": NukeAutoscaling,
         "dlm": NukeDlm,
         "ebs": NukeEbs,

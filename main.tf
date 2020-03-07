@@ -225,7 +225,9 @@ resource "aws_iam_role_policy" "nuke_analytic" {
         {
             "Action": [
                 "elasticmapreduce:ListClusters",
-                "elasticmapreduce:TerminateJobFlows"
+                "elasticmapreduce:TerminateJobFlows",
+                "kafka:ListClusters",
+                "kafka:DeleteCluster"
             ],
             "Effect": "Allow",
             "Resource": "*"
