@@ -57,3 +57,4 @@
 ## Analytic
 
 - emr cluster
+- kafka cluster
