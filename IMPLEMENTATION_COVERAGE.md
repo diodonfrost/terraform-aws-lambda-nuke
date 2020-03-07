@@ -17,6 +17,7 @@
 - elbv2
 - elbv2 target group
 - key pair
+- snapshot
 - spot request
 - spot fleet
 
