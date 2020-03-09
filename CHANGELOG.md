@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Python 3.8 support
 - Kafka support
 
 ## [2.8.0] - 2020-03-07
