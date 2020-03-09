@@ -43,6 +43,11 @@ jobs:
       script: tox
 
     - stage: Python tests
+      python: 3.8
+      env: TOXENV=py38
+      script: tox
+
+    - stage: Python tests
       python: 3.7
       env: TOXENV=flake8
       script: tox
