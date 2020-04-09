@@ -18,6 +18,7 @@ def nuke_exceptions(resource_name, resource_id, exception):
         Human readable string describing the exception
     """
     info_error_codes = [
+        "UnauthorizedOperation",
         "CannotDelete",
         "DependencyViolation",
         "InvalidVolume",
@@ -26,9 +27,10 @@ def nuke_exceptions(resource_name, resource_id, exception):
         "InvalidCacheSubnetState",
         "InvalidParameterValue",
         "InvalidCacheParameterGroupState",
-        "ServiceLinkedRoleNotFoundFault",
-        "RequestLimitExceeded",
         "InvalidPermission.NotFound",
+        "RequestLimitExceeded",
+        "ServiceLinkedRoleNotFoundFault",
+        "UnauthorizedOperation",
         "VolumeInUse",
     ]
     warning_error_codes = [
