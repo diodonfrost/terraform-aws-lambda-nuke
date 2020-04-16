@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Python 3.8 support
 - Kafka support
 
+### Changed
+- Restrict iam log group policy
+
 ## [2.8.0] - 2020-03-07
 ### Added
 - Nuke ec2 snapshot
