@@ -270,7 +270,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "arn:aws:logs:*:*:*",
+        "Resource": "${aws_cloudwatch_log_group.this.arn}",
         "Effect": "Allow"
       }
     ]
@@ -283,7 +283,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "arn:aws:logs:*:*:*",
+        "Resource": "${aws_cloudwatch_log_group.this.arn}",
         "Effect": "Allow"
       },
       {
