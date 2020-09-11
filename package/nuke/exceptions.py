@@ -47,11 +47,17 @@ def nuke_exceptions(resource_name, resource_id, exception):
 
     if exception.response["Error"]["Code"] in info_error_codes:
         logging.info(
-            "%s %s: %s", resource_name, resource_id, exception,
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
         )
     elif exception.response["Error"]["Code"] in warning_error_codes:
         logging.warning(
-            "%s %s: %s", resource_name, resource_id, exception,
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
         )
     else:
         logging.error(
