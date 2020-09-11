@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.9.0] - 2020-09-12
 ### Added
 - Python 3.8 support
-- Kafka support
+- Kafka nuke support
 
 ### Changed
 - Restrict iam log group policy
+- Improve security group exceptions
+- Restrict cloudwatch log group policy
+- Pytest: freeze moto version
 
 ## [2.8.0] - 2020-03-07
 ### Added
@@ -166,7 +170,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AWS elbv2 deletion support
 - AWS keypair deletion support
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.1...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...HEAD
+[2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.8.0...2.9.0
+[2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.1...2.8.0
 [2.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.0...2.7.1
 [2.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.5.0...2.6.0
