@@ -72,34 +72,6 @@ module "nuke_everything_older_than_7d" {
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Tests
-
-This module has been packaged with [awspec](https://github.com/k1LoW/awspec) tests through test kitchen. To run them:
-
-Install kitchen-terraform and awspec:
-
-```shell
-# Install dependencies
-gem install bundler
-bundle install
-```
-
-Launch kitchen tests:
-
-```shell
-# List all tests with kitchen
-kitchen list
-
-# Build, and tests terraform module
-kitchen test
-
-# for development, create environment
-kitchen converge
-
-# Apply awspec tests
-kitchen verify
-```
-
 ## Authors
 
 Modules managed by [diodonfrost](https://github.com/diodonfrost)
