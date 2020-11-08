@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.10.0] - 2020-11-08
+### Test
+
+* **poetry:** add python pyproject.toml file ([d59483f](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/d59483f119d410282490ddcfeb8292d3c5041f38))
+* **pytest:** set python_path directly in pytest.ini ([70e7b98](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/70e7b98d59b4a976701b3c791d489f18906fbf03))
+* **kitchen-ci:** removing kitchen-ci test ([8722edb](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/8722edbc417875b5d7b3f4558de6ed89571601e9))
+
 ## [2.9.0] - 2020-09-12
 ### Added
 - Python 3.8 support
@@ -170,7 +177,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AWS elbv2 deletion support
 - AWS keypair deletion support
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.0...HEAD
+[2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...2.10.0
 [2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.1...2.8.0
 [2.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.0...2.7.1
