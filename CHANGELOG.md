@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.10.1] - 2020-12-20
+### Bug fixes
+* **terraform:** apply terraform fmt ([e10eb9f](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/e10eb9f7717aa0f3a47f4cd7d85d067e6b3e8c9b))
+
+### CI
+* **tflint:** update terraform version ([cfc0b4c](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/cfc0b4c3ccf8833ff6a3563e57da6823211b838a))
+* **travis-ci:** removing travis-ci pipeline ([706bc0c](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/706bc0c545d1c2369f82f91480e2acfcfbfa66bf))
+
+### Tests
+* **sanity:** stop sanity script when error is found ([5c7ed0f](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/5c7ed0f66ca1441d8f2713ff3f99e431dbca7287))
+
 ## [2.10.0] - 2020-11-08
 ### Test
 
@@ -177,7 +189,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AWS elbv2 deletion support
 - AWS keypair deletion support
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.1...HEAD
+[2.10.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.0...2.10.1
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...2.10.0
 [2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.7.1...2.8.0
