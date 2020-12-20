@@ -263,37 +263,37 @@ EOF
 
 locals {
   lambda_logging_policy = {
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": [
+        "Action" : [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "${aws_cloudwatch_log_group.this.arn}",
-        "Effect": "Allow"
+        "Resource" : aws_cloudwatch_log_group.this.arn,
+        "Effect" : "Allow"
       }
     ]
   }
   lambda_logging_and_kms_policy = {
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": [
+        "Action" : [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "${aws_cloudwatch_log_group.this.arn}",
-        "Effect": "Allow"
+        "Resource" : aws_cloudwatch_log_group.this.arn,
+        "Effect" : "Allow"
       },
       {
-        "Action": [
+        "Action" : [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:CreateGrant"
         ],
-        "Resource": "${var.kms_key_arn}",
-        "Effect": "Allow"
+        "Resource" : var.kms_key_arn,
+        "Effect" : "Allow"
       }
     ]
   }

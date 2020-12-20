@@ -24,7 +24,7 @@ EOF
 
 resource "aws_iam_role_policy" "nuke" {
   name = "dlm-lifecycle-policy"
-  role = "${aws_iam_role.nuke.id}"
+  role = aws_iam_role.nuke.id
 
   policy = <<EOF
 {
@@ -54,7 +54,7 @@ EOF
 
 resource "aws_dlm_lifecycle_policy" "nuke" {
   description        = "nuke DLM lifecycle policy"
-  execution_role_arn = "${aws_iam_role.nuke.arn}"
+  execution_role_arn = aws_iam_role.nuke.arn
   state              = "ENABLED"
 
   policy_details {

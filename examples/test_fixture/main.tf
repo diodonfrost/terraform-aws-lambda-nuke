@@ -7,7 +7,7 @@ resource "aws_kms_key" "scheduler" {
 
 module "nuke-everything" {
   source                         = "../.."
-  name                           = "nuke-everything" 
+  name                           = "nuke-everything"
   kms_key_arn                    = aws_kms_key.scheduler.arn
   cloudwatch_schedule_expression = "cron(0 22 ? * MON-FRI *)"
   older_than                     = "0d"
@@ -15,7 +15,7 @@ module "nuke-everything" {
 
 module "nuke-except-rds" {
   source                         = "../.."
-  name                           = "nuke-except-rds" 
+  name                           = "nuke-except-rds"
   cloudwatch_schedule_expression = "cron(0 22 ? * MON-FRI *)"
   older_than                     = "0d"
 }
