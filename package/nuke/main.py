@@ -75,15 +75,15 @@ def lambda_handler(event, context):
         "network_acl": NukeNetworkAcl,
     }
 
-    for key, value in _strategy.items():
-        if key not in exclude_resources:
-            for aws_region in aws_regions:
+    for aws_region in aws_regions:
+        for key, value in _strategy.items():
+            if key not in exclude_resources:
                 strategy = value(region_name=aws_region)
                 strategy.nuke(older_than_seconds)
 
     no_older_than = [int(s) for s in older_than if s.isdigit() and s == "0"]
-    for key, value in _strategy_with_no_date.items():
-        if key not in exclude_resources and no_older_than == [0]:
-            for aws_region in aws_regions:
+    for aws_region in aws_regions:
+        for key, value in _strategy_with_no_date.items():
+            if key not in exclude_resources and no_older_than == [0]:
                 strategy = value(region_name=aws_region)
                 strategy.nuke()
