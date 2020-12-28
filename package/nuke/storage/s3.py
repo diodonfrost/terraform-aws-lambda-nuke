@@ -4,10 +4,10 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
+from nuke.client_connections import AwsResource
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,12 +16,8 @@ class NukeS3:
 
     def __init__(self, region_name=None) -> None:
         """Initialize s3 nuke."""
-        if region_name:
-            self.s3 = boto3.client("s3", region_name=region_name)
-            self.s3_resource = boto3.resource("s3", region_name=region_name)
-        else:
-            self.s3 = boto3.client("s3")
-            self.s3_resource = boto3.resource("s3")
+        self.s3 = AwsClient().connect("s3", region_name)
+        self.s3_resource = AwsResource().connect("s3", region_name)
 
         try:
             self.s3.list_buckets()

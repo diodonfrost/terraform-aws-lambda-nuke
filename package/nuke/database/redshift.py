@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeRedshift:
 
     def __init__(self, region_name=None) -> None:
         """Initialize redshift nuke."""
-        if region_name:
-            self.redshift = boto3.client("redshift", region_name=region_name)
-        else:
-            self.redshift = boto3.client("redshift")
+        self.redshift = AwsClient().connect("redshift", region_name)
 
         try:
             self.redshift.describe_clusters()

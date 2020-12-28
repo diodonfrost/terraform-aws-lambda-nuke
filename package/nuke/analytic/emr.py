@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeEmr:
 
     def __init__(self, region_name=None) -> None:
         """Initialize emr nuke."""
-        if region_name:
-            self.emr = boto3.client("emr", region_name=region_name)
-        else:
-            self.emr = boto3.client("emr")
+        self.emr = AwsClient().connect("emr", region_name)
 
     def nuke(self, older_than_seconds: float) -> None:
         """Emr deleting function.

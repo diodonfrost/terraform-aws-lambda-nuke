@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-"""Module deleting all ec ami."""
+"""Module deleting all ec2 ami."""
 
 from typing import Iterator
-
-import boto3
 
 from botocore.exceptions import ClientError
 
 from dateutil.parser import parse
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -18,10 +17,7 @@ class NukeAmi:
 
     def __init__(self, region_name=None) -> None:
         """Initialize ec2 ami."""
-        if region_name:
-            self.ec2 = boto3.client("ec2", region_name=region_name)
-        else:
-            self.ec2 = boto3.client("ec2")
+        self.ec2 = AwsClient().connect("ec2", region_name)
 
     def nuke(self, older_than_seconds) -> None:
         """Ec2 ami deleting function.

@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeEfs:
 
     def __init__(self, region_name=None) -> None:
         """Initialize efs nuke."""
-        if region_name:
-            self.efs = boto3.client("efs", region_name=region_name)
-        else:
-            self.efs = boto3.client("efs")
+        self.efs = AwsClient().connect("efs", region_name)
 
         try:
             self.efs.describe_file_systems()

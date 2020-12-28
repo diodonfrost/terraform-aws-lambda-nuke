@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeKafka:
 
     def __init__(self, region_name=None) -> None:
         """Initialize kafka nuke."""
-        if region_name:
-            self.kafka = boto3.client("kafka", region_name=region_name)
-        else:
-            self.kafka = boto3.client("kafka")
+        self.kafka = AwsClient().connect("kafka", region_name)
 
     def nuke(self, older_than_seconds: float) -> None:
         """Kafka deleting function.

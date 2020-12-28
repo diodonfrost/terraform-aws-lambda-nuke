@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,12 +15,8 @@ class NukeElb:
 
     def __init__(self, region_name=None) -> None:
         """Initialize elb nuke."""
-        if region_name:
-            self.elb = boto3.client("elb", region_name=region_name)
-            self.elbv2 = boto3.client("elbv2", region_name=region_name)
-        else:
-            self.elb = boto3.client("elb")
-            self.elbv2 = boto3.client("elbv2")
+        self.elb = AwsClient().connect("elb", region_name)
+        self.elbv2 = AwsClient().connect("elbv2", region_name)
 
         try:
             self.elb.describe_load_balancers()

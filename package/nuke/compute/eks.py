@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeEks:
 
     def __init__(self, region_name=None) -> None:
         """Initialize eks nuke."""
-        if region_name:
-            self.eks = boto3.client("eks", region_name=region_name)
-        else:
-            self.eks = boto3.client("eks")
+        self.eks = AwsClient().connect("eks", region_name)
 
         try:
             self.eks.list_clusters()

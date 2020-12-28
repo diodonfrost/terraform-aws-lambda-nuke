@@ -5,10 +5,9 @@
 import datetime
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -17,10 +16,7 @@ class NukeGlacier:
 
     def __init__(self, region_name=None) -> None:
         """Initialize glacier nuke."""
-        if region_name:
-            self.glacier = boto3.client("glacier", region_name=region_name)
-        else:
-            self.glacier = boto3.client("glacier")
+        self.glacier = AwsClient().connect("glacier", region_name)
 
         try:
             self.glacier.list_vaults()

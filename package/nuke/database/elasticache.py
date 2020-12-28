@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,12 +15,7 @@ class NukeElasticache:
 
     def __init__(self, region_name=None) -> None:
         """Initialize elasticache nuke."""
-        if region_name:
-            self.elasticache = boto3.client(
-                "elasticache", region_name=region_name
-            )
-        else:
-            self.elasticache = boto3.client("elasticache")
+        self.elasticache = AwsClient().connect("elasticache", region_name)
 
         try:
             self.elasticache.describe_cache_clusters()

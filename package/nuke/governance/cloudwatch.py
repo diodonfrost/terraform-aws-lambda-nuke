@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,12 +15,7 @@ class NukeCloudwatch:
 
     def __init__(self, region_name=None) -> None:
         """Initialize cloudwatch nuke."""
-        if region_name:
-            self.cloudwatch = boto3.client(
-                "cloudwatch", region_name=region_name
-            )
-        else:
-            self.cloudwatch = boto3.client("cloudwatch")
+        self.cloudwatch = AwsClient().connect("cloudwatch", region_name)
 
     def nuke(self, older_than_seconds: float) -> None:
         """Cloudwatch and dlm policies deleting function.

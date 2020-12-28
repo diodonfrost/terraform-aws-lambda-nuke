@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeSpot:
 
     def __init__(self, region_name=None) -> None:
         """Initialize spot nuke."""
-        if region_name:
-            self.ec2 = boto3.client("ec2", region_name=region_name)
-        else:
-            self.ec2 = boto3.client("ec2")
+        self.ec2 = AwsClient().connect("ec2", region_name)
 
     def nuke(self, older_than_seconds: float) -> None:
         """Spot request and spot fleet deleting function.

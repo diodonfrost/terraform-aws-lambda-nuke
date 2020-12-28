@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeDlm:
 
     def __init__(self, region_name=None) -> None:
         """Initialize dlm nuke."""
-        if region_name:
-            self.dlm = boto3.client("dlm", region_name=region_name)
-        else:
-            self.dlm = boto3.client("dlm")
+        self.dlm = AwsClient().connect("dlm", region_name)
 
         try:
             self.dlm.get_lifecycle_policies()

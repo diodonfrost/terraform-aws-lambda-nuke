@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeDynamodb:
 
     def __init__(self, region_name=None) -> None:
         """Initialize dynamodb nuke."""
-        if region_name:
-            self.dynamodb = boto3.client("dynamodb", region_name=region_name)
-        else:
-            self.dynamodb = boto3.client("dynamodb")
+        self.dynamodb = AwsClient().connect("dynamodb", region_name)
 
         try:
             self.dynamodb.list_tables()

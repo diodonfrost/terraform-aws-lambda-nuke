@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeAutoscaling:
 
     def __init__(self, region_name=None) -> None:
         """Initialize autoscaling nuke."""
-        if region_name:
-            self.asg = boto3.client("autoscaling", region_name=region_name)
-        else:
-            self.asg = boto3.client("autoscaling")
+        self.asg = AwsClient().connect("autoscaling", region_name)
 
         try:
             self.asg.describe_auto_scaling_groups()

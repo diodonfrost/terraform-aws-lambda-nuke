@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeEcr:
 
     def __init__(self, region_name=None) -> None:
         """Initialize ecr nuke."""
-        if region_name:
-            self.ecr = boto3.client("ecr", region_name=region_name)
-        else:
-            self.ecr = boto3.client("ecr")
+        self.ecr = AwsClient().connect("ecr", region_name)
 
         try:
             self.ecr.describe_repositories()

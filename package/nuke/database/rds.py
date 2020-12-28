@@ -4,10 +4,9 @@
 
 from typing import Iterator
 
-import boto3
-
 from botocore.exceptions import ClientError, EndpointConnectionError
 
+from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
@@ -16,10 +15,7 @@ class NukeRds:
 
     def __init__(self, region_name=None) -> None:
         """Initialize rds nuke."""
-        if region_name:
-            self.rds = boto3.client("rds", region_name=region_name)
-        else:
-            self.rds = boto3.client("rds")
+        self.rds = AwsClient().connect("rds", region_name)
 
         try:
             self.rds.describe_db_clusters()
