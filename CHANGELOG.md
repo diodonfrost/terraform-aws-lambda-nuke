@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.0] - 2020-12-28
+### Performance Improvements
+
+* **python:** optimize aws_regions loop ([204e58a](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/204e58a9165ccd89a1efc9b7e8f5d2ba19a93980))
+* **python:** use singleton class to initialize connection to aws ([2395f08](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/2395f08197c53d5db70417a4c3ba5750f4cdc751))
+
 ## [2.10.1] - 2020-12-20
 ### Bug fixes
 * **terraform:** apply terraform fmt ([e10eb9f](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/e10eb9f7717aa0f3a47f4cd7d85d067e6b3e8c9b))
@@ -189,7 +195,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AWS elbv2 deletion support
 - AWS keypair deletion support
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.1...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.11.0...HEAD
+[2.11.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.1...2.11.0
 [2.10.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.0...2.10.1
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...2.10.0
 [2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.8.0...2.9.0
