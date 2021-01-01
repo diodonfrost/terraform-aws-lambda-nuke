@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.12.0] - 2021-01-01
+### Features
+
+* **terraform:** add tags variable ([19bb8d4](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/19bb8d44b58766e1dfdc46096dcc4c5018f9bbc5))
+
 ## [2.11.0] - 2020-12-28
 ### Performance Improvements
 
