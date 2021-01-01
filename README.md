@@ -54,6 +54,7 @@ module "nuke_everything_older_than_7d" {
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | exclude_resources | Define the resources that will be not destroyed | string | null | no |
 | older_than | Only destroy resources that were created before a certain period | string | 0d | no |
+| tags | A map of tags to assign to the resources. | map(any) | null | no |
 
 ## Outputs
 

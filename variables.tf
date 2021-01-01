@@ -45,3 +45,8 @@ variable "older_than" {
   default     = "0d"
 }
 
+variable "tags" {
+  description = "A map of tags to assign to the resources."
+  type        = map(any)
+  default     = null
+}

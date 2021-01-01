@@ -9,6 +9,7 @@ resource "aws_iam_role" "this" {
   name               = "${var.name}-lambda-nuke"
   description        = "Allows Lambda functions to destroy all aws resources"
   assume_role_policy = data.aws_iam_policy_document.this.json
+  tags               = var.tags
 }
 
 data "aws_iam_policy_document" "this" {
@@ -312,6 +313,7 @@ resource "aws_lambda_function" "this" {
   runtime          = "python3.7"
   timeout          = "900"
   kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
+  tags             = var.tags
 
   environment {
     variables = {
@@ -331,6 +333,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   name                = "trigger-lambda-nuke-${var.name}"
   description         = "Trigger lambda nuke"
   schedule_expression = var.cloudwatch_schedule_expression
+  tags                = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "this" {
@@ -349,4 +352,5 @@ resource "aws_lambda_permission" "this" {
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
+  tags              = var.tags
 }
