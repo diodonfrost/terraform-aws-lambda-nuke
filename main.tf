@@ -255,7 +255,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource" : aws_cloudwatch_log_group.this.arn,
+        "Resource" : "${aws_cloudwatch_log_group.this.arn}:*",
         "Effect" : "Allow"
       }
     ]
@@ -268,7 +268,7 @@ locals {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource" : aws_cloudwatch_log_group.this.arn,
+        "Resource" : "${aws_cloudwatch_log_group.this.arn}:*",
         "Effect" : "Allow"
       },
       {
