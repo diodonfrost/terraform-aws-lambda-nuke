@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.12.1] - 2021-02-02
+### Bug Fixes
+
+* **log:** grant lambda scheduler to write log ([197387a](https://github.com/diodonfrost/terraform-aws-lambda-nuke/commit/197387a155cd9fef16a73e4189454a802db94001))
 
 ## [2.12.0] - 2021-01-01
 ### Features
@@ -200,7 +204,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AWS elbv2 deletion support
 - AWS keypair deletion support
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.11.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.12.1...HEAD
+[2.12.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.12.0...2.12.1
+[2.12.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.11.0...2.12.0
 [2.11.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.1...2.11.0
 [2.10.1]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.10.0...2.10.1
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-nuke/compare/2.9.0...2.10.0
