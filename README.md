@@ -10,7 +10,7 @@ This role was developed using python lib boto3 1.13.34 Backwards compatibility i
 
 ## Terraform versions
 
-For Terraform 0.12 use version v2.* of this module.
+For Terraform 0.15.* use version v2.* of this module.
 
 If you are using Terraform 0.11 you can use versions v1.*.
 
