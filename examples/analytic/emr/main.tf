@@ -314,4 +314,3 @@ module "nuke-everything" {
   exclude_resources              = "key_pair"
   older_than                     = "0d"
 }
-

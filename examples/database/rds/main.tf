@@ -56,4 +56,3 @@ module "nuke-everything" {
   exclude_resources              = "rds, neptune"
   older_than                     = "0d"
 }
-

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module use by nuke unit tests."""
 
 import boto3

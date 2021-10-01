@@ -70,4 +70,3 @@ module "nuke-everything" {
   exclude_resources              = ""
   older_than                     = "0d"
 }
-

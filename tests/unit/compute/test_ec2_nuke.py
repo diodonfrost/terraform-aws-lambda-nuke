@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for the ec2 nuke class."""
 
 import boto3
