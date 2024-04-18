@@ -310,7 +310,7 @@ resource "aws_lambda_function" "this" {
   role             = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler          = "nuke.main.lambda_handler"
   source_code_hash = data.archive_file.this.output_base64sha256
-  runtime          = "python3.7"
+  runtime          = "python3.12"
   timeout          = "900"
   kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
   tags             = var.tags
