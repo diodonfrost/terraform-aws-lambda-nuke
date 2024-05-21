@@ -319,6 +319,7 @@ resource "aws_lambda_function" "this" {
     variables = {
       AWS_REGIONS       = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       EXCLUDE_RESOURCES = var.exclude_resources
+      TARGET_RESOURCE   = var.target_resource
       OLDER_THAN        = var.older_than
     }
   }

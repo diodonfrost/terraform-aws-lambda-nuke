@@ -54,5 +54,5 @@ variable "tags" {
 variable "target_resource" {
   description = "Define the specific resources that will be destroyed"
   type        = string
-  default     = null
+  default     = ""
 }
