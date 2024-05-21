@@ -50,3 +50,9 @@ variable "tags" {
   type        = map(any)
   default     = null
 }
+
+variable "TARGET_RESOURCE" {
+  description = "Define the specific resources that will be destroyed"
+  type        = string
+  default     = null
+}
