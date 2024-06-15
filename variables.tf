@@ -36,7 +36,7 @@ variable "aws_regions" {
 variable "include_resources" {
   description = "Define the resources that will be destroyed"
   type        = string
-  default     = "ec2,key_pair"
+  default     = "ec2"
 }
 
 variable "exclude_resources" {
