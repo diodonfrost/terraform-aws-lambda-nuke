@@ -26,6 +26,8 @@ module "nuke-everything" {
   source                         = "../../../"
   name                           = "nuke-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
+  include_resources              = ""
   exclude_resources              = ""
   older_than                     = "0d"
+  tags                           = {}
 }

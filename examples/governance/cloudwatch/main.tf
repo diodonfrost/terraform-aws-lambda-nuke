@@ -43,7 +43,8 @@ resource "aws_cloudwatch_metric_alarm" "nuke" {
 module "nuke-everything" {
   source                         = "../../../"
   name                           = "nuke-cloudwatch"
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
+  cloudwatch_schedule_expression = "cron(* * * * * *)"
+  include_resources              = "s3"
   exclude_resources              = ""
-  older_than                     = "0d"
+  older_than                     = "1m"
 }

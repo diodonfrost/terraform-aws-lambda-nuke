@@ -30,7 +30,13 @@ variable "kms_key_arn" {
 variable "aws_regions" {
   description = "A list of one or more aws regions where the lambda will be apply, default use the current region"
   type        = list(string)
-  default     = null
+  default     = ["ap-south-1"]
+}
+
+variable "include_resources" {
+  description = "Define the resources that will be destroyed"
+  type        = string
+  default     = "ec2,key_pair"
 }
 
 variable "exclude_resources" {
@@ -49,4 +55,10 @@ variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(any)
   default     = null
+}
+
+variable "required_tags" {
+  description = "Comma-separated list of required tags in the format key=value"
+  type        = string
+  default     = "dev=develop"
 }

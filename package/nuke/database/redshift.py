@@ -2,7 +2,7 @@
 
 """Module deleting all redshift resources."""
 
-from typing import Iterator
+from typing import Iterator, Dict
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
@@ -23,7 +23,7 @@ class NukeRedshift:
             print("Redshift resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds) -> None:
+    def nuke(self, older_than_seconds: float, required_tags: Dict[str, str] = None) -> None:
         """Redshift resources deleting function.
 
         Deleting all redshift resources with
@@ -37,38 +37,42 @@ class NukeRedshift:
         :param int older_than_seconds:
             The timestamp in seconds used from which the aws
             resource will be deleted
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the Redshift clusters to exclude from deletion
         """
-        self.nuke_clusters(older_than_seconds)
+        self.nuke_clusters(older_than_seconds, required_tags)
         self.nuke_snapshots(older_than_seconds)
         self.nuke_subnets()
         self.nuke_param_groups()
 
-    def nuke_clusters(self, time_delete) -> None:
+    def nuke_clusters(self, time_delete: float, required_tags: Dict[str, str] = None) -> None:
         """Redshift cluster deleting function.
 
         Deleting redshift clusters with a timestamp lower than
-        time_delete.
+        time_delete and not matching the required tags.
 
-        :param int older_than_seconds:
+        :param int time_delete:
             The timestamp in seconds used from which the aws resource
             will be deleted
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the Redshift clusters to exclude from deletion
         """
-        for cluster in self.list_clusters(time_delete):
+        for cluster in self.list_clusters(time_delete, required_tags):
             try:
                 self.redshift.delete_cluster(
                     ClusterIdentifier=cluster, SkipFinalClusterSnapshot=True
                 )
-                print("Nuke redshift cluster{0}".format(cluster))
+                print("Nuke redshift cluster {0}".format(cluster))
             except ClientError as exc:
                 nuke_exceptions("redshift cluster", cluster, exc)
 
-    def nuke_snapshots(self, time_delete) -> None:
+    def nuke_snapshots(self, time_delete: float) -> None:
         """Redshift snapshot deleting function.
 
         Deleting redshift snapshots with a timestamp lower than
         time_delete.
 
-        :param int older_than_seconds:
+        :param int time_delete:
             The timestamp in seconds used from which the aws resource
             will be deleted
         """
@@ -87,7 +91,7 @@ class NukeRedshift:
         Deleting redshift subnets with a timestamp lower than
         time_delete.
 
-        :param int older_than_seconds:
+        :param int time_delete:
             The timestamp in seconds used from which the aws resource
             will be deleted
         """
@@ -106,7 +110,7 @@ class NukeRedshift:
         Deleting redshift parameter groups with a timestamp lower than
         time_delete.
 
-        :param int older_than_seconds:
+        :param int time_delete:
             The timestamp in seconds used from which the aws resource
             will be deleted
         """
@@ -119,14 +123,16 @@ class NukeRedshift:
             except ClientError as exc:
                 nuke_exceptions("redshift param", param, exc)
 
-    def list_clusters(self, time_delete: float) -> Iterator[str]:
+    def list_clusters(self, time_delete: float, required_tags: Dict[str, str] = None) -> Iterator[str]:
         """Redshift cluster list function.
 
-        List IDs of all redshift cluster with a timestamp lower than
-        time_delete.
+        List IDs of all redshift clusters with a timestamp lower than
+        time_delete and not matching the required tags.
 
         :param int time_delete:
-            Timestamp in seconds used for filter redshift cluster
+            Timestamp in seconds used for filter redshift clusters
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the Redshift clusters to exclude from deletion
 
         :yield Iterator[str]:
             Redshift cluster IDs
@@ -136,6 +142,8 @@ class NukeRedshift:
         for page in paginator.paginate():
             for cluster in page["Clusters"]:
                 if cluster["ClusterCreateTime"].timestamp() < time_delete:
+                    if required_tags and not self._cluster_has_required_tags(cluster, required_tags):
+                        continue
                     yield cluster["ClusterIdentifier"]
 
     def list_snapshots(self, time_delete: float) -> Iterator[str]:
@@ -163,9 +171,7 @@ class NukeRedshift:
         :yield Iterator[str]:
             Redshift subnet names
         """
-        paginator = self.redshift.get_paginator(
-            "describe_cluster_subnet_groups"
-        )
+        paginator = self.redshift.get_paginator("describe_cluster_subnet_groups")
 
         for page in paginator.paginate():
             for subnet in page["ClusterSubnetGroups"]:
@@ -177,10 +183,30 @@ class NukeRedshift:
         :yield Iterator[str]:
             Redshift cluster parameter names
         """
-        paginator = self.redshift.get_paginator(
-            "describe_cluster_parameter_groups"
-        )
+        paginator = self.redshift.get_paginator("describe_cluster_parameter_groups")
 
         for page in paginator.paginate():
             for param in page["ParameterGroups"]:
                 yield param["ParameterGroupName"]
+
+    def _cluster_has_required_tags(self, cluster: dict, required_tags: Dict[str, str]) -> bool:
+        """Check if the cluster has the required tags.
+
+        :param dict cluster:
+            The Redshift cluster dictionary
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) to exclude from deletion
+
+        :return bool:
+            True if the cluster has all the required tags, False otherwise
+        """
+        try:
+            tags = self.redshift.list_tags_for_resource(ResourceName=cluster["ClusterIdentifier"])
+            tag_dict = {tag["Key"]: tag["Value"] for tag in tags["TaggedResources"]}
+            for key, value in required_tags.items():
+                if tag_dict.get(key) != value:
+                    return False
+            return True
+        except ClientError as e:
+            print(f"Failed to get tags for Redshift cluster {cluster['ClusterIdentifier']}: {e}")
+            return False

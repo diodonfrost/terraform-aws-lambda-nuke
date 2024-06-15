@@ -51,6 +51,7 @@ data "aws_iam_policy_document" "nuke_compute" {
       "ec2:DeletePlacementGroup",
       "ec2:DescribeImages",
       "ec2:DeregisterImage",
+      "ec2:DescribeTags",
       "dlm:GetLifecyclePolicy",
       "dlm:GetLifecyclePolicies",
       "dlm:DeleteLifecyclePolicy",
@@ -94,6 +95,7 @@ data "aws_iam_policy_document" "nuke_storage" {
       "s3:ListBucketVersions",
       "s3:GetObject",
       "s3:GetObjectVersion",
+      "s3:GetBucketTagging",
       "s3:DeleteObject",
       "s3:DeleteObjectVersion",
       "s3:DeleteBucketPolicy",
@@ -133,6 +135,7 @@ data "aws_iam_policy_document" "nuke_database" {
       "rds:DeleteDBParameterGroup",
       "rds:DescribeDBClusterSnapshots",
       "rds:DeleteDBClusterSnapshot",
+      "rds:ListTagsForResource",
       "dynamodb:ListTables",
       "dynamodb:DescribeTable",
       "dynamodb:DeleteTable",
@@ -318,11 +321,14 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       AWS_REGIONS       = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+      INCLUDE_RESOURCES = var.include_resources
       EXCLUDE_RESOURCES = var.exclude_resources
       OLDER_THAN        = var.older_than
+      REQUIRED_TAGS     = var.required_tags
     }
   }
 }
+
 
 ################################################
 #

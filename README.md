@@ -32,7 +32,13 @@ module "nuke_everything_older_than_7d" {
   older_than                     = "7d"
 }
 ```
-
+## added
+```hcl
+module "nuke_everything_older_than_7d" {
+  include_resources              = "s3"
+  required_tags                  = "{env=development}"
+}
+```
 ## Examples
 
 *   [Compute-nuke](https://github.com/diodonfrost/terraform-aws-lambda-nuke/tree/master/examples/compute) Create lambda function to nuke compute resources on Friday at 23:00 Gmt

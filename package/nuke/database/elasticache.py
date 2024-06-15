@@ -2,7 +2,7 @@
 
 """Module deleting all elasticache resources."""
 
-from typing import Iterator
+from typing import Iterator, Dict
 
 from botocore.exceptions import ClientError, EndpointConnectionError
 
@@ -23,7 +23,7 @@ class NukeElasticache:
             print("Elasticache resource is not available in this aws region")
             return
 
-    def nuke(self, older_than_seconds: float) -> None:
+    def nuke(self, older_than_seconds: float, required_tags: Dict[str, str] = None) -> None:
         """Elasticache resources deleting function.
 
         Deleting all elasticache resources with
@@ -37,83 +37,47 @@ class NukeElasticache:
         :param int older_than_seconds:
             The timestamp in seconds used from which the aws
             resource will be deleted
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the Elasticache clusters to exclude from deletion
         """
-        self.nuke_clusters(older_than_seconds)
-        self.nuke_snapshots(older_than_seconds)
-        self.nuke_subnets()
-        self.nuke_param_groups()
-
-    def nuke_clusters(self, time_delete: float) -> None:
-        """Elasticache cluster deleting function.
-
-        Deleting elasticache cluster with a timestamp lower than
-        time_delete.
-
-        :param int older_than_seconds:
-            The timestamp in seconds used from which the aws resource
-            will be deleted
-        """
-        for cluster in self.list_clusters(time_delete):
+        for cluster in self.list_clusters(older_than_seconds, required_tags):
             try:
                 self.elasticache.delete_cache_cluster(CacheClusterId=cluster)
                 print("Nuke elasticache cluster {0}".format(cluster))
             except ClientError as exc:
                 nuke_exceptions("elasticache cluster", cluster, exc)
 
-    def nuke_snapshots(self, time_delete: float) -> None:
-        """Elasticache snapshot deleting function.
-
-        Deleting elasticache snapshot with a timestamp lower than
-        time_delete.
-
-        :param int older_than_seconds:
-            The timestamp in seconds used from which the aws resource
-            will be deleted
-        """
-        for snapshot in self.list_snapshots(time_delete):
+        for snapshot in self.list_snapshots(older_than_seconds):
             try:
                 self.elasticache.delete_snapshot(SnapshotName=snapshot)
                 print("Nuke elasticache snapshot {0}".format(snapshot))
             except ClientError as exc:
                 nuke_exceptions("elasticache snapshot", snapshot, exc)
 
-    def nuke_subnets(self) -> None:
-        """Elasticache subnet deleting function.
-
-        Deleting elasticache subnets
-        """
         for subnet in self.list_subnets():
-
             try:
-                self.elasticache.delete_cache_subnet_group(
-                    CacheSubnetGroupName=subnet
-                )
-                print("Nuke elasticache subnet{0}".format(subnet))
+                self.elasticache.delete_cache_subnet_group(CacheSubnetGroupName=subnet)
+                print("Nuke elasticache subnet {0}".format(subnet))
             except ClientError as exc:
                 nuke_exceptions("elasticache subnet", subnet, exc)
 
-    def nuke_param_groups(self) -> None:
-        """Elasticache param group deleting function.
-
-        Deleting elasticache parameter groups
-        """
         for param in self.list_param_groups():
             try:
-                self.elasticache.delete_cache_parameter_group(
-                    CacheParameterGroupName=param
-                )
+                self.elasticache.delete_cache_parameter_group(CacheParameterGroupName=param)
                 print("Nuke elasticache param {0}".format(param))
             except ClientError as exc:
                 nuke_exceptions("elasticache param", param, exc)
 
-    def list_clusters(self, time_delete: float) -> Iterator[str]:
+    def list_clusters(self, time_delete: float, required_tags: Dict[str, str] = None) -> Iterator[str]:
         """Elasticache cluster list function.
 
         List IDs of all elasticache clusters with a timestamp
-        lower than time_delete.
+        lower than time_delete and not matching the required tags.
 
         :param int time_delete:
             Timestamp in seconds used for filter elasticache clusters
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the Elasticache clusters to exclude from deletion
 
         :yield Iterator[str]:
             Elasticache clusters IDs
@@ -123,6 +87,8 @@ class NukeElasticache:
         for page in paginator.paginate():
             for cluster in page["CacheClusters"]:
                 if cluster["CacheClusterCreateTime"].timestamp() < time_delete:
+                    if required_tags and self._cluster_has_required_tags(cluster, required_tags):
+                        continue
                     yield cluster["CacheClusterId"]
 
     def list_snapshots(self, time_delete: float) -> Iterator[str]:
@@ -135,7 +101,7 @@ class NukeElasticache:
             Timestamp in seconds used for filter elasticache snapshots
 
         :yield Iterator[str]:
-            Elasticache snpashots names
+            Elasticache snapshots names
         """
         paginator = self.elasticache.get_paginator("describe_snapshots")
 
@@ -153,9 +119,7 @@ class NukeElasticache:
         :yield Iterator[str]:
             Elasticache subnet group names
         """
-        paginator = self.elasticache.get_paginator(
-            "describe_cache_subnet_groups"
-        )
+        paginator = self.elasticache.get_paginator("describe_cache_subnet_groups")
 
         for page in paginator.paginate():
             for subnet in page["CacheSubnetGroups"]:
@@ -169,10 +133,30 @@ class NukeElasticache:
         :yield Iterator[str]:
             Elasticache param group names
         """
-        paginator = self.elasticache.get_paginator(
-            "describe_cache_parameter_groups"
-        )
+        paginator = self.elasticache.get_paginator("describe_cache_parameter_groups")
 
         for page in paginator.paginate():
             for param_group in page["CacheParameterGroups"]:
                 yield param_group["CacheParameterGroupName"]
+
+    def _cluster_has_required_tags(self, cluster: dict, required_tags: Dict[str, str]) -> bool:
+        """Check if the cluster has the required tags.
+
+        :param dict cluster:
+            The Elasticache cluster dictionary
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) to exclude from deletion
+
+        :return bool:
+            True if the cluster has all the required tags, False otherwise
+        """
+        try:
+            tags = self.elasticache.list_tags_for_resource(ResourceName=cluster["ARN"])
+            tag_dict = {tag["Key"]: tag["Value"] for tag in tags["TagList"]}
+            for key, value in required_tags.items():
+                if tag_dict.get(key) != value:
+                    return False
+            return True
+        except ClientError as e:
+            print(f"Failed to get tags for Elasticache cluster {cluster['CacheClusterId']}: {e}")
+            return False

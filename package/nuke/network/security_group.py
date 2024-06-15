@@ -2,7 +2,7 @@
 
 """Module deleting all security groups."""
 
-from typing import Iterator
+from typing import Iterator, Dict
 
 from botocore.exceptions import ClientError
 
@@ -17,15 +17,22 @@ class NukeSecurityGroup:
         """Initialize endpoint nuke."""
         self.ec2 = AwsClient().connect("ec2", region_name)
 
-    def nuke(self) -> None:
-        """Security groups delete function."""
-        for sec_grp in self.list_security_groups():
+    def nuke(self, required_tags: Dict[str, str] = None) -> None:
+        """Security groups delete function.
+
+        Deletes all security groups except those matching the required tags.
+
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the security groups
+            to exclude from deletion
+        """
+        for sec_grp in self.list_security_groups(required_tags):
             try:
                 self.revoke_all_rules_in_security_group(sec_grp)
             except ClientError as exc:
                 nuke_exceptions("security group rule", sec_grp, exc)
 
-        for sec_grp in self.list_security_groups():
+        for sec_grp in self.list_security_groups(required_tags):
             try:
                 self.ec2.delete_security_group(GroupId=sec_grp)
                 print("Nuke ec2 security group {0}".format(sec_grp))
@@ -55,14 +62,41 @@ class NukeSecurityGroup:
         except ClientError as exc:
             nuke_exceptions("security group rule", security_group_id, exc)
 
-    def list_security_groups(self) -> Iterator[str]:
+    def list_security_groups(self, required_tags: Dict[str, str] = None) -> Iterator[str]:
         """Security groups list function.
 
+        List all security group IDs except those matching the required tags.
+
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) for the security groups
+            to exclude from deletion
+
         :yield Iterator[str]:
-            Security group Id
+            Security group ID
         """
         paginator = self.ec2.get_paginator("describe_security_groups")
 
         for page in paginator.paginate():
             for security_group in page["SecurityGroups"]:
+                if required_tags and not self._security_group_has_required_tags(security_group, required_tags):
+                    continue
                 yield security_group["GroupId"]
+
+    def _security_group_has_required_tags(self, security_group: dict, required_tags: Dict[str, str]) -> bool:
+        """Check if the security group has the required tags.
+
+        :param dict security_group:
+            The security group dictionary object from describe_security_groups response
+        :param dict required_tags:
+            A dictionary of required tags (key-value pairs) to exclude from deletion
+
+        :return bool:
+            True if the security group has all the required tags, False otherwise
+        """
+        if 'Tags' in security_group:
+            tags_dict = {tag['Key']: tag['Value'] for tag in security_group['Tags']}
+            for key, value in required_tags.items():
+                if tags_dict.get(key) != value:
+                    return False
+            return True
+        return False

@@ -1,52 +1,52 @@
 # -*- coding: utf-8 -*-
 
-"""Module deleting all ec2 instances, placement groups and launch templates."""
+"""Module deleting all EC2 instances, placement groups, and launch templates."""
 
 from typing import Iterator
-
 from botocore.exceptions import ClientError, WaiterError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
 
 class NukeEc2:
-    """Abstract ec2 nuke in a class."""
+    """Abstract EC2 nuke in a class."""
 
     def __init__(self, region_name=None) -> None:
-        """Initialize ec2 nuke."""
+        """Initialize EC2 nuke."""
         self.ec2 = AwsClient().connect("ec2", region_name)
 
-    def nuke(self, older_than_seconds) -> None:
-        """Ec2 instance, placement group and template deleting function.
+    def nuke(self, older_than_seconds: float, required_tags: dict = None) -> None:
+        """EC2 instance, placement group and template deleting function.
 
-        Deleting all ec2 instances, placement groups and launch
-        templates with a timestamp greater than older_than_seconds.
+        Deleting all EC2 instances, placement groups, and launch templates
+        with a timestamp greater than older_than_seconds and not matching the required tags.
 
-        :param int older_than_seconds:
-            The timestamp in seconds used from which the aws resource
-            will be deleted
+        :param older_than_seconds:
+            The timestamp in seconds used from which the AWS resource will be deleted
+        :param required_tags:
+            A dictionary of required tags to exclude the EC2 instances
         """
-        self.nuke_instances(older_than_seconds)
+        self.nuke_instances(older_than_seconds, required_tags)
         self.nuke_launch_templates(older_than_seconds)
         self.nuke_placement_groups()
 
-    def nuke_instances(self, time_delete: float) -> None:
-        """Ec2 instance delete function.
+    def nuke_instances(self, time_delete: float, required_tags: dict = None) -> None:
+        """EC2 instance delete function.
 
-        Delete ec2 instances with a timestamp greater than time_delete
+        Delete EC2 instances with a timestamp greater than time_delete and not matching required tags.
 
-        :param int time_delete:
-            The timestamp in seconds used from which the aws resource
-            will be deleted
+        :param time_delete:
+            The timestamp in seconds used from which the AWS resource will be deleted
+        :param required_tags:
+            A dictionary of required tags to exclude the EC2 instances
         """
         instance_terminating = []
         ec2_waiter = self.ec2.get_waiter("instance_terminated")
 
-        for instance in self.list_instances(time_delete):
+        for instance in self.list_instances(time_delete, required_tags):
             try:
                 self.ec2.terminate_instances(InstanceIds=[instance])
-                print("Terminate instances {0}".format(instance))
+                print(f"Terminate instances {instance}")
             except ClientError as exc:
                 nuke_exceptions("instance", instance, exc)
             else:
@@ -62,41 +62,41 @@ class NukeEc2:
                 nuke_exceptions("instance waiter", instance_terminating, exc)
 
     def nuke_launch_templates(self, time_delete: float) -> None:
-        """Ec2 launche template delete function.
+        """EC2 launch template delete function.
 
-        Delete ec2 instances with a timestamp greater than time_delete
+        Delete EC2 instances with a timestamp greater than time_delete
 
-        :param int time_delete:
-            The timestamp in seconds used from which the aws resource
-            will be deleted
+        :param time_delete:
+            The timestamp in seconds used from which the AWS resource will be deleted
         """
         for template in self.list_templates(time_delete):
             try:
                 self.ec2.delete_launch_template(LaunchTemplateId=template)
-                print("Nuke Launch Template{0}".format(template))
+                print(f"Nuke Launch Template {template}")
             except ClientError as exc:
-                nuke_exceptions("ec2 template", template, exc)
+                nuke_exceptions("EC2 template", template, exc)
 
     def nuke_placement_groups(self) -> None:
-        """Ec2 placement group delete function."""
+        """EC2 placement group delete function."""
         for placement_group in self.list_placement_groups():
             try:
                 self.ec2.delete_placement_group(GroupName=placement_group)
-                print("Nuke Placement Group {0}".format(placement_group))
+                print(f"Nuke Placement Group {placement_group}")
             except ClientError as exc:
                 nuke_exceptions("placement group", placement_group, exc)
 
-    def list_instances(self, time_delete: float) -> Iterator[str]:
-        """Ec2 instance list function.
+    def list_instances(self, time_delete: float, required_tags: dict = None) -> Iterator[str]:
+        """EC2 instance list function.
 
-        List IDs of all ec2 instances with a timestamp lower than
-        time_delete.
+        List IDs of all EC2 instances with a timestamp lower than time_delete and not matching required tags.
 
-        :param int time_delete:
-            Timestamp in seconds used for filter ec2 instances
+        :param time_delete:
+            Timestamp in seconds used to filter EC2 instances
+        :param required_tags:
+            A dictionary of required tags to exclude the EC2 instances
 
         :yield Iterator[str]:
-            Ec2 instances IDs
+            EC2 instances IDs
         """
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
@@ -112,19 +112,20 @@ class NukeEc2:
             for reservation in page["Reservations"]:
                 for instance in reservation["Instances"]:
                     if instance["LaunchTime"].timestamp() < time_delete:
+                        if required_tags and self.instance_has_tags(instance["InstanceId"], required_tags):
+                            continue
                         yield instance["InstanceId"]
 
     def list_templates(self, time_delete: float) -> Iterator[str]:
         """Launch Template list function.
 
-        List Ids of all Launch Templates with a timestamp lower than
-        time_delete.
+        List IDs of all Launch Templates with a timestamp lower than time_delete.
 
-        :param int time_delete:
-            Timestamp in seconds used for filter Launch Templates
+        :param time_delete:
+            Timestamp in seconds used to filter Launch Templates
 
         :yield Iterator[str]:
-            Launch Templates Ids
+            Launch Templates IDs
         """
         response = self.ec2.describe_launch_templates()
 
@@ -135,7 +136,7 @@ class NukeEc2:
     def list_placement_groups(self) -> Iterator[str]:
         """Placement Group list function.
 
-        List name of all placement group.
+        List names of all placement groups.
 
         :yield Iterator[str]:
             Placement groups names
@@ -144,3 +145,26 @@ class NukeEc2:
 
         for placementgroup in response["PlacementGroups"]:
             yield placementgroup["GroupName"]
+
+    def instance_has_tags(self, instance_id: str, required_tags: dict) -> bool:
+        """Check if the instance has the required tags.
+
+        :param instance_id:
+            ID of the EC2 instance
+        :param required_tags:
+            A dictionary of required tags to filter the EC2 instances
+        :return:
+            True if the instance has all the required tags, False otherwise
+        """
+        try:
+            response = self.ec2.describe_tags(
+                Filters=[{"Name": "resource-id", "Values": [instance_id]}]
+            )
+            instance_tags = {tag["Key"]: tag["Value"] for tag in response["Tags"]}
+            for key, value in required_tags.items():
+                if instance_tags.get(key) == value:
+                    return True
+            return False
+        except ClientError as exc:
+            nuke_exceptions("EC2 instance tagging", instance_id, exc)
+            return False
