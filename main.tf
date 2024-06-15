@@ -47,6 +47,7 @@ data "aws_iam_policy_document" "nuke_compute" {
       "ec2:DeleteVolume",
       "ec2:DescribeKeyPairs",
       "ec2:DeleteKeyPair",
+      "tag:GetResources",
       "ec2:DescribePlacementGroups",
       "ec2:DeletePlacementGroup",
       "ec2:DescribeImages",
@@ -100,6 +101,7 @@ data "aws_iam_policy_document" "nuke_storage" {
       "s3:DeleteObjectVersion",
       "s3:DeleteBucketPolicy",
       "s3:DeleteBucket",
+      "tag:GetResources",
       "elasticfilesystem:DescribeFileSystems",
       "elasticfilesystem:DeleteFileSystem",
       "glacier:ListVaults",
@@ -136,6 +138,7 @@ data "aws_iam_policy_document" "nuke_database" {
       "rds:DescribeDBClusterSnapshots",
       "rds:DeleteDBClusterSnapshot",
       "rds:ListTagsForResource",
+      "tag:GetResources",
       "dynamodb:ListTables",
       "dynamodb:DescribeTable",
       "dynamodb:DeleteTable",
@@ -189,6 +192,7 @@ data "aws_iam_policy_document" "nuke_network" {
       "ec2:DeleteNatGateway",
       "ec2:DescribeAddresses",
       "ec2:ReleaseAddress",
+      "tag:GetResources",
       "ec2:DescribeRouteTables",
       "ec2:DeleteRouteTable",
       "ec2:DescribeInternetGateways",
@@ -219,6 +223,7 @@ data "aws_iam_policy_document" "nuke_analytic" {
       "elasticmapreduce:TerminateJobFlows",
       "kafka:ListClusters",
       "kafka:DeleteCluster",
+      "tag:GetResources",
     ]
 
     resources = [
@@ -241,6 +246,7 @@ data "aws_iam_policy_document" "nuke_monitoring" {
       "cloudwatch:DeleteDashboards",
       "cloudwatch:DescribeAlarms",
       "cloudwatch:DeleteAlarms",
+      "tag:GetResources",
     ]
 
     resources = [

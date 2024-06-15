@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -- coding: utf-8 --
 
 """Main entrypoint function for destroy all AWS resources."""
 import os
@@ -122,7 +122,7 @@ def lambda_handler(event=None, context=None):
                     strategy = value(region_name=aws_region)
                     strategy.nuke()
 
-# if __name__ == "__main__":
+# if _name_ == "_main_":
 
     # os.environ.setdefault("EXCLUDE_RESOURCES", "s3")
     # os.environ.setdefault("INCLUDE_RESOURCES", "")
@@ -131,5 +131,3 @@ def lambda_handler(event=None, context=None):
     # os.environ.setdefault("REQUIRED_TAGS", "dev=develop")  
     
     # lambda_handler()
-
-

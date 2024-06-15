@@ -60,5 +60,6 @@ variable "tags" {
 variable "required_tags" {
   description = "Comma-separated list of required tags in the format key=value"
   type        = string
-  default     = "dev=develop"
+  default     = null
+  # default     = "dev=develop"
 }

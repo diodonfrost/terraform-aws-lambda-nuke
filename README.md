@@ -31,14 +31,26 @@ module "nuke_everything_older_than_7d" {
   exclude_resources              = "key_pairs,rds"
   older_than                     = "7d"
 }
+
 ```
 ## added
 ```hcl
 module "nuke_everything_older_than_7d" {
   include_resources              = "s3"
-  required_tags                  = "{env=development}"
+  required_tags                  = "Env=development"
 }
 ```
+## How it works?
+
+Notice: This is still in testing process.
+
+*include resources* deletes only the specific resources that are provided inside it.
+*required_tags* if there are still work going on some development resources *Eg:* There are multiple instances running in EC2 where if you specify the tags like -- "Env=development" -- ( tags = { key: Env, value: development} ) which ignores the resource which is pointed to the tags.
+
+## Tested Resources:
+- EC2
+- S3
+
 ## Examples
 
 *   [Compute-nuke](https://github.com/diodonfrost/terraform-aws-lambda-nuke/tree/master/examples/compute) Create lambda function to nuke compute resources on Friday at 23:00 Gmt
