@@ -40,25 +40,23 @@ class NukeSecurityGroup:
                 nuke_exceptions("security group", sec_grp, exc)
 
     def revoke_all_rules_in_security_group(self, security_group_id) -> None:
-        """Revoke all rules in specific security group.
+        """Revoke all egress rules in a specific security group.
 
         :param str security_group_id:
-            The security group to apply this rule to.
+            The security group to revoke egress rules from.
         """
         sg_desc = self.ec2.describe_security_groups(
             GroupIds=[security_group_id]
         )
         try:
-            self.ec2.revoke_security_group_egress(
-                GroupId=security_group_id,
-                IpPermissions=sg_desc["SecurityGroups"][0]["IpPermissions"],
-            )
-            self.ec2.revoke_security_group_ingress(
-                GroupId=security_group_id,
-                IpPermissions=sg_desc["SecurityGroups"][0][
-                    "IpPermissionsEgress"
-                ],
-            )
+            if 'IpPermissionsEgress' in sg_desc['SecurityGroups'][0]:
+                self.ec2.revoke_security_group_egress(
+                    GroupId=security_group_id,
+                    IpPermissions=[],  # Empty list since we're only revoking egress
+                    SecurityGroupRuleIds=[  # Fetching all egress rule IDs
+                        rule['GroupId'] for rule in sg_desc['SecurityGroups'][0]['IpPermissionsEgress']
+                    ],
+                )
         except ClientError as exc:
             nuke_exceptions("security group rule", security_group_id, exc)
 
@@ -100,3 +98,6 @@ class NukeSecurityGroup:
                     return False
             return True
         return False
+
+# Additional imports and setup might be required based on your actual implementation context.
+# Ensure you have necessary imports and configurations from `nuke.client_connections` and `nuke.exceptions`.

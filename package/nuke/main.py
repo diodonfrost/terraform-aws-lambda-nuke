@@ -38,96 +38,90 @@ if 1:
     from nuke.storage.s3 import NukeS3
     from nuke.timeparse import timeparse
 
-def call_nuke(strategy, older_than_seconds, tag_dict):
-    """Call the nuke method with the appropriate arguments."""
-    nuke_method = strategy.nuke
-    sig = signature(nuke_method)
-    if 'required_tags' in sig.parameters:
-        nuke_method(older_than_seconds, required_tags=tag_dict)
-    else:
-        nuke_method(older_than_seconds)
+    def call_nuke(strategy, older_than_seconds, tag_dict):
+        """Call the nuke method with the appropriate arguments."""
+        nuke_method = strategy.nuke
+        sig = signature(nuke_method)
+        if 'required_tags' in sig.parameters:
+            nuke_method(older_than_seconds, required_tags=tag_dict)
+        else:
+            nuke_method(older_than_seconds)
 
-def lambda_handler(event=None, context=None):
-    """Main function entrypoint for lambda."""
-    exclude_resources = os.getenv("EXCLUDE_RESOURCES", "").replace(" ", "").split(",")
-    include_resources = os.getenv("INCLUDE_RESOURCES", "").replace(" ", "").split(",")
-    
-    older_than = os.getenv("OLDER_THAN", "0d")
-    older_than_seconds = time.time() - timeparse(older_than)
+    def lambda_handler(event=None, context=None):
+        """Main function entrypoint for lambda."""
+        exclude_resources = os.getenv("EXCLUDE_RESOURCES", "").replace(" ", "").split(",")
+        include_resources = os.getenv("INCLUDE_RESOURCES", "").replace(" ", "").split(",")
+        
+        older_than = os.getenv("OLDER_THAN", "0d")
+        older_than_seconds = time.time() - timeparse(older_than)
 
-    aws_regions = os.getenv("AWS_REGIONS", "").replace(" ", "").split(",")
-    if not aws_regions:
-        raise ValueError("AWS_REGIONS environment variable is not set or empty.")
-    
-    required_tags = os.getenv("REQUIRED_TAGS", "")
-    tag_dict = dict(tag.split("=") for tag in required_tags.split(",") if "=" in tag)
+        aws_regions = os.getenv("AWS_REGIONS", "").replace(" ", "").split(",")
+        if not aws_regions:
+            raise ValueError("AWS_REGIONS environment variable is not set or empty.")
+        
+        required_tags = os.getenv("REQUIRED_TAGS", "")
+        tag_dict = dict(tag.split("=") for tag in required_tags.split(",") if "=" in tag)
 
-    _strategy = {
-        "ami": NukeAmi,
-        "ebs": NukeEbs,
-        "snapshot": NukeSnapshot,
-        "spot": NukeSpot,
-        "endpoint": NukeEndpoint,
-        "ecr": NukeEcr,
-        "emr": NukeEmr,
-        "kafka": NukeKafka,
-        "autoscaling": NukeAutoscaling,
-        "dlm": NukeDlm,
-        "eks": NukeEks,
-        "elasticbeanstalk": NukeElasticbeanstalk,
-        "elb": NukeElb,
-        "dynamodb": NukeDynamodb,
-        "elasticache": NukeElasticache,
-        "redshift": NukeRedshift,
-        "cloudwatch": NukeCloudwatch,
-        "efs": NukeEfs,
-        "glacier": NukeGlacier,
-        "ec2": NukeEc2,
-        "rds": NukeRds,
-        "s3": NukeS3,
-    }
+        _strategy = {
+            "ami": NukeAmi,
+            "ebs": NukeEbs,
+            "snapshot": NukeSnapshot,
+            "spot": NukeSpot,
+            "endpoint": NukeEndpoint,
+            "ecr": NukeEcr,
+            "emr": NukeEmr,
+            "kafka": NukeKafka,
+            "autoscaling": NukeAutoscaling,
+            "dlm": NukeDlm,
+            "eks": NukeEks,
+            "elasticbeanstalk": NukeElasticbeanstalk,
+            "elb": NukeElb,
+            "dynamodb": NukeDynamodb,
+            "elasticache": NukeElasticache,
+            "redshift": NukeRedshift,
+            "cloudwatch": NukeCloudwatch,
+            "efs": NukeEfs,
+            "glacier": NukeGlacier,
+            "ec2": NukeEc2,
+            "rds": NukeRds,
+            "s3": NukeS3,
+        }
 
-    _strategy_with_no_date = {
-        "eip": NukeEip,
-        "key_pair": NukeKeypair,
-        "security_group": NukeSecurityGroup,
-        "network_acl": NukeNetworkAcl,
-    }
+        _strategy_with_no_date = {
+            "eip": NukeEip,
+            "key_pair": NukeKeypair,
+            "security_group": NukeSecurityGroup,
+            "network_acl": NukeNetworkAcl,
+        }
 
-    if include_resources[0]:
-        for aws_region in aws_regions:
-            for key, value in _strategy.items():
-                if key in include_resources:
-                    strategy = value(region_name=aws_region)
-                    call_nuke(strategy, older_than_seconds, tag_dict)
+        # Ensure lists are not empty or contain empty strings
+        include_resources = [res for res in include_resources if res]
+        exclude_resources = [res for res in exclude_resources if res]
 
-        no_older_than = any(s == "0" for s in older_than)
-        for aws_region in aws_regions:
-            for key, value in _strategy_with_no_date.items():
-                if key in include_resources and no_older_than:
-                    strategy = value(region_name=aws_region)
-                    strategy.nuke()
+        if include_resources:
+            for aws_region in aws_regions:
+                for key, value in _strategy.items():
+                    if key in include_resources:
+                        strategy = value(region_name=aws_region)
+                        call_nuke(strategy, older_than_seconds, tag_dict)
 
-    elif exclude_resources[0]:
-        for aws_region in aws_regions:
-            for key, value in _strategy.items():
-                if key not in exclude_resources:
-                    strategy = value(region_name=aws_region)
-                    call_nuke(strategy, older_than_seconds, tag_dict)
+            no_older_than = any(s == "0" for s in older_than)
+            for aws_region in aws_regions:
+                for key, value in _strategy_with_no_date.items():
+                    if key in include_resources and no_older_than:
+                        strategy = value(region_name=aws_region)
+                        strategy.nuke()
 
-        no_older_than = any(s == "0" for s in older_than)
-        for aws_region in aws_regions:
-            for key, value in _strategy_with_no_date.items():
-                if key not in exclude_resources and no_older_than:
-                    strategy = value(region_name=aws_region)
-                    strategy.nuke()
+        elif exclude_resources:
+            for aws_region in aws_regions:
+                for key, value in _strategy.items():
+                    if key not in exclude_resources:
+                        strategy = value(region_name=aws_region)
+                        call_nuke(strategy, older_than_seconds, tag_dict)
 
-# if _name_ == "_main_":
-
-    # os.environ.setdefault("EXCLUDE_RESOURCES", "s3")
-    # os.environ.setdefault("INCLUDE_RESOURCES", "")
-    # os.environ.setdefault("OLDER_THAN", "0d")
-    # os.environ.setdefault("AWS_REGIONS", "ap-south-1")  
-    # os.environ.setdefault("REQUIRED_TAGS", "dev=develop")  
-    
-    # lambda_handler()
+            no_older_than = any(s == "0" for s in older_than)
+            for aws_region in aws_regions:
+                for key, value in _strategy_with_no_date.items():
+                    if key not in exclude_resources and no_older_than:
+                        strategy = value(region_name=aws_region)
+                        strategy.nuke()

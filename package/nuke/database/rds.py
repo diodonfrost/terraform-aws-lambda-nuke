@@ -6,6 +6,7 @@ from typing import Iterator
 from botocore.exceptions import ClientError, EndpointConnectionError
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
+import boto3
 import time
 
 
@@ -15,6 +16,7 @@ class NukeRds:
     def __init__(self, region_name=None) -> None:
         """Initialize RDS nuke."""
         self.rds = AwsClient().connect("rds", region_name)
+        self.account_id = boto3.client('sts').get_caller_identity().get('Account')
 
         try:
             self.rds.describe_db_clusters()
@@ -43,18 +45,35 @@ class NukeRds:
                 self.rds.delete_db_instance(
                     DBInstanceIdentifier=instance, SkipFinalSnapshot=True
                 )
-                print(f"Stop RDS instance {instance}")
+                print(f"Deleted RDS instance {instance}")
             except ClientError as exc:
-                nuke_exceptions("RDS instance", instance, exc)
+                if exc.response['Error']['Code'] == 'InvalidDBInstanceState':
+                    print(f"RDS instance {instance} is already being deleted.")
+                else:
+                    nuke_exceptions("RDS instance", instance, exc)
 
         for cluster in self.list_clusters(older_than_seconds, required_tags):
             try:
                 self.rds.delete_db_cluster(
                     DBClusterIdentifier=cluster, SkipFinalSnapshot=True
                 )
-                print(f"Nuke RDS cluster {cluster}")
+                print(f"Deleted RDS cluster {cluster}")
             except ClientError as exc:
-                nuke_exceptions("RDS cluster", cluster, exc)
+                if exc.response['Error']['Code'] == 'InvalidParameterCombination':
+                    print(f"RDS cluster {cluster} has deletion protection enabled. Disabling protection.")
+                    try:
+                        self.rds.modify_db_cluster(
+                            DBClusterIdentifier=cluster,
+                            DeletionProtection=False
+                        )
+                        self.rds.delete_db_cluster(
+                            DBClusterIdentifier=cluster, SkipFinalSnapshot=True
+                        )
+                        print(f"Deleted RDS cluster {cluster} after disabling deletion protection.")
+                    except ClientError as inner_exc:
+                        nuke_exceptions("RDS cluster", cluster, inner_exc)
+                else:
+                    nuke_exceptions("RDS cluster", cluster, exc)
 
     def list_instances(self, time_delete: float, required_tags: dict = None) -> Iterator[str]:
         """RDS instance list function.
@@ -73,7 +92,7 @@ class NukeRds:
 
         for page in paginator.paginate():
             for instance in page["DBInstances"]:
-                if instance["InstanceCreateTime"].timestamp() < time_delete:
+                if "InstanceCreateTime" in instance and instance["InstanceCreateTime"].timestamp() < time_delete:
                     if required_tags and self.resource_has_tags(instance["DBInstanceIdentifier"], required_tags, "db-instance"):
                         continue
                     yield instance["DBInstanceIdentifier"]
@@ -95,7 +114,7 @@ class NukeRds:
 
         for page in paginator.paginate():
             for cluster in page["DBClusters"]:
-                if cluster["ClusterCreateTime"].timestamp() < time_delete:
+                if "ClusterCreateTime" in cluster and cluster["ClusterCreateTime"].timestamp() < time_delete:
                     if required_tags and self.resource_has_tags(cluster["DBClusterIdentifier"], required_tags, "db-cluster"):
                         continue
                     yield cluster["DBClusterIdentifier"]
@@ -113,7 +132,7 @@ class NukeRds:
             True if the resource has any of the required tags, False otherwise
         """
         try:
-            arn = f"arn:aws:rds:{self.rds.meta.region_name}:{self.rds.meta.client_id}:{resource_type}:{resource_id}"
+            arn = f"arn:aws:rds:{self.rds.meta.region_name}:{self.account_id}:{resource_type}:{resource_id}"
             response = self.rds.list_tags_for_resource(ResourceName=arn)
             resource_tags = {tag["Key"]: tag["Value"] for tag in response["TagList"]}
             for key, value in required_tags.items():
@@ -124,13 +143,3 @@ class NukeRds:
             nuke_exceptions("RDS resource tagging", resource_id, exc)
             return False
 
-# def main():
-#     region_name = "us-east-1"
-#     older_than_seconds = time.time() - 60 * 60 * 24 * 7  # 1 week ago
-#     required_tags = {"environment": "production"}
-
-#     nuke_rds = NukeRds(region_name)
-#     nuke_rds.nuke(older_than_seconds, required_tags)
-
-# if __name__ == "__main__":
-#     main()

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-"""Module deleting all aws Glacier resources."""
-
 import datetime
 from typing import Iterator, Dict
 
@@ -21,7 +17,7 @@ class NukeGlacier:
         try:
             self.glacier.list_vaults()
         except EndpointConnectionError:
-            print("Glacier resource is not available in this aws region")
+            print("Glacier resource is not available in this AWS region")
             return
 
     def nuke(self, older_than_seconds: float, required_tags: Dict[str, str] = None) -> None:
@@ -40,7 +36,7 @@ class NukeGlacier:
         for vault in self.list_vaults(older_than_seconds, required_tags):
             try:
                 self.glacier.delete_vault(vaultName=vault)
-                print("Nuke glacier vault {0}".format(vault))
+                print(f"Nuke glacier vault {vault}")
             except ClientError as exc:
                 nuke_exceptions("glacier vault", vault, exc)
 
@@ -66,8 +62,10 @@ class NukeGlacier:
                 creation_date = datetime.datetime.strptime(
                     vault["CreationDate"], "%Y-%m-%dT%H:%M:%S.%fZ"
                 )
+                print(f"Vault: {vault['VaultName']}, Creation Date: {creation_date}")
                 if creation_date.timestamp() < time_delete:
                     if required_tags and self._vault_has_required_tags(vault["VaultName"], required_tags):
+                        print(f"Vault {vault['VaultName']} has required tags, skipping deletion.")
                         continue
                     yield vault["VaultName"]
 
@@ -85,6 +83,7 @@ class NukeGlacier:
         try:
             tags = self.glacier.list_tags_for_vault(vaultName=vault_name)
             tags_dict = {tag['Key']: tag['Value'] for tag in tags['Tags']}
+            print(f"Vault {vault_name} Tags: {tags_dict}")
             for key, value in required_tags.items():
                 if tags_dict.get(key) != value:
                     return False

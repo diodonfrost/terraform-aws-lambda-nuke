@@ -36,7 +36,7 @@ variable "aws_regions" {
 variable "include_resources" {
   description = "Define the resources that will be destroyed"
   type        = string
-  default     = "ec2"
+  default     = "s3"
 }
 
 variable "exclude_resources" {
@@ -60,6 +60,6 @@ variable "tags" {
 variable "required_tags" {
   description = "Comma-separated list of required tags in the format key=value"
   type        = string
-  default     = null
-  # default     = "dev=develop"
+  default     = "env=develop"
+  # default     = null
 }
