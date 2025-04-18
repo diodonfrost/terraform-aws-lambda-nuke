@@ -18,7 +18,7 @@ variable "name" {
 variable "runtime" {
   description = "Lambda function runtime"
   type        = string
-  default     = "python3.7"
+  default     = "python3.11"
 }
 
 variable "custom_iam_role_arn" {
