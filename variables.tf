@@ -15,6 +15,12 @@ variable "name" {
   default     = "everything"
 }
 
+variable "runtime" {
+  description = "Lambda function runtime"
+  type        = string
+  default     = "python3.7"
+}
+
 variable "custom_iam_role_arn" {
   description = "Custom IAM role arn for the scheduling lambda"
   type        = string
