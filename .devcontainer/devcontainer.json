@@ -1,0 +1,38 @@
+{
+  "build": { "dockerfile": "Dockerfile", "context": "../" },
+  "mounts": [
+    "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "redhat.vscode-yaml",
+        "vscode-icons-team.vscode-icons",
+        "isudox.vscode-jetbrains-keybindings",
+        "GitHub.vscode-github-actions"
+      ],
+      "settings": {
+        // Fonts MesLGS NF should be install: https://github.com/romkatv/powerlevel10k-media/blob/master/MesloLGS%20NF%20Regular.ttf
+        "terminal.integrated.fontFamily": "MesloLGS NF",
+        "redhat.telemetry.enabled": false,
+        "aws.telemetry": false,
+        "workbench.iconTheme": "vscode-icons",
+        "vsicons.dontShowNewVersionMessage": true,
+        "editor.rulers": [88,120]
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "installSentinel": true,
+      "installTFsec": true,
+      "installTerraformDocs": true
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
+  },
+  "postStartCommand": "pip install -r requirements-dev.txt",
+  "remoteEnv": { "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin" },
+  "remoteUser": "vscode"
+}
