@@ -30,7 +30,10 @@
       "installTFsec": true,
       "installTerraformDocs": true
     },
-    "ghcr.io/devcontainers/features/aws-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.13"
+    }
   },
   "postStartCommand": "pip install -r requirements-dev.txt",
   "remoteEnv": { "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin" },
