@@ -5,6 +5,7 @@ data "aws_availability_zones" "available" {
 
 # Create rds aurora cluster
 resource "aws_rds_cluster" "aurora_nuke" {
+  engine              = "aurora-mysql"
   cluster_identifier  = "aurora-cluster-nuke"
   availability_zones  = data.aws_availability_zones.available.names
   database_name       = "auroranuke"
@@ -14,6 +15,7 @@ resource "aws_rds_cluster" "aurora_nuke" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_nuke" {
+  engine             = "aurora-mysql"
   identifier         = "aurora-instance-nuke"
   cluster_identifier = aws_rds_cluster.aurora_nuke.id
   instance_class     = "db.t2.small"
@@ -22,7 +24,7 @@ resource "aws_rds_cluster_instance" "aurora_nuke" {
 # Create rds mariadb instance with tag
 resource "aws_db_instance" "mariadb_nuke" {
   identifier          = "mariadb-instance-nuke"
-  name                = "mariadbnuke"
+  db_name             = "mariadbnuke"
   allocated_storage   = 10
   storage_type        = "gp2"
   engine              = "mariadb"
@@ -36,7 +38,7 @@ resource "aws_db_instance" "mariadb_nuke" {
 # Create rds mysql instance with tag
 resource "aws_db_instance" "mysql_nuke" {
   identifier          = "mysql-instance-nuke"
-  name                = "mysqlnuke"
+  db_name             = "mysqlnuke"
   allocated_storage   = 10
   storage_type        = "gp2"
   engine              = "mysql"

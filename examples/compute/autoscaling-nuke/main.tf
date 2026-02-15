@@ -5,7 +5,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
   }
 
   filter {
@@ -25,7 +25,7 @@ resource "aws_subnet" "main" {
   cidr_block = "10.0.1.0/24"
 }
 
-resource "aws_launch_configuration" "as_conf" {
+resource "aws_launch_template" "as_conf" {
   name          = "web_config"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
@@ -41,8 +41,12 @@ resource "aws_autoscaling_group" "autoscaling_nuke" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = aws_launch_configuration.as_conf.name
   vpc_zone_identifier       = [aws_subnet.main.id]
+
+  launch_template {
+    id      = aws_launch_template.as_conf.id
+    version = "$Latest"
+  }
 }
 
 ### Terraform modules ###

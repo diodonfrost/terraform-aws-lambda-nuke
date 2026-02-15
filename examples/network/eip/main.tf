@@ -15,17 +15,17 @@ resource "aws_internet_gateway" "nuke_nat" {
 
 # Create elastic ip
 resource "aws_eip" "nuke_eip_one" {
-  vpc = true
+  domain = "vpc"
 }
 
 # Create elastic ip
 resource "aws_eip" "nuke_eip_two" {
-  vpc = true
+  domain = "vpc"
 }
 
 # Create elastic ip
 resource "aws_eip" "nuke_eip_three" {
-  vpc = true
+  domain = "vpc"
 }
 
 ### Terraform modules ###
