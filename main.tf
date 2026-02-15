@@ -312,7 +312,7 @@ resource "aws_lambda_function" "this" {
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = var.runtime
   timeout          = "900"
-  kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
+  kms_key_arn      = var.kms_key_arn
   tags             = var.tags
 
   environment {
