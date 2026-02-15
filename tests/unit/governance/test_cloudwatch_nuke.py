@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_cloudwatch
+from moto import mock_aws
 
 from package.nuke.governance.cloudwatch import NukeCloudwatch
 
@@ -20,7 +20,7 @@ from .utils import create_cloudwatch_alarm, create_cloudwatch_dashboard
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_cloudwatch
+@mock_aws
 def test_cloudwatch_dashboard_nuke(aws_region, older_than_seconds, result_count):
     """Verify cloudwatch dashboard nuke function."""
     client = boto3.client("cloudwatch", region_name=aws_region)
@@ -40,7 +40,7 @@ def test_cloudwatch_dashboard_nuke(aws_region, older_than_seconds, result_count)
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_cloudwatch
+@mock_aws
 def test_cloudwatch_alarm_nuke(aws_region, older_than_seconds, result_count):
     """Verify cloudwatch alarm nuke function."""
     client = boto3.client("cloudwatch", region_name=aws_region)

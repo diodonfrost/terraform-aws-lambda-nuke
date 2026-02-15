@@ -46,13 +46,6 @@ repos:
       - id: pytest-unit-tests
         name: Run unit tests with coverage
         entry: pytest tests/unit --cov package
-        language: python
+        language: system
         types: [python]
         pass_filenames: false
-        additional_dependencies:
-          - boto3==1.*
-          - botocore==1.*
-          - moto==5.*
-          - pytest==9.*
-          - pytest-cov==7.*
-          - python-dateutil==2.*

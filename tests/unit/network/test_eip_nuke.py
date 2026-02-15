@@ -3,7 +3,7 @@
 
 import boto3
 import pytest
-from moto import mock_ec2
+from moto import mock_aws
 
 from package.nuke.network.eip import NukeEip
 
@@ -17,7 +17,7 @@ from .utils import create_eip
         ("eu-west-2", 0),
     ],
 )
-@mock_ec2
+@mock_aws
 def test_eip_nuke(aws_region, result_count):
     """Verify eip nuke function."""
     client = boto3.client("ec2", region_name=aws_region)

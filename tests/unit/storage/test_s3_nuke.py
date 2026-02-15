@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 
 from package.nuke.storage.s3 import NukeS3
 
@@ -20,7 +20,7 @@ from .utils import create_s3
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_s3
+@mock_aws
 def test_s3_nuke(aws_region, older_than_seconds, result_count):
     """Verify s3 nuke function."""
     client = boto3.client("s3", region_name=aws_region)

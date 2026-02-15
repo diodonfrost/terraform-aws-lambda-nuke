@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """Tests for the keypair nuke class."""
 
-import time
-
 import boto3
 import pytest
-from moto import mock_ec2
+from moto import mock_aws
 
 from package.nuke.compute.key_pair import NukeKeypair
 
@@ -19,7 +17,7 @@ from .utils import create_keypair
         ("eu-west-2", 0),
     ],
 )
-@mock_ec2
+@mock_aws
 def test_keypair_nuke(aws_region, result_count):
     """Verify keypair nuke class."""
     client = boto3.client("ec2", region_name=aws_region)

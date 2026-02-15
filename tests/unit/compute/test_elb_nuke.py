@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_ec2, mock_elb, mock_elbv2
+from moto import mock_aws
 
 from package.nuke.compute.elb import NukeElb
 
@@ -20,9 +20,7 @@ from .utils import create_elb, create_elbv2
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_ec2
-@mock_elb
-@mock_elbv2
+@mock_aws
 def test_elb_nuke(aws_region, older_than_seconds, result_count):
     """Verify elb nuke function."""
     elb = boto3.client("elb", region_name=aws_region)
@@ -42,9 +40,7 @@ def test_elb_nuke(aws_region, older_than_seconds, result_count):
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_ec2
-@mock_elb
-@mock_elbv2
+@mock_aws
 def test_elbv2_nuke(aws_region, older_than_seconds, result_count):
     """Verify elbv2 nuke function."""
     elbv2 = boto3.client("elbv2", region_name=aws_region)

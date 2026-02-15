@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_autoscaling, mock_ec2
+from moto import mock_aws
 
 from package.nuke.compute.autoscaling import NukeAutoscaling
 
@@ -20,8 +20,7 @@ from .utils import create_autoscaling
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_ec2
-@mock_autoscaling
+@mock_aws
 def test_autoscaling_nuke(aws_region, older_than_seconds, result_count):
     """Verify autoscaling nuke class."""
     client = boto3.client("autoscaling", region_name=aws_region)
@@ -41,8 +40,7 @@ def test_autoscaling_nuke(aws_region, older_than_seconds, result_count):
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_ec2
-@mock_autoscaling
+@mock_aws
 def test_launch_conf_nuke(aws_region, older_than_seconds, result_count):
     """Verify launch configuration nuke function."""
     client = boto3.client("autoscaling", region_name=aws_region)

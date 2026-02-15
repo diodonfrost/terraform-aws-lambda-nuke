@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_emr
+from moto import mock_aws
 
 from package.nuke.analytic.emr import NukeEmr
 
@@ -20,7 +20,7 @@ from .utils import create_emr
         ("eu-west-2", 630720000, "WAITING"),
     ],
 )
-@mock_emr
+@mock_aws
 def test_emr_nuke(aws_region, older_than_seconds, result_count):
     """Verify emr nuke function."""
     client = boto3.client("emr", region_name=aws_region)

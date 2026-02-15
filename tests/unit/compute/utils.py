@@ -106,4 +106,5 @@ def create_snapshot(region_name):
     client = boto3.client("ec2", region_name=region_name)
 
     ebs_volume = client.create_volume(AvailabilityZone=region_name + "a", Size=50)
-    client.create_snapshot(VolumeId=ebs_volume["VolumeId"])
+    snapshot = client.create_snapshot(VolumeId=ebs_volume["VolumeId"])
+    return snapshot["SnapshotId"]

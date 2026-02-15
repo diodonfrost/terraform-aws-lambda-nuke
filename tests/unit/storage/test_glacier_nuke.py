@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_glacier
+from moto import mock_aws
 
 from package.nuke.storage.glacier import NukeGlacier
 
@@ -20,7 +20,7 @@ from .utils import create_glacier
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_glacier
+@mock_aws
 def test_glacier_nuke(aws_region, older_than_seconds, result_count):
     """Verify glacier nuke function."""
     client = boto3.client("glacier", region_name=aws_region)

@@ -5,7 +5,7 @@ import time
 
 import boto3
 import pytest
-from moto import mock_redshift
+from moto import mock_aws
 
 from package.nuke.database.redshift import NukeRedshift
 
@@ -20,7 +20,7 @@ from .utils import create_redshift
         ("eu-west-2", 630720000, 1),
     ],
 )
-@mock_redshift
+@mock_aws
 def test_redshift_nuke(aws_region, older_than_seconds, result_count):
     """Verify redshift nuke function."""
     client = boto3.client("redshift", region_name=aws_region)
