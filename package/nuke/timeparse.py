@@ -43,14 +43,11 @@ SECCLOCK = r":(?P<secs>\d{2}(?:\.\d+)?)"
 MINCLOCK = r"(?P<mins>\d{1,2}):(?P<secs>\d{2}(?:\.\d+)?)"
 HOURCLOCK = r"(?P<hours>\d+):(?P<mins>\d{2}):(?P<secs>\d{2}(?:\.\d+)?)"
 DAYCLOCK = (
-    r"(?P<days>\d+):(?P<hours>\d{2}):"
-    r"(?P<mins>\d{2}):(?P<secs>\d{2}(?:\.\d+)?)"
+    r"(?P<days>\d+):(?P<hours>\d{2}):" r"(?P<mins>\d{2}):(?P<secs>\d{2}(?:\.\d+)?)"
 )
 
 OPT = lambda x: r"(?:{x})?".format(x=x, SEPARATORS=SEPARATORS)  # type: ignore
-OPTSEP = lambda x: r"(?:{x}\s*(?:{SEPARATORS}\s*)?)?".format(
-    x=x, SEPARATORS=SEPARATORS
-)
+OPTSEP = lambda x: r"(?:{x}\s*(?:{SEPARATORS}\s*)?)?".format(x=x, SEPARATORS=SEPARATORS)
 
 TIMEFORMATS = [
     r"{WEEKS}\s*{DAYS}\s*{HOURS}\s*{MINS}\s*{SECS}".format(
@@ -166,9 +163,7 @@ def timeparse(sval, granularity="seconds"):
                 )
             # if SECS is an integer number
             elif (
-                "secs" not in mdict
-                or mdict["secs"] is None
-                or mdict["secs"].isdigit()
+                "secs" not in mdict or mdict["secs"] is None or mdict["secs"].isdigit()
             ):
                 # we will return an integer
                 return sign * int(

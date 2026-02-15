@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Main entrypoint function for destroy all aws resources."""
+
 import os
 import time
 

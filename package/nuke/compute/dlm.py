@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError, EndpointConnectionError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -55,8 +54,6 @@ class NukeDlm:
         response = self.dlm.get_lifecycle_policies()
 
         for policy in response["Policies"]:
-            detailed = self.dlm.get_lifecycle_policy(
-                PolicyId=policy["PolicyId"]
-            )
+            detailed = self.dlm.get_lifecycle_policy(PolicyId=policy["PolicyId"])
             if detailed["Policy"]["DateCreated"].timestamp() < time_delete:
                 yield policy["PolicyId"]

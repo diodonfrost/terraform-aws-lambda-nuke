@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError, EndpointConnectionError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -15,16 +14,12 @@ class NukeElasticbeanstalk:
 
     def __init__(self, region_name=None) -> None:
         """Initialize elasticbeanstalk nuke."""
-        self.elasticbeanstalk = AwsClient().connect(
-            "elasticbeanstalk", region_name
-        )
+        self.elasticbeanstalk = AwsClient().connect("elasticbeanstalk", region_name)
 
         try:
             self.elasticbeanstalk.describe_applications()
         except EndpointConnectionError:
-            print(
-                "elasticbeanstalk resource is not available in this aws region"
-            )
+            print("elasticbeanstalk resource is not available in this aws region")
             return
 
     def nuke(self, older_than_seconds: float) -> None:

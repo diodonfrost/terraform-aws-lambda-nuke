@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -38,9 +37,7 @@ class NukeSpot:
 
         for spot_fleet in self.list_fleet(older_than_seconds):
             try:
-                self.ec2.cancel_spot_fleet_requests(
-                    SpotFleetRequestIds=[spot_fleet]
-                )
+                self.ec2.cancel_spot_fleet_requests(SpotFleetRequestIds=[spot_fleet])
                 print("Nuke spot fleet request {0}".format(spot_fleet))
             except ClientError as exc:
                 nuke_exceptions("spot fleet", spot_fleet, exc)

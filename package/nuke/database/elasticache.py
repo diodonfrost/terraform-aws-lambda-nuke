@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError, EndpointConnectionError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -83,11 +82,8 @@ class NukeElasticache:
         Deleting elasticache subnets
         """
         for subnet in self.list_subnets():
-
             try:
-                self.elasticache.delete_cache_subnet_group(
-                    CacheSubnetGroupName=subnet
-                )
+                self.elasticache.delete_cache_subnet_group(CacheSubnetGroupName=subnet)
                 print("Nuke elasticache subnet{0}".format(subnet))
             except ClientError as exc:
                 nuke_exceptions("elasticache subnet", subnet, exc)
@@ -153,9 +149,7 @@ class NukeElasticache:
         :yield Iterator[str]:
             Elasticache subnet group names
         """
-        paginator = self.elasticache.get_paginator(
-            "describe_cache_subnet_groups"
-        )
+        paginator = self.elasticache.get_paginator("describe_cache_subnet_groups")
 
         for page in paginator.paginate():
             for subnet in page["CacheSubnetGroups"]:
@@ -169,9 +163,7 @@ class NukeElasticache:
         :yield Iterator[str]:
             Elasticache param group names
         """
-        paginator = self.elasticache.get_paginator(
-            "describe_cache_parameter_groups"
-        )
+        paginator = self.elasticache.get_paginator("describe_cache_parameter_groups")
 
         for page in paginator.paginate():
             for param_group in page["CacheParameterGroups"]:

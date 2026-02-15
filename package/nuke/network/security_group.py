@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -38,9 +37,7 @@ class NukeSecurityGroup:
         :param str security_group_id:
             The security group to apply this rule to.
         """
-        sg_desc = self.ec2.describe_security_groups(
-            GroupIds=[security_group_id]
-        )
+        sg_desc = self.ec2.describe_security_groups(GroupIds=[security_group_id])
         try:
             self.ec2.revoke_security_group_egress(
                 GroupId=security_group_id,
@@ -48,9 +45,7 @@ class NukeSecurityGroup:
             )
             self.ec2.revoke_security_group_ingress(
                 GroupId=security_group_id,
-                IpPermissions=sg_desc["SecurityGroups"][0][
-                    "IpPermissionsEgress"
-                ],
+                IpPermissions=sg_desc["SecurityGroups"][0]["IpPermissionsEgress"],
             )
         except ClientError as exc:
             nuke_exceptions("security group rule", security_group_id, exc)

@@ -5,7 +5,6 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError, EndpointConnectionError
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
@@ -74,9 +73,7 @@ class NukeRedshift:
         """
         for snapshot in self.list_snapshots(time_delete):
             try:
-                self.redshift.delete_cluster_snapshot(
-                    SnapshotIdentifier=snapshot
-                )
+                self.redshift.delete_cluster_snapshot(SnapshotIdentifier=snapshot)
                 print("Nuke redshift snapshot {0}".format(snapshot))
             except ClientError as exc:
                 nuke_exceptions("redshift snapshot", snapshot, exc)
@@ -93,9 +90,7 @@ class NukeRedshift:
         """
         for subnet in self.list_subnet():
             try:
-                self.redshift.delete_cluster_subnet_group(
-                    ClusterSubnetGroupName=subnet
-                )
+                self.redshift.delete_cluster_subnet_group(ClusterSubnetGroupName=subnet)
                 print("Nuke redshift subnet {0}".format(subnet))
             except ClientError as exc:
                 nuke_exceptions("redshift subnet", subnet, exc)
@@ -112,9 +107,7 @@ class NukeRedshift:
         """
         for param in self.list_cluster_params():
             try:
-                self.redshift.delete_cluster_parameter_group(
-                    ParameterGroupName=param
-                )
+                self.redshift.delete_cluster_parameter_group(ParameterGroupName=param)
                 print("Nuke redshift param {0}".format(param))
             except ClientError as exc:
                 nuke_exceptions("redshift param", param, exc)
@@ -163,9 +156,7 @@ class NukeRedshift:
         :yield Iterator[str]:
             Redshift subnet names
         """
-        paginator = self.redshift.get_paginator(
-            "describe_cluster_subnet_groups"
-        )
+        paginator = self.redshift.get_paginator("describe_cluster_subnet_groups")
 
         for page in paginator.paginate():
             for subnet in page["ClusterSubnetGroups"]:
@@ -177,9 +168,7 @@ class NukeRedshift:
         :yield Iterator[str]:
             Redshift cluster parameter names
         """
-        paginator = self.redshift.get_paginator(
-            "describe_cluster_parameter_groups"
-        )
+        paginator = self.redshift.get_paginator("describe_cluster_parameter_groups")
 
         for page in paginator.paginate():
             for param in page["ParameterGroups"]:

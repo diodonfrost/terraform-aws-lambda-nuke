@@ -5,9 +5,7 @@
 from typing import Iterator
 
 from botocore.exceptions import ClientError
-
 from dateutil.parser import parse
-
 from nuke.client_connections import AwsClient
 from nuke.exceptions import nuke_exceptions
 
