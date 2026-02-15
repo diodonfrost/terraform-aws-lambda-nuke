@@ -22,7 +22,7 @@ resource "aws_instance" "instance_nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

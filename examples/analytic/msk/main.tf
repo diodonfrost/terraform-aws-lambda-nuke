@@ -76,7 +76,7 @@ resource "aws_msk_cluster" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-msk"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

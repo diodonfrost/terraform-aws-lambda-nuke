@@ -64,7 +64,7 @@ resource "aws_elasticache_cluster" "nuke_redis" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-elasticache"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

@@ -1,7 +1,3 @@
-# Get all availability zones
-data "aws_availability_zones" "available" {
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -31,7 +27,7 @@ resource "aws_ami_from_instance" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-ami"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

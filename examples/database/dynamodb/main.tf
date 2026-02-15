@@ -20,7 +20,7 @@ resource "aws_dynamodb_table" "dynamodb_nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-dynamodb"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

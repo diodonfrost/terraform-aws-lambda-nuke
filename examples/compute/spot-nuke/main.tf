@@ -30,7 +30,7 @@ resource "aws_spot_instance_request" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-spot"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

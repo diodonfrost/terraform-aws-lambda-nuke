@@ -51,7 +51,7 @@ resource "aws_vpc_endpoint_service" "nuke_loadbalancer_endpoint" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-endpoint"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

@@ -40,7 +40,7 @@ resource "aws_cloudwatch_metric_alarm" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-cloudwatch"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

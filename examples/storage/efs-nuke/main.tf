@@ -5,7 +5,7 @@ resource "aws_efs_file_system" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-efs"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

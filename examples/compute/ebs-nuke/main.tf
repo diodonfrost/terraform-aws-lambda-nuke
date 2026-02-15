@@ -11,7 +11,7 @@ resource "aws_ebs_volume" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-ebs"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

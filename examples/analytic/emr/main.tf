@@ -307,7 +307,7 @@ EOF
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-emr"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

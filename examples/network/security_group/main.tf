@@ -97,7 +97,7 @@ resource "aws_security_group_rule" "nuke_egress_http_2" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-security-group"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

@@ -1,7 +1,3 @@
-# Get all availability zones
-data "aws_availability_zones" "available" {
-}
-
 resource "aws_iam_role" "nuke" {
   name = "dlm-lifecycle-role"
 
@@ -88,7 +84,7 @@ resource "aws_dlm_lifecycle_policy" "nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-dlm"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

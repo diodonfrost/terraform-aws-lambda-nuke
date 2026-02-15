@@ -30,7 +30,7 @@ resource "aws_eip" "nuke_eip_three" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-eip"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

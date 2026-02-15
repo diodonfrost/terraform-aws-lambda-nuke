@@ -5,7 +5,7 @@ resource "aws_glacier_vault" "my_archive" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-glacier"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "autoscaling_nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-autoscaling"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

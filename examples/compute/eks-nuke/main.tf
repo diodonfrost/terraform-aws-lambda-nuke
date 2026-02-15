@@ -63,7 +63,7 @@ resource "aws_eks_cluster" "nuke_eks" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-eks"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

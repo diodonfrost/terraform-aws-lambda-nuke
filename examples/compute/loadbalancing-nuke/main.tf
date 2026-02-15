@@ -39,7 +39,7 @@ resource "aws_lb" "network_nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-loadbalancer"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"

@@ -51,7 +51,7 @@ resource "aws_db_instance" "mysql_nuke" {
 
 ### Terraform modules ###
 
-module "nuke-everything" {
+module "nuke_everything" {
   source                         = "../../../"
   name                           = "nuke-rds"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
