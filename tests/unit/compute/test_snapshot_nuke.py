@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """Tests for the snapshot nuke class."""
 
-import boto3
 import time
 
+import boto3
+import pytest
 from moto import mock_ec2
 
 from package.nuke.compute.snapshot import NukeSnapshot
 
 from .utils import create_snapshot
-
-import pytest
 
 
 @pytest.mark.parametrize(

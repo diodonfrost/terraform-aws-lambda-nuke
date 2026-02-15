@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """Tests for the glacier nuke class."""
 
-import boto3
 import time
 
+import boto3
+import pytest
 from moto import mock_glacier
 
 from package.nuke.storage.glacier import NukeGlacier
 
 from .utils import create_glacier
-
-import pytest
 
 
 @pytest.mark.parametrize(

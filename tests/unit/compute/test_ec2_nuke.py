@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """Tests for the ec2 nuke class."""
 
-import boto3
 import time
 
+import boto3
+import pytest
 from moto import mock_ec2
 
 from package.nuke.compute.ec2 import NukeEc2
 
 from .utils import create_instances
 
-import pytest
-
 
 @pytest.mark.parametrize(
-    "aws_region, older_than_seconds, result_count", [
-        ("eu-west-1", time.time() + 43200, {'Code': 48, 'Name': 'terminated'}),
-        ("eu-west-2", time.time() + 43200, {'Code': 48, 'Name': 'terminated'}),
-        ("eu-west-2", 630720000, {'Code': 16, 'Name': 'running'}),
-    ]
+    "aws_region, older_than_seconds, result_count",
+    [
+        ("eu-west-1", time.time() + 43200, {"Code": 48, "Name": "terminated"}),
+        ("eu-west-2", time.time() + 43200, {"Code": 48, "Name": "terminated"}),
+        ("eu-west-2", 630720000, {"Code": 16, "Name": "running"}),
+    ],
 )
 @mock_ec2
 def test_ec2_nuke(aws_region, older_than_seconds, result_count):

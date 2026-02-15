@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """Tests for the emr nuke class."""
 
-import boto3
 import time
 
+import boto3
+import pytest
 from moto import mock_emr
 
 from package.nuke.analytic.emr import NukeEmr
 
 from .utils import create_emr
-
-import pytest
 
 
 @pytest.mark.parametrize(

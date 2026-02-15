@@ -16,6 +16,7 @@ def create_security_group(region_name):
 
     client.create_security_group(GroupName="sg-test", Description="sg test")
 
+
 def create_network_acl(region_name):
     """Create security group and network acl."""
     client = boto3.client("ec2", region_name=region_name)

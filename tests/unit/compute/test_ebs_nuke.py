@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """Tests for the ebs nuke class."""
 
-import boto3
 import time
 
+import boto3
+import pytest
 from moto import mock_ec2
 
 from package.nuke.compute.ebs import NukeEbs
 
 from .utils import create_ebs
 
-import pytest
-
 
 @pytest.mark.parametrize(
-    "aws_region, older_than_seconds, result_count", [
+    "aws_region, older_than_seconds, result_count",
+    [
         ("eu-west-1", time.time() + 43200, 0),
         ("eu-west-2", time.time() + 43200, 0),
         ("eu-west-2", 630720000, 1),
-    ]
+    ],
 )
 @mock_ec2
 def test_ebs_nuke(aws_region, older_than_seconds, result_count):
